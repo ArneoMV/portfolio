@@ -1,0 +1,634 @@
+@use "../core/mixins" as mix;
+
+/* =====================================================================
+   PROJECT DETAIL PAGE  —  /work/[slug]
+   Task 1 foundation: hero + introduction → static dark band →
+   other work → footer. Dark band is intentionally NOT pinned
+   (Task 2 will add the parallax / internal-scroll behaviour).
+===================================================================== */
+
+/* Page root — pins Source Sans 3 across the whole template and
+   leaves room above for the fixed site header (~104px) and below
+   for the fixed BottomToolbar (~122px). The dark section escapes
+   the rail container by living outside `.page-rail-group`, so the
+   bg can be full-bleed while inner content still sits at 1100px. */
+.project-detail {
+  font-family: var(--font-sans);
+  padding-bottom: var(--space-5xl);
+}
+
+.project-detail :is(p, h1, h2, h3, h4, dt, dd, span) {
+  font-family: var(--font-sans);
+}
+
+/* ── Section 1 — Hero / Introduction ───────────────────────── */
+
+.project-detail-hero {
+  background: var(--color-background);
+  padding-top: 124px;
+  padding-bottom: var(--space-3xl);
+}
+
+.project-detail-hero-container {
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 64px;
+  padding-right: 64px;
+}
+
+@media (max-width: 1439px) and (min-width: 768px) {
+  .project-detail-hero-container {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .project-detail-hero {
+    padding-top: 96px;
+  }
+
+  .project-detail-hero-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.project-detail-title {
+  margin: 0 0 var(--space-2xl);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--color-neutral-100);
+}
+
+/* Two-column rows (label left, body right). Stacks on mobile. */
+.project-detail-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--space-2xl);
+  align-items: start;
+}
+
+@media (max-width: 767px) {
+  .project-detail-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+}
+
+.project-detail-row-label {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.4;
+  color: var(--color-neutral-100);
+}
+
+/* Strong label variant — used by the "INTRODUCTION" eyebrow.
+   Bold + slightly tighter line-height; sits at the same baseline
+   as the description label so the visual rhythm is consistent. */
+.project-detail-row-label--strong {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.project-detail-row-body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--color-neutral-90);
+}
+
+/* Hero image — spans the FULL container box (rail-to-rail) by
+   breaking out of `.project-detail-hero-container`'s 64/48/16
+   horizontal padding via negative margins + an over-wide width.
+   Per breakpoint the offsets mirror the container's own padding
+   so the image's left/right edges land exactly at the dotted
+   rails (rail x = container outer edge). No border-radius — the
+   Figma reference shows hard-edge corners. Neutral grey
+   background acts as a placeholder when no Image fills it. */
+.project-detail-image {
+  position: relative;
+  width: calc(100% + 128px);
+  margin-left: -64px;
+  margin-top: var(--space-2xl);
+  aspect-ratio: 16 / 9;
+  background: var(--color-neutral-30);
+  overflow: hidden;
+}
+
+@media (max-width: 1439px) and (min-width: 768px) {
+  .project-detail-image {
+    width: calc(100% + 96px);
+    margin-left: -48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .project-detail-image {
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    aspect-ratio: 4 / 3;
+    margin-top: var(--space-xl);
+  }
+}
+
+/* Meta grid — 4-up on desktop / medium, 2-up on mobile. ONE
+   horizontal dotted separator at the bottom, rendered via
+   `::after` so it can use the same `linear-gradient(to right,
+   neutral-80 0/4px → transparent 4/12px)` pattern as the
+   `.page-rail-group` vertical rails (and the homepage's
+   `.footer-links` horizontal dotted dividers). Negative left /
+   right offsets match the container's per-breakpoint padding so
+   the line extends from the LEFT rail to the RIGHT rail — not
+   inset inside the content padding. `padding-bottom: 2xl` keeps
+   the visual rhythm: 48px gap above the separator, 48px below
+   (intro's `margin-top: 2xl` provides the lower half), so the
+   spacing matches the previous border-top implementation. */
+.project-detail-meta {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xl);
+  margin: var(--space-2xl) 0 0;
+  padding-bottom: var(--space-2xl);
+}
+
+.project-detail-meta::after {
+  content: "";
+  position: absolute;
+  left: -64px;
+  right: -64px;
+  bottom: 0;
+  height: 1px;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to right,
+    var(--color-neutral-80) 0,
+    var(--color-neutral-80) 4px,
+    transparent 4px,
+    transparent 12px
+  );
+  background-size: 12px 1px;
+  background-repeat: repeat-x;
+}
+
+@media (max-width: 1439px) and (min-width: 768px) {
+  .project-detail-meta::after {
+    left: -48px;
+    right: -48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .project-detail-meta {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .project-detail-meta::after {
+    left: -16px;
+    right: -16px;
+  }
+}
+
+.project-detail-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.project-detail-meta-label {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--color-neutral-90);
+}
+
+.project-detail-meta-value {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.3;
+  color: var(--color-neutral-100);
+}
+
+/* Introduction row — sits below the meta separator with a single
+   `margin-top` gap. The previous `border-top: 1px dashed` here
+   was the meta row's bottom line; that line is now rendered by
+   `.project-detail-meta::after` (rail-style gradient), so the
+   intro itself just provides the spacing below the separator. */
+.project-detail-row--intro {
+  margin-top: var(--space-2xl);
+}
+
+/* ── Section 2 — Dark band with scroll-pin behaviour ───────
+   Mobile-first cascade with a JS-gated pin overlay. The split
+   between "static layout at ≥900" and ".is-pinned overrides"
+   means the section degrades to a clean editorial composition
+   whenever the pin can't or shouldn't run — reduced-motion,
+   short content (maxY ≤ 0), Fast Refresh — instead of leaving
+   100dvh + overflow:hidden stranded on a non-pinned section.
+
+     • Mobile (<900): single column. Lead paragraph at 22px
+       reads larger than the 18px body but stays compact
+       enough that it doesn't feel like desktop spacing
+       crammed into mobile. Aligned with the same 16px
+       content edge as the rest of the section. No pin, no
+       transform — section flows as normal block content.
+
+     • Medium + Large (≥900) static base: two-column
+       editorial layout. Modest vertical padding (--space-2xl
+       on the columns), align-items: start so the left lead
+       can be shorter than the right body without empty
+       stretched space below it. This is the always-on
+       fallback — it renders correctly on its own, with no
+       JS required. 900px chosen over 768px because at 768
+       each column is ~310px which is too tight for the 4/3
+       image + paragraph pairing — 900px gives ~386px which
+       reads cleanly.
+
+     • .is-pinned overrides (added by JS once
+       ScrollTrigger.create has confirmed there's something
+       to scrub): section becomes 100dvh, columns stretch to
+       fill, right viewport gets overflow:hidden, columns get
+       generous pin-mode padding (3xl/5xl) to size the lead
+       inside the pinned viewport. The JS class lifecycle is
+       what gates this — see ProjectDarkSection.tsx.
+
+     • ≥1200 additive: widens the column gap and adds a 64px
+       left inset so wider screens feel intentional. Applies
+       in both static and pinned modes.
+
+     • ≥1440: drops the 48px inner inset so content goes
+       rail-to-rail on the largest layouts.
+================================ */
+
+/* ── Mobile-first base (also applies to <768) ── */
+
+.project-detail-dark {
+  background: var(--color-neutral-100);
+  color: var(--color-neutral-10);
+  /* Tight vertical padding so the lead doesn't float in a tall
+     band of empty dark on a phone. Medium / large add their own
+     padding via media queries below. */
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+}
+
+.project-detail-dark-inner {
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.project-detail-dark-grid {
+  display: grid;
+  /* Single column on mobile; tight gap so the lead is visually
+     connected to the body content below it. */
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  align-items: start;
+}
+
+/* Shared column layout. NO padding-top/bottom or padding-left
+   here — those belong only to desktop large (≥1200px). Putting
+   them on the unscoped rule was what made every mobile reset
+   useless before. */
+.project-detail-dark-left,
+.project-detail-dark-right-track {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.project-detail-dark-text {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--color-neutral-10);
+}
+
+/* Mobile-first lead emphasis — paragraph in the LEFT cell
+   renders at 22px / 1.3 so it reads slightly larger than the
+   18px body without ballooning into a heading. Medium and
+   large reset back to 18px (the side-by-side two-column
+   layout makes the size contrast unnecessary at those widths). */
+.project-detail-dark-left .project-detail-dark-text {
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.project-detail-dark-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--color-neutral-30);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+/* ── Medium + Large static base (≥900) ────────────────────
+   Always-on two-column editorial composition. Renders
+   correctly even when the JS pin doesn't activate. */
+@media (min-width: 900px) {
+  .project-detail-dark {
+    /* Static editorial spacing — modest enough that the
+       section reads as a content band, not a pinned hero.
+       The .is-pinned override below replaces these with
+       padding: 0 + height: 100dvh when the pin engages. */
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-3xl);
+  }
+
+  .project-detail-dark-inner {
+    /* 48px inner inset on Medium so two-column content doesn't
+       butt up against the rails. ≥1440 drops this back to 0 so
+       wide screens go rail-to-rail. */
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  .project-detail-dark-grid {
+    grid-template-columns: 1fr 1fr;
+    /* Tighter gap at Medium so 386px columns aren't squeezed
+       further — the ≥1200 block widens this back out. */
+    gap: var(--space-xl);
+    /* `start` so the short left lead doesn't get stretched
+       to the full height of the (much taller) right column.
+       The .is-pinned override flips this to `stretch`. */
+    align-items: start;
+  }
+
+  /* Modest column padding for static editorial. The pin
+     override below bumps these to 3xl/5xl — but those numbers
+     only make sense when the section IS 100dvh, so they don't
+     belong on the static fallback. */
+  .project-detail-dark-left,
+  .project-detail-dark-right-track {
+    padding-top: var(--space-2xl);
+    padding-bottom: var(--space-2xl);
+  }
+
+  /* Reset mobile lead size — beside-the-body equal sizing reads
+     as a coherent two-column band at this width. */
+  .project-detail-dark-left .project-detail-dark-text {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+
+  /* ── Pin overrides (JS-gated) ─────────────────────────
+     ProjectDarkSection.tsx adds `.is-pinned` to the section
+     element *only after* its ScrollTrigger.create has
+     succeeded (matchMedia matched ≥900, reduced-motion off,
+     measured maxY > 0). When any of those conditions fail
+     the class is never added and the static layout above
+     remains in place — no clipping, no stranded 100dvh.
+
+     The selector specificity (0,2,1) cleanly beats the
+     unscoped rules (0,1,0), so each override below replaces
+     the corresponding static value. */
+  .project-detail-dark.is-pinned {
+    /* Cascading dvh fallback for browsers without dvh support. */
+    height: 100vh;
+    height: 100dvh;
+    padding-top: 0;
+    padding-bottom: 0;
+
+    .project-detail-dark-inner {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    .project-detail-dark-grid {
+      flex: 1;
+      align-items: stretch;
+      /* min-height: 0 lets the right viewport's `overflow: hidden`
+         actually clip — without it, grid auto-sizing would let
+         the cell grow to the track's full height. */
+      min-height: 0;
+    }
+
+    /* Generous top/bottom padding sizes the lead inside the
+       pinned viewport. */
+    .project-detail-dark-left,
+    .project-detail-dark-right-track {
+      padding-top: var(--space-3xl);
+      padding-bottom: var(--space-5xl);
+    }
+
+    .project-detail-dark-right-viewport {
+      position: relative;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .project-detail-dark-right-track {
+      will-change: transform;
+    }
+  }
+}
+
+/* ── ≥1200 additive — wider gap + left inset ───────────────
+   At Large widths the editorial design wants more breathing
+   room between columns and a 64px lead inset matching the
+   broader hierarchy. Medium (900–1199) deliberately omits these
+   so columns don't feel cramped on tablet. */
+@media (min-width: 1200px) {
+  .project-detail-dark-grid {
+    gap: var(--space-3xl);
+  }
+
+  .project-detail-dark-left {
+    padding-left: 64px;
+  }
+}
+
+/* ── ≥1440 — drop the inner 48px padding so content goes
+   rail-to-rail on the largest layouts. */
+@media (min-width: 1440px) {
+  .project-detail-dark-inner {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* ── Section 3 — Other Work ────────────────────────────────── */
+
+.project-detail-other {
+  background: var(--color-background);
+  padding-top: var(--space-4xl);
+  padding-bottom: var(--space-3xl);
+}
+
+.project-detail-other-container {
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 64px;
+  padding-right: 64px;
+}
+
+@media (max-width: 1439px) and (min-width: 768px) {
+  .project-detail-other-container {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .project-detail-other-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.project-detail-other-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+}
+
+.project-detail-other-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.1;
+  color: var(--color-neutral-100);
+}
+
+.project-detail-other-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+@media (max-width: 767px) {
+  .project-detail-other-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+}
+
+.project-detail-other-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  text-decoration: none;
+  color: inherit;
+}
+
+.project-detail-other-card-image {
+  position: relative;
+  width: 100%;
+  background: var(--color-neutral-30);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: background-color 200ms ease;
+}
+
+.project-detail-other-card--tall .project-detail-other-card-image {
+  height: 400px;
+}
+
+.project-detail-other-card--short .project-detail-other-card-image {
+  height: 300px;
+}
+
+@media (max-width: 1439px) and (min-width: 768px) {
+  .project-detail-other-card--tall .project-detail-other-card-image {
+    height: 320px;
+  }
+
+  .project-detail-other-card--short .project-detail-other-card-image {
+    height: 240px;
+  }
+}
+
+@media (max-width: 767px) {
+  .project-detail-other-card--tall .project-detail-other-card-image,
+  .project-detail-other-card--short .project-detail-other-card-image {
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.project-detail-other-card:hover .project-detail-other-card-image {
+  background-color: var(--color-neutral-40);
+}
+
+.project-detail-other-card-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.2;
+  color: var(--color-neutral-100);
+}
+
+.project-detail-other-card-desc {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--color-neutral-90);
+}
+
+.project-detail-other-card-tag {
+  align-self: flex-start;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--color-neutral-100);
+  padding: 4px 12px;
+  border: 1px solid var(--color-neutral-80);
+  border-radius: 999px;
+}
+
+/* ── Section 4 — Footer (project-page link/meta variant) ──── */
+
+/* Inline links inside the footer's right meta cell (Terms /
+   Privacy). The shared SiteFooter renders the meta cell as a
+   `<p>`; we just style the inner anchors. */
+.project-detail-footer-meta-links {
+  display: inline-flex;
+  gap: var(--space-md);
+}
+
+.project-detail-footer-meta-link {
+  font-family: var(--font-sans);
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 160ms ease;
+}
+
+.project-detail-footer-meta-link:hover,
+.project-detail-footer-meta-link:focus-visible {
+  opacity: 0.7;
+}

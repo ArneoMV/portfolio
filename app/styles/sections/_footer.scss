@@ -1,0 +1,244 @@
+@use "../core/mixins" as mix;
+
+/* ================================
+   FOOTER SECTION (homepage)
+
+   Sits inside the same 1100px page-rail-group wrapper as
+   Services / FAQ / About — the vertical dotted rails are inherited
+   from the parent. This file owns the inner content layout, the
+   horizontal dotted dividers around the links block, and the
+   3-column grid for both subsections.
+================================ */
+
+.footer-section {
+  background: var(--color-background);
+}
+
+.footer-container {
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: var(--space-4xl);
+  padding-left: 64px;
+  padding-right: 64px;
+}
+
+@media (max-width: 1439px) and (min-width: 768px) {
+  .footer-container {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .footer-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* ── Links block ──
+   Top + bottom horizontal dotted lines bracket the links block.
+   Style matches the vertical page-rail-group dashes (4px dash, 8px
+   gap, neutral-80). Implemented as ::before / ::after on the wrapper
+   so the dividers always span the container width regardless of
+   inner column heights. */
+.footer-links {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  align-items: start;
+  column-gap: var(--space-md);
+  padding: var(--space-2xl) 0;
+}
+
+.footer-links::before,
+.footer-links::after {
+  content: "";
+  position: absolute;
+  /* Span the container's outer edges — same x as the vertical dotted
+     rails — without crossing past them. `.footer-links` sits inside
+     `.footer-container`'s content-box, which is the container minus
+     its 64/48/16 inline padding; matching *negative* offsets push the
+     line through that padding so each end lands exactly at the
+     container's outer edge (= rail x). No 100vw, no translateX, no
+     full-bleed extension. */
+  left: -64px;
+  right: -64px;
+  height: 1px;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to right,
+    var(--color-neutral-80) 0,
+    var(--color-neutral-80) 4px,
+    transparent 4px,
+    transparent 12px
+  );
+  background-size: 12px 1px;
+  background-repeat: repeat-x;
+}
+
+@media (max-width: 1439px) and (min-width: 768px) {
+  .footer-links::before,
+  .footer-links::after {
+    /* Match the container's medium-breakpoint padding so the line
+       still ends at the container outer edge / rail x. */
+    left: -48px;
+    right: -48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .footer-links::before,
+  .footer-links::after {
+    /* Match the container's mobile padding (16). On <1100px viewports
+       the rails snap to the viewport edges, so the line ends at the
+       viewport edge / rail x as well. */
+    left: -16px;
+    right: -16px;
+  }
+}
+
+.footer-links::before {
+  top: 0;
+}
+
+.footer-links::after {
+  bottom: 0;
+}
+
+
+
+/* 12-column placement: left col 1/5, center col 5/9, right col 9/13.
+   Centre column is centered as a block, then its items are
+   center-aligned within. Right column is right-aligned so its items
+   hug the container's right rail. */
+.footer-links-col {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.footer-links-col--left {
+  grid-column: 1 / 5;
+  text-align: left;
+}
+
+.footer-links-col--center {
+  grid-column: 5 / 9;
+  text-align: center;
+  align-items: center;
+}
+
+.footer-links-col--right {
+  grid-column: 9 / 13;
+  text-align: right;
+  align-items: flex-end;
+}
+
+.footer-link {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 21px;
+  line-height: 1.3;
+  color: var(--color-neutral-100);
+  text-decoration: none;
+  transition: opacity 160ms ease;
+}
+
+.footer-link:hover,
+.footer-link:focus-visible {
+  opacity: 0.7;
+}
+
+.footer-link:focus-visible {
+  outline: 2px solid var(--color-primary-60);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+
+
+/* ── Copyright row ──
+   Same 12-column placement as the links block above so left/center/
+   right items sit on the same vertical guides. No dividers — the
+   bottom dotted line of the links block doubles as the visual
+   separator. */
+.footer-meta {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  align-items: center;
+  column-gap: var(--space-md);
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+}
+
+.footer-meta-item {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 21px;
+  line-height: 1.3;
+  color: var(--color-neutral-100);
+}
+
+.footer-meta-item--left {
+  grid-column: 1 / 5;
+  text-align: left;
+}
+
+.footer-meta-item--center {
+  grid-column: 5 / 9;
+  text-align: center;
+}
+
+.footer-meta-item--right {
+  grid-column: 9 / 13;
+  text-align: right;
+}
+
+/* ── Mobile — stack everything vertically ──
+   Keep the dotted top/bottom dividers around the links block
+   (they're on the wrapper, not the columns, so they survive the
+   layout change). Centre column items return to left alignment for
+   readability when the columns are stacked. */
+@media (max-width: 767px) {
+  .footer-links {
+    grid-template-columns: 1fr;
+    row-gap: var(--space-lg);
+    padding: var(--space-xl) 0;
+  }
+
+  .footer-links-col--left,
+  .footer-links-col--center,
+  .footer-links-col--right {
+    grid-column: 1 / -1;
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .footer-meta {
+    grid-template-columns: 1fr;
+    row-gap: var(--space-xs);
+    padding-top: var(--space-lg);
+  }
+
+  .footer-meta-item--left,
+  .footer-meta-item--center,
+  .footer-meta-item--right {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+
+  .footer-link {
+    font-size: 18px;
+  }
+
+  .footer-meta-item {
+    font-size: 16px;
+  }
+}

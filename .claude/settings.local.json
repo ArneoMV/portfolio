@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(echo \"tsc=$?\")",
+      "Bash(npx sass *)",
+      "Bash(echo \"sass=$?\")",
+      "Bash(npx eslint *)",
+      "Bash(echo \"eslint=$?\")"
+    ]
+  }
+}

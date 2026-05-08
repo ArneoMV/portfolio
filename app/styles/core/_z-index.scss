@@ -1,0 +1,12 @@
+// Z-index reference ladder.
+// Values match what's currently used across the app so authoring stays
+// consistent. These are documentation-only (components set z-index
+// directly). Adopt as tokens if needed later.
+//
+//   lab-scene-root wrapper         0
+//   header                        10
+//   hero text                     10
+//   hero floating image frame     20
+//   work floating preview         60
+//   footer toolbar                50
+//   services floating card shell 100

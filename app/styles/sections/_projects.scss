@@ -1,0 +1,272 @@
+@use "../core/mixins" as mix;
+
+/* ================================
+   HOMEPAGE PROJECTS SECTION
+================================ */
+
+/* Reveal wrapper around <ProjectsSection> + <WorkSection> in
+   page.tsx. Its only job: be the positioned containing block for
+   the sticky Projects, with a height tall enough (Projects + Work)
+   that sticky has travel range = Work's height. No rails on this
+   wrapper — Projects renders its own (see ::before / ::after below).
+   Work's full-bleed background sits below in DOM and gets z:2 in
+   _module.scss so it paints over sticky Projects during reveal. */
+.projects-work-reveal {
+  position: relative;
+}
+
+.projects-section {
+  /* Cascading fallback: browsers that don't parse `100dvh` keep the
+     `100vh` declaration. `min-height` (not `height`) so content taller
+     than the viewport grows the section instead of clipping. Block
+     flow keeps content top-aligned in any extra empty stretch. */
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-top: var(--space-4xl);
+  padding-bottom: var(--space-4xl);
+  background: var(--color-background);
+  position: relative;
+  /* Lower than .work-section's z:2 so Work paints on top during the
+     reveal scroll. */
+  z-index: 1;
+}
+
+/* Dotted vertical rails through Projects.
+   Originally Projects shared a .page-rail-group with Hero and
+   inherited continuous rails. After moving Projects into
+   .projects-work-reveal so sticky has travel room over Work, we
+   render Projects-local rails here at the same x-positions
+   (max(0px, calc(50% ± 550px))) and dash pattern as the rail-group,
+   so the visual rail line still reads through Projects. Hero's own
+   rail-group still wraps Hero — its rails are covered by Hero's
+   z:2 section element, same as before, so no Hero visual change. */
+.projects-section::before,
+.projects-section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  pointer-events: none;
+  z-index: 1;
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-neutral-80) 0,
+    var(--color-neutral-80) 4px,
+    transparent 4px,
+    transparent 12px
+  );
+  background-size: 1px 12px;
+  background-repeat: repeat-y;
+}
+
+.projects-section::before {
+  left: max(0px, calc(50% - 550px));
+}
+
+.projects-section::after {
+  right: max(0px, calc(50% - 550px));
+}
+
+/* Desktop+: Projects sticks at viewport top while Work scrolls up
+   over it, covering Projects via its higher z-index. Containing
+   block is .projects-work-reveal; sticky travel = Work's height.
+   Mobile keeps normal flow — short viewports don't have room for
+   the reveal to feel right and the user prefers stable stacking. */
+@media (min-width: 768px) {
+  .projects-section {
+    position: sticky;
+    top: 0;
+  }
+}
+
+/* Rails moved up to the parent .page-rail-group so they read as
+   continuous across Hero + Projects. This container only handles
+   content-width / centering — content spans edge-to-edge inside
+   the 1100px box. */
+.projects-container {
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.projects-row + .projects-row {
+  margin-top: 64px;
+}
+
+/* ── Row 1 — description + CTA ── */
+
+.projects-row--intro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  /* 124px stays as long as we're in the 2-column layout; the row
+     stacks via the @media block below at <=767px. */
+  gap: 124px;
+  padding-left: 64px;
+  padding-right: 64px;
+}
+
+.projects-description {
+  flex: 1 1 auto;
+  max-width: 600px;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(20px, 2.3vw, 30px);
+  line-height: 1.35;
+  color: var(--color-neutral-100);
+}
+
+.projects-cta {
+  flex: 0 0 auto;
+  /* Nudge the CTA to align with the description's first text line. */
+  padding-top: 2px;
+}
+
+@media (max-width: 767px) {
+  .projects-row--intro {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-lg);
+  }
+
+  .projects-cta {
+    align-self: flex-start;
+    padding-top: 0;
+  }
+}
+
+/* ── Row 2 — infinite marquee ── */
+
+/* Wrapper clips the over-wide track to the container's content width
+   so the moving cards never push horizontal page scroll. */
+.projects-marquee {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Track is intentionally `width: max-content` so it can hold the
+   duplicated set at full size; the keyframes translate it by exactly
+   -50% so the duplicate lands at the original set's starting position
+   for a seamless loop. */
+.projects-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: projects-marquee-scroll 50s linear infinite;
+}
+
+.projects-marquee:hover .projects-marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-marquee-track {
+    animation: none;
+  }
+}
+
+@keyframes projects-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* -50% lines the duplicate set up exactly with where the original
+       set started — provided every item carries an identical
+       margin-right (NOT a flex `gap`, which would skip the gap after
+       the last item and break the loop math by one gap). */
+    transform: translateX(-50%);
+  }
+}
+
+.projects-marquee-item {
+  flex: 0 0 auto;
+  width: clamp(220px, 28vw, 320px);
+  /* margin-right (not flex gap) — see keyframes comment above. */
+  margin-right: 24px;
+}
+
+.projects-marquee-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--color-neutral-30);
+}
+
+.projects-marquee-label {
+  margin: 0;
+  margin-top: var(--space-sm);
+  /* Tech font (VT323 — same `--font-tech` token loaded in app/layout.tsx)
+     so project labels read as a tech/UI tag distinct from the body copy
+     above. The size/spacing/casing of the rule are unchanged so layout
+     measurements stay identical to the previous Source Sans rendering. */
+  font-family: var(--font-tech);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+}
+
+/* ── Row 3 — static client logos ── */
+
+/* Two literal rows (3 + 2) inside a column wrapper, rather than a
+   single wrapping flex — keeps the row split deterministic and the
+   per-row centering simple. */
+.projects-logos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  width: 100%;
+}
+
+.projects-logos-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg) var(--space-3xl);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.projects-logos-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Common track height so every wordmark sits on the same baseline
+     strip regardless of its native height. */
+  height: 32px;
+}
+
+/* The wordmark SVGs ship with `fill="#9aa3af"` (== --color-neutral-70),
+   so no filter/opacity is needed to land the muted look. Width auto
+   + max-height: 100% + object-fit: contain preserves each wordmark's
+   intrinsic aspect ratio with zero cropping. */
+.projects-logos-image {
+  display: block;
+  height: auto;
+  width: auto;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 767px) {
+  .projects-logos {
+    gap: var(--space-lg);
+  }
+
+  .projects-logos-row {
+    gap: var(--space-md) var(--space-2xl);
+  }
+
+  .projects-logos-item {
+    height: 24px;
+  }
+}

@@ -1,0 +1,53 @@
+/* =====================================================================
+   Portfolio — SCSS entry point
+   Order matters: tokens → animations (referenced by sections) → base →
+   layout → sections → pages → components → utils.
+===================================================================== */
+
+// core — design tokens, @keyframes, mixins, z-index reference
+@use "core/tokens";
+@use "core/animations";
+@use "core/breakpoints";
+@use "core/mixins";
+@use "core/z-index";
+
+// base — html/body, typography, resets
+@use "base/reset";
+@use "base/root";
+@use "base/globals";
+@use "base/typography";
+
+// layout — container, grid, site-shell regions
+@use "layout/page";
+@use "layout/container";
+@use "layout/grid";
+@use "layout/header";
+@use "layout/footer-toolbar";
+
+// sections — homepage content blocks + project-detail template
+@use "sections/hero";
+@use "sections/projects";
+@use "sections/about";
+@use "sections/work";
+@use "sections/services";
+@use "sections/faq";
+@use "sections/footer";
+@use "sections/contact";
+@use "sections/project-detail";
+
+// pages — standalone routes
+@use "pages/work-page";
+@use "pages/lab-page";
+
+// components — reusable UI primitives
+@use "components/buttons";
+@use "components/modals";
+@use "components/section-header";
+
+// utils — visibility, spacing, state
+@use "utils/spacing";
+@use "utils/visibility";
+@use "utils/state";
+
+// cursor — loaded last so global custom-cursor rules win the cascade
+@use "utils/cursor";

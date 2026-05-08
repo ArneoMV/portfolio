@@ -1,0 +1,168 @@
+/* ================================
+   WORK PAGES — /work and /work/[slug]
+================================ */
+
+/* ── Shared Work-page shell ──────────────────────────────────
+   One wrapper for both /work and /work/[slug]. Caps content at
+   the rail width, centres it horizontally, and puts the page's
+   first content edge at exactly 124px from the top of the page
+   so the fixed site header (~104px tall) never overlaps it.
+
+   Inner sections still use the global `.container` class for
+   their own inline padding — the shell only handles vertical
+   rhythm and centering.
+
+   Also pins Source Sans 3 across the whole page and overrides
+   the typography classes that otherwise pull tech/display fonts
+   (.title-h4 → VT323, .body-md → Young Serif). The (0,2,0)
+   descendant specificity wins against both the global classes
+   and any Tailwind `font-[…]` arbitrary utilities. Scope is
+   local to .work-page-shell so AboutText on the homepage still
+   renders Young Serif as before. */
+.work-page-shell {
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 124px;
+  font-family: var(--font-sans);
+
+  .title-h4,
+  .body-md {
+    font-family: var(--font-sans);
+  }
+}
+
+/* ================================
+   WORK LISTING PAGE — /work
+
+   Editorial 6-card grid:
+     • Top section: 2 equal columns. Left = Neogov (tall). Right =
+       Elite Digital + Spona stacked.
+     • Bottom section: 3 equal columns. Croatel, Metro UI Library,
+       Glasački list.
+
+   Implemented as nested grids/flex rather than one big
+   grid-template-areas, because the top has 2 cols and the bottom
+   has 3 — separate parents are clearer than a 6-col grid with span
+   gymnastics.
+
+   Mobile (<768px) collapses to a single stacked column. The DOM
+   order naturally produces the required mobile sequence:
+   Neogov → Elite → Spona → Croatel → Metro → Glasački.
+================================ */
+
+.work-listing {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.work-listing-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.work-listing-top-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.work-listing-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 767px) {
+  .work-listing-top {
+    grid-template-columns: 1fr;
+  }
+  .work-listing-bottom {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Card structure ─────────────────────────────────────────
+   Image rectangle on top, title text below. The image's height
+   is layout-specific (set per slug class on the desktop layout)
+   so Neogov can read as a tall portrait while the right-column
+   cards stay short and wide. */
+.work-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  text-decoration: none;
+  color: inherit;
+}
+
+.work-card-image {
+  position: relative;
+  width: 100%;
+  /* Mobile + fallback aspect — the desktop overrides below replace
+     this with explicit pixel heights once the editorial grid kicks
+     in at 768px. */
+  aspect-ratio: 4 / 3;
+  background: var(--color-neutral-30);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.work-card-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+.work-card:hover .work-card-image {
+  background-color: var(--color-neutral-40);
+}
+
+/* ── Desktop / medium card sizing ───────────────────────────
+   Switch from aspect-ratio to fixed image heights so the
+   editorial composition matches the reference (Neogov tall,
+   Elite/Spona short-wide stacked, bottom row 4:5 portraits).
+
+   Math for the top section: 320 + 24 (gap) + 320 = 664. Neogov's
+   700 leaves a small overhang below the right column to absorb
+   the title row underneath each right card, so the bottom edges
+   visually align across the row. */
+@media (min-width: 768px) {
+  .work-card--neogov .work-card-image {
+    aspect-ratio: auto;
+    height: 700px;
+  }
+
+  .work-card--elite .work-card-image,
+  .work-card--spona .work-card-image {
+    aspect-ratio: auto;
+    height: 320px;
+  }
+
+  .work-card--croatel .work-card-image,
+  .work-card--metro .work-card-image,
+  .work-card--glasacki .work-card-image {
+    aspect-ratio: 4 / 5;
+  }
+}
+
+/* Tighter heights on the medium breakpoint (≥768, <1280) so the
+   tall Neogov card doesn't blow out of proportion when the
+   container gets narrower. The top section keeps the same 320 +
+   24 + 320 = 664 ratio reference, just scaled down. */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .work-card--neogov .work-card-image {
+    height: 560px;
+  }
+
+  .work-card--elite .work-card-image,
+  .work-card--spona .work-card-image {
+    height: 256px;
+  }
+}

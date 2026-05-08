@@ -1,0 +1,30 @@
+// State-oriented utilities (is-open, is-active, is-dragging).
+// body.dragging currently lives in sections/_services.scss (coupled to
+// the services drag interaction); migrate here if more components adopt
+// shared drag state.
+
+/* ================================
+   TASK SIDE PANEL — global offset
+================================ */
+
+:root {
+  --panel-offset: 0px;
+}
+
+body {
+  transition: padding-right 250ms ease-out;
+}
+
+// Scroll-lock on all breakpoints — background page freezes while the
+// side panel is the active scroll surface. overflow-x: clip set on <body>
+// elsewhere is preserved because we only touch the y axis here.
+body.task-panel-open {
+  overflow-y: hidden;
+}
+
+@media (min-width: 768px) {
+  body.task-panel-open {
+    --panel-offset: 420px;
+    padding-right: 420px;
+  }
+}

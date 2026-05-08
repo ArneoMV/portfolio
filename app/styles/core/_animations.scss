@@ -1,0 +1,58 @@
+/* ================================
+   KEYFRAMES
+================================ */
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes gradient-shadow-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes work-preview-drift {
+  0%,
+  100% {
+    transform: rotate(-3deg) translateY(0px);
+  }
+  50% {
+    transform: rotate(-2.5deg) translateY(-6px);
+  }
+}
+
+@keyframes contact-card-drift {
+  0%,
+  100% {
+    --card-drift-x: 0px;
+    --card-drift-y: 0px;
+    --card-drift-rot: 0deg;
+  }
+  25% {
+    --card-drift-x: 1px;
+    --card-drift-y: -2px;
+    --card-drift-rot: 0.4deg;
+  }
+  50% {
+    --card-drift-x: -1px;
+    --card-drift-y: -3px;
+    --card-drift-rot: -0.3deg;
+  }
+  75% {
+    --card-drift-x: 1px;
+    --card-drift-y: -1px;
+    --card-drift-rot: 0.2deg;
+  }
+}

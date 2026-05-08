@@ -1,0 +1,122 @@
+/* ================================
+   FOOTER TOOLBAR
+================================ */
+
+/* Marquee animation (keyframes in core/_animations.scss) */
+.footer-toolbar-marquee {
+  animation: marquee-scroll 12s linear infinite;
+}
+
+/* Grid placement */
+.footer-toolbar-wrapper {
+  grid-column: 4 / 10;
+}
+
+@media (max-width: 767px) {
+  .footer-toolbar-wrapper {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ── Shell ── */
+
+.footer-toolbar-shell {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  max-height: 98px;
+  transition:
+    max-height 0.45s cubic-bezier(0.34, 1.4, 0.64, 1),
+    box-shadow 0.35s ease;
+}
+
+.footer-toolbar-shell--open {
+  max-height: 600px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.14);
+}
+
+/* Bottom bar — always anchored at bottom */
+.footer-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  height: 98px;
+  flex-shrink: 0;
+  padding: var(--space-xs);
+  margin-top: auto;
+}
+
+/* ── Menu section ── */
+
+.footer-menu {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-xs);
+  gap: 0;
+}
+
+.footer-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm, 8px);
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.35s cubic-bezier(0.34, 1.4, 0.64, 1),
+    transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1),
+    background-color 0.2s ease;
+}
+
+.footer-menu-item:hover {
+  background-color: var(--color-neutral-10);
+}
+
+.footer-toolbar-shell--open .footer-menu-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.footer-menu-thumb {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm, 8px);
+  background-color: var(--color-neutral-20);
+  transform: scale(0.7);
+  transform-origin: bottom left;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.4, 0.64, 1),
+    background-color 0.4s ease;
+}
+
+.footer-toolbar-shell--open .footer-menu-thumb {
+  transform: scale(1);
+  background-color: var(--color-neutral-40);
+}
+
+.footer-menu-label {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: 130%;
+  color: var(--color-neutral-50);
+  clip-path: inset(100% 0 0 0);
+  transform: translateY(6px);
+  transition:
+    clip-path 0.4s cubic-bezier(0.34, 1.4, 0.64, 1),
+    transform 0.4s cubic-bezier(0.34, 1.4, 0.64, 1),
+    color 0.4s ease;
+}
+
+.footer-toolbar-shell--open .footer-menu-label {
+  clip-path: inset(0 0 0 0);
+  transform: translateY(0);
+  color: var(--color-neutral-90);
+}

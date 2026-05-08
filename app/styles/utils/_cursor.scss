@@ -1,0 +1,64 @@
+/* ================================
+   GLOBAL CUSTOM CURSOR
+   Replaces the system pointer with bespoke .cur files for a consistent
+   cursor across the entire site (including past the Hero pin). Loaded
+   last in main.scss so these selectors win the cascade against any
+   section-level `cursor: pointer` declarations.
+================================ */
+
+html,
+body {
+  cursor: url("/icons/SmoothArrow.cur"), auto;
+}
+
+/* Inherit by default — descendants pick up the arrow cursor unless an
+   interactive selector below overrides. */
+
+a,
+a[href],
+button,
+[role="button"],
+[role="link"],
+[role="menuitem"],
+[role="tab"],
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+select,
+summary,
+label[for],
+.footer-menu-item,
+.contact-header a,
+.about-word-slot {
+  cursor: url("/icons/SmoothHand.cur"), pointer;
+}
+
+/* Native text input cursor (I-beam) on text-entry fields. The global
+   arrow inherits onto inputs by default; restore the platform cue. */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+input:not([type]),
+textarea,
+[contenteditable="true"] {
+  cursor: text;
+}
+
+/* Touch devices don't render cursors anyway, but explicitly skip the
+   .cur fetch under coarse pointers as a small bandwidth save. */
+@media (hover: none), (pointer: coarse) {
+  html,
+  body,
+  a,
+  button,
+  [role="button"],
+  .footer-menu-item {
+    cursor: auto;
+  }
+}

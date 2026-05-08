@@ -1,0 +1,32 @@
+// Breakpoint ranges used throughout the site.
+//   Large:   min-width: 1440px
+//   Medium:  768px – 1439px
+//   Small:   max-width: 767px
+//
+// Mixins below can be adopted incrementally in partials via:
+//   @use "../core/breakpoints" as bp;
+//   @include bp.large { ... }
+
+@mixin large {
+  @media (min-width: 1440px) {
+    @content;
+  }
+}
+
+@mixin medium {
+  @media (max-width: 1439px) and (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin small {
+  @media (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin desktop-up {
+  @media (min-width: 768px) {
+    @content;
+  }
+}

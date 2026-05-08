@@ -1,0 +1,112 @@
+@use "../core/mixins" as mix;
+
+/* ================================
+   ABOUT SECTION (homepage)
+
+   Sits inside the same 1100px dotted-guides container as Services
+   and FAQ. Two-column layout on desktop (text 1–7 / story 9–12),
+   stacked on mobile. The slideshow translateY scrub lives in
+   AboutSection.tsx — this file only handles layout / typography.
+================================ */
+
+.about-section {
+  padding-bottom: var(--space-4xl);
+  background: var(--color-background);
+}
+
+/* Desktop — give the section a full-viewport height and centre its
+   content vertically. ScrollTrigger pins the section with
+   start: "top top", so when the pin engages the content is already
+   visually centred in the viewport instead of jumping into place. */
+@media (min-width: 768px) {
+  .about-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.about-container {
+  /* Rails moved up to the parent .page-rail-group so they read as
+     continuous across Services + FAQ + About. */
+  padding-top: var(--space-4xl);
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 64px;
+  padding-right: 64px;
+}
+
+@media (max-width: 1439px) and (min-width: 768px) {
+  .about-container {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .about-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* 12-column grid — text 1/8 (cols 1–7), story 9/13 (cols 9–12),
+   column 8 acts as a clean gap between the two. */
+.about-text-col {
+  grid-column: 1 / 8;
+  order: 1;
+}
+
+.about-story-col {
+  grid-column: 8 / 13;
+  order: 2;
+}
+
+.about-title {
+  margin: 0;
+}
+
+/* Paragraphs — vertical stack with breathing room between each. */
+.about-text-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.about-paragraph {
+  margin: 0;
+}
+
+.insta-image {
+  height: 380px;
+}
+
+/* Tablet — slightly tighter columns. */
+@media (max-width: 1439px) and (min-width: 768px) {
+  .about-text-col {
+    grid-column: 1 / 7;
+  }
+  .about-story-col {
+    grid-column: 8 / 13;
+  }
+}
+
+/* Mobile — stack text first, slideshow second. No follow-scroll
+   animation runs on this breakpoint (gated in AboutSection.tsx). */
+@media (max-width: 767px) {
+  .about-text-col {
+    grid-column: 1 / -1;
+    order: 1;
+  }
+
+  .about-story-col {
+    grid-column: 1 / -1;
+    order: 2;
+  }
+
+  .insta-image {
+    height: 310px;
+  }
+}

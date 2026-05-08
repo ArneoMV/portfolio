@@ -1,0 +1,94 @@
+/* ================================
+   CONTAINER
+================================ */
+
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Desktop Large */
+@media (min-width: 1440px) {
+  .container {
+    padding-left: 64px;
+    padding-right: 64px;
+  }
+}
+
+/* Desktop Medium */
+@media (max-width: 1439px) and (min-width: 768px) {
+  .container {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* ================================
+   PAGE RAIL GROUP
+
+   Continuous dotted-rail wrapper for one or more contiguous
+   homepage sections. Renders a single pair of vertical dashed
+   guide lines spanning the wrapper's full height, anchored to
+   the same 1100px-centered x positions the per-section
+   containers used to use.
+
+   Why not `max-width: 1100` + the existing dotted-vertical-guides
+   mixin? Hero is a full-bleed section (its slideshow uses
+   `absolute inset-0` against the section element). Constraining
+   the wrapper to 1100 would shrink Hero. Instead the wrapper
+   stays full-width and the rails are absolutely positioned at
+   `calc(50% - 550px)` from each side — the exact same x where
+   the old per-section rails sat — but spanning the wrapper's
+   full height so the rails are continuous through inter-section
+   vertical gaps and GSAP pin-spacers.
+
+   On viewports < 1100, `max(0px, …)` clamps the rails to the
+   viewport edges, matching the old `max-width: 1100; width: 100%`
+   container behaviour at those sizes.
+================================ */
+.page-rail-group {
+  position: relative;
+}
+
+.page-rail-group::before,
+.page-rail-group::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  pointer-events: none;
+  /* z-index: 1 lifts both rails into step 8 of the stacking-context
+     paint order so they always render after every positioned descendant
+     of the rail group. Without this the left rail (::before) appeared
+     in DOM before any GSAP pin-spacer and was painted over by the
+     pinned About section, while the right rail (::after) remained
+     visible because it sat last in DOM order. */
+  z-index: 1;
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-neutral-80) 0,
+    var(--color-neutral-80) 4px,
+    transparent 4px,
+    transparent 12px
+  );
+  background-size: 1px 12px;
+  background-repeat: repeat-y;
+}
+
+.page-rail-group::before {
+  left: max(0px, calc(50% - 550px));
+}
+
+.page-rail-group::after {
+  right: max(0px, calc(50% - 550px));
+}

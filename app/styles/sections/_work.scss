@@ -1,0 +1,199 @@
+/* ================================
+   WORK SECTION (homepage)
+================================ */
+
+.work-section {
+  position: relative;
+}
+
+/* Floating preview — centered over the section */
+.work-preview-float {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.work-preview-frame {
+  width: 600px;
+  height: 780px;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 24px 64px -12px rgba(0, 0, 0, 0.2),
+    0 8px 24px -8px rgba(0, 0, 0, 0.1);
+  animation: work-preview-drift 4s ease-in-out infinite;
+}
+
+/* Main content wrapper */
+.work-container {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Header row */
+.work-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+/* Work list */
+.work-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+}
+
+/* Individual row: content + line */
+.work-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  cursor: pointer;
+}
+
+.work-row-content {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.work-row-title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(18px, 3vw, 21px);
+  color: var(--color-neutral-100);
+  transition: color 0.3s ease;
+}
+
+.work-row-desc {
+  text-align: right;
+  flex-shrink: 0;
+  color: var(--color-neutral-90);
+  transition: color 0.3s ease;
+}
+
+/* Inline preview image — hidden on desktop, shown on mobile */
+.work-row-image {
+  display: none;
+}
+
+.work-row-line {
+  height: 2px;
+  width: 100%;
+  background-color: var(--color-neutral-50);
+  transition: background-color 0.3s ease;
+}
+
+/* ── Hover state (desktop only) ── */
+
+@media (min-width: 768px) {
+  .work-row:hover .work-row-title {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-orange-50) 100%, black 30%),
+      color-mix(in srgb, var(--color-primary-60) 100%, black 30%),
+      color-mix(in srgb, var(--color-green-60) 100%, black 30%),
+      color-mix(in srgb, var(--color-red-50) 100%, black 30%),
+      color-mix(in srgb, var(--color-primary-80) 100%, black 30%)
+    );
+    background-size: 200% 100%;
+    animation: gradient-shadow-shift 6s ease infinite;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .work-row:hover .work-row-desc {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-orange-50) 100%, black 30%),
+      color-mix(in srgb, var(--color-primary-60) 100%, black 30%),
+      color-mix(in srgb, var(--color-green-60) 100%, black 30%),
+      color-mix(in srgb, var(--color-red-50) 100%, black 30%),
+      color-mix(in srgb, var(--color-primary-80) 100%, black 30%)
+    );
+    background-size: 200% 100%;
+    animation: gradient-shadow-shift 6s ease infinite;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .work-row:hover .work-row-line {
+    height: 2px;
+    background-color: transparent;
+    background-image: linear-gradient(
+      90deg,
+      var(--color-orange-50),
+      var(--color-primary-60),
+      var(--color-green-60),
+      var(--color-red-50),
+      var(--color-primary-80)
+    );
+    background-size: 200% 100%;
+    animation: gradient-shadow-shift 6s ease infinite;
+  }
+}
+
+/* Medium */
+@media (max-width: 1439px) and (min-width: 768px) {
+  .work-row-title {
+    font-size: clamp(24px, 3.5vw, 36px);
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .work-preview-float {
+    display: none;
+  }
+
+  .work-row-image {
+    display: block;
+    height: 200px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+  }
+
+  .work-row-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .work-row-line {
+    display: none;
+  }
+
+  .work-row-content {
+    flex-direction: column;
+    gap: var(--space-xxs);
+  }
+
+  .work-row-title {
+    font-size: 28px;
+  }
+
+  .work-row-desc {
+    text-align: left;
+  }
+
+  .work-container,
+  .work-list {
+    gap: 32px;
+  }
+
+  .work-row {
+    gap: var(--space-sm);
+  }
+}

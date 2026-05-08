@@ -1,0 +1,164 @@
+/* ================================
+   CONTACT SECTION (homepage)
+
+   Sits inside the homepage's `.lower-contact-reveal` wrapper as a
+   sibling of `.lower-content-layer` (which holds the second rail
+   group with Services / FAQ / About / Footer). The lower layer
+   sits at z:1 and Contact at z:2, so Contact paints above the
+   rail group's box for the from-bottom reveal as the user scrolls
+   past Footer. Contact renders its own dotted ::before/::after
+   vertical rails so the rail line still reads continuously through
+   the dark band — same x-positions and dash pattern as the
+   .page-rail-group rails so the visual line is unchanged from the
+   pre-restructure design. The dark background is full-bleed; only
+   the email + canvas content is constrained to the 1100px rail
+   width via the inner wrapper.
+================================ */
+
+/* Background layer: the rail group with Services / FAQ / About /
+   Footer. Plain `position: relative` (no z-index here) so we don't
+   force the layer into a new stacking context and accidentally
+   trap rail painting inside it; layering against Contact happens
+   purely through Contact's z:2 in the wrapper's stacking context. */
+.lower-contact-reveal {
+  position: relative;
+}
+
+.lower-content-layer {
+  position: relative;
+  z-index: 1;
+}
+
+.contact-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  isolation: isolate;
+  /* Foreground layer: paints above .lower-content-layer (z:1) so
+     the rail group reads as "behind" Contact during the reveal. */
+  z-index: 2;
+}
+
+/* Contact-local rails — Contact used to inherit rails from the
+   second `.page-rail-group`. After moving Contact out of that
+   rail group (so it can stack above as a separate layer), we
+   render Contact's own rails here at the same x-positions and
+   dash pattern so the visual rail line still reads continuously
+   through the dark band.
+
+   z:25 places them above every other element inside Contact's
+   stacking context: .contact-scene-host (z:10) and .contact-header
+   (z:20). The original rail-group rails painted over the entire
+   Contact section box (rail-group rails were OUTSIDE Contact's
+   stacking context, so they always painted last regardless of
+   internal z); replicating that here means our local rails need
+   to sit above Contact's tallest internal z-index. */
+.contact-section::before,
+.contact-section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  pointer-events: none;
+  z-index: 25;
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-neutral-80) 0,
+    var(--color-neutral-80) 4px,
+    transparent 4px,
+    transparent 12px
+  );
+  background-size: 1px 12px;
+  background-repeat: repeat-y;
+}
+
+.contact-section::before {
+  left: max(0px, calc(50% - 550px));
+}
+
+.contact-section::after {
+  right: max(0px, calc(50% - 550px));
+}
+
+/* Inner column — 1100px wide, centred. Hosts the canvas (which now
+   spans 1100px instead of full viewport, so the R3F scene's
+   viewport.width-derived walls keep objects inside the rails) and
+   centres the email vertically/horizontally. */
+.contact-section-inner {
+  background: var(--color-neutral-100);
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  min-height: 100vh;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Email anchored to the centre of the inner column. z-index 20 puts
+   it above .contact-scene-host (z-index 10) so the email captures
+   pointer events first and stays selectable; the canvas underneath
+   still receives events everywhere else, so 3D hover/click continues
+   to work for objects outside the email's bounding box. */
+.contact-header {
+  position: relative;
+  z-index: 20;
+  padding: 0 var(--space-xl);
+  text-align: center;
+}
+
+/* Heading typography — Young Serif, ~50% smaller than before so the
+   email reads balanced inside the new 1100px container.
+   Was: clamp(48px, 10vw, 124px). */
+.contact-header h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5.5vw, 64px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--color-neutral-10);
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
+}
+
+.contact-header a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 200ms ease;
+}
+
+.contact-header a:hover {
+  opacity: 0.75;
+}
+
+/* Canvas host fills the inner column behind the email. The host is
+   click-through so the email link stays selectable; the canvas
+   element inside captures pointer events on object hits. */
+.contact-scene-host {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.contact-scene-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  touch-action: manipulation;
+  pointer-events: auto;
+}
+
+@media (max-width: 767px) {
+  .contact-header {
+    padding: 0 var(--space-lg);
+  }
+}

@@ -1,0 +1,60 @@
+/* CRT screen — covers the whole section, mask-clipped to the
+   monitor's screen shape per breakpoint.
+
+   Masks are full-canvas RGBA PNGs at the same dimensions as their
+   matching bg image, transparent everywhere except the screen shape
+   over the monitor. With `mask-size: 100% 100%` and `mask-position:
+   0 0`, the mask aligns pixel-for-pixel with the bg, so the slideshow
+   shows through only where the screen is. The slideshow <img>
+   children fill the full container — the mask, not the image
+   geometry, is the source of truth for screen position + shape. */
+
+.screen {
+  position: absolute;
+  inset: 0;
+  /* Above the bg-tint (z=2) so the slideshow renders un-tinted
+     wherever the monitor mask is opaque. */
+  z-index: 3;
+  pointer-events: none;
+
+  /* Default = small mask. Overridden up. */
+  -webkit-mask-image: url("/images/home/work/small-mask.png");
+          mask-image: url("/images/home/work/small-mask.png");
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: 0 0;
+          mask-position: 0 0;
+}
+
+@media (min-width: 640px) {
+  .screen {
+    -webkit-mask-image: url("/images/home/work/medium-mask.png");
+            mask-image: url("/images/home/work/medium-mask.png");
+  }
+}
+
+@media (min-width: 1024px) {
+  .screen {
+    -webkit-mask-image: url("/images/home/work/large-mask.png");
+            mask-image: url("/images/home/work/large-mask.png");
+  }
+}
+
+.image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: #000;
+  display: block;
+}
+
+.imageActive {
+  opacity: 1;
+}

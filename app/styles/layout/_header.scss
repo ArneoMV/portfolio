@@ -1,0 +1,100 @@
+/* ================================
+   HEADER
+
+   The site header is fixed to the top of the viewport with an inner
+   wrapper constrained to the same 1100px / 64-48-16 container that
+   the dotted page-rail-group uses, so the location block on the
+   left and CTA on the right line up with the dotted rails.
+
+   Auto-hide on scroll: scroll-direction logic in Header.tsx flips
+   data-hidden="true" while scrolling down past HIDE_AFTER, and back
+   to "false" when scrolling up or near the top. The transition runs
+   via translateY only so layout never shifts.
+================================ */
+
+/* Specificity (0,1,0) beats the bare `header` selector elsewhere in
+   the codebase, including the legacy `header { position: absolute }`
+   rule that AboutText.tsx still warns about. */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  /* `transform: translateY(-100%)` slides the whole bar up off the
+     viewport. Because the header is `position: fixed`, no inline
+     content reflows when it hides — no layout shift on toggle. */
+  transform: translateY(0);
+  /* Keep the existing 400ms opacity fade used by the preloader
+     (defined globally on `header` in _hero.scss) AND add the new
+     transform transition. Combining them in one shorthand avoids the
+     class rule overriding the opacity transition. */
+  transition:
+    transform 240ms ease,
+    opacity 400ms ease;
+  will-change: transform;
+}
+
+.site-header[data-hidden="true"] {
+  transform: translateY(-100%);
+}
+
+.site-header-inner {
+  width: 100%;
+  /* Inner width is 1260px — 80px wider than the 1100px rail
+     container on each side. The location block (left-aligned) and
+     CTA (right-aligned) then sit *outside* the rail x-positions, so
+     the dotted rails visually pass *through* them rather than
+     touching their outer edges. Rails stay fixed at `calc(50% ± 550px)`;
+     only the header's own content box is widened.
+
+     With each item's center landing roughly 40–50% across the rail
+     line, the left rail crosses through the location block and the
+     right rail crosses through the CTA — matches the reference. */
+  max-width: 1260px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+}
+
+@media (max-width: 767px) {
+  .site-header-inner {
+    /* On <768px the rails snap to viewport edges (rails use
+       `max(0px, …)`), so content can't extend "past" them — give
+       the inner a normal gutter instead. */
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.globe-icon img {
+  width: 32px;
+  height: 32px;
+}
+
+/* Animated globe meridian — scaleX cycles 1 → -1 → 1 to fake a
+   Y-axis rotation. Passing through 0 reads as "edge-on" mid-spin.
+   Origin pinned to the ellipse's own centre via fill-box so the
+   transform doesn't drift across the SVG viewbox. */
+.globe-icon-meridian {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: globe-icon-spin 8s ease-in-out infinite;
+}
+
+@keyframes globe-icon-spin {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(-1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .globe-icon-meridian {
+    animation: none;
+  }
+}

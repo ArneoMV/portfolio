@@ -1,0 +1,108 @@
+/* ================================
+   GLOBAL TYPOGRAPHY
+================================ */
+
+.title-hero {
+  font-family: var(--font-display);
+  font-size: clamp(64px, 12vw, var(--hero-title-size));
+  line-height: 95%;
+  letter-spacing: var(--tracking-tight);
+  line-height: 80%;
+}
+
+.title-hero-sub {
+  font-family: var(--font-tech);
+  font-size: clamp(48px, 9vw, var(--hero-title-size));
+  line-height: 80%;
+}
+
+.title-h2 {
+  font-family: var(--font-sans);
+  font-size: var(--h2-size);
+  line-height: 115%;
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+
+.title-h4 {
+  font-family: var(--font-tech);
+  font-size: var(--h4-size);
+  line-height: 120%;
+}
+
+.body-lg {
+  font-family: var(--font-sans);
+  font-size: clamp(24px, 2.5vw, 36px);
+  line-height: 115%;
+  font-weight: 500;
+}
+
+.body-md {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.5vw, 32px);
+  line-height: 140%;
+}
+
+.body-sm {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 130%;
+}
+
+.label-tech {
+  font-family: var(--font-tech);
+  font-size: var(--text-caption);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.caption {
+  font-size: var(--text-caption);
+  line-height: 150%;
+}
+
+/* ── Responsive section + card typography (clamp-based) ── */
+
+.section-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(32px, 4vw, 60px);
+  line-height: 115%;
+  letter-spacing: 0.02em;
+  color: var(--color-neutral-60);
+}
+
+.section-description {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(24px, 3.2vw, 38px);
+  line-height: 120%;
+  letter-spacing: 0;
+  color: var(--color-neutral-90);
+}
+
+.card-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(20px, 2vw, 24px);
+  line-height: 130%;
+  letter-spacing: -0.01em;
+  color: var(--color-neutral-100);
+  overflow-wrap: anywhere;
+}
+
+.card-description {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(16px, 1.4vw, 21px);
+  line-height: 130%;
+  color: var(--color-neutral-100);
+  overflow-wrap: anywhere;
+}
+
+.timeline-date {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(14px, 1.2vw, 18px);
+  line-height: 130%;
+}

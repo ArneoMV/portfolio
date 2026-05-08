@@ -1,0 +1,30 @@
+/* ================================
+   LAB PAGE — /lab
+================================ */
+
+.lab-scene-root {
+  overflow: hidden;
+}
+
+.lab-bg-text-wrap {
+  pointer-events: none;
+  z-index: 0;
+  justify-content: center;
+  display: flex;
+  overflow: hidden;
+  height: 100%;
+  align-items: center;
+}
+
+.lab-bg-text {
+  font-family: var(--font-sans);
+  font-size: clamp(300px, 72vw, 480px);
+  font-weight: 400;
+  line-height: 0.78;
+  letter-spacing: -0.04em;
+  color: #c0cad4;
+  white-space: nowrap;
+  user-select: none;
+  margin-right: -0.03em;
+  margin-bottom: -0.08em;
+}

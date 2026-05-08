@@ -1,0 +1,42 @@
+/* ================================
+   SECTION HEADER (shared)
+
+   Centred title + optional subtitle block. Used by the homepage
+   Services and FAQ sections via the SectionHeader React component.
+   Extracted from the previously duplicated `.svc-title-*` and
+   `.faq-title-*` rules, which were byte-identical.
+
+   Per-section spacing tweaks (e.g. extra `margin-bottom`) belong
+   on the parent element via the component's optional `className`
+   prop, not in here.
+================================ */
+
+.section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.section-header__title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(36px, 5vw, 64px);
+  line-height: 1.1;
+  color: var(--color-neutral-50);
+  letter-spacing: -0.01em;
+}
+
+.section-header__subtitle {
+  /* No top margin — the title's line-height already gives the
+     visual separation; an explicit gap was reading as too loose. */
+  margin: 0 auto;
+  max-width: 540px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(16px, 1vw, 21px);
+  line-height: 1.5;
+  color: var(--color-neutral-90);
+}

@@ -1,0 +1,17 @@
+/* ================================
+   VISIBILITY UTILITIES
+================================ */
+
+@media (max-width: 767px) {
+  .mobile-hidden {
+    display: none;
+  }
+
+  .mobile-justify-start {
+    justify-content: flex-start;
+  }
+
+  .mobile-justify-end {
+    justify-content: flex-end;
+  }
+}

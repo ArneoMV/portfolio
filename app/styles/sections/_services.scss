@@ -1,0 +1,669 @@
+@use "../core/mixins" as mix;
+
+/* ================================
+   SERVICES SECTION (homepage redesign)
+
+   Static UI illustration of the design + dev process. The diagram is
+   a position: relative wrapper with absolutely-placed cards on
+   desktop. Mobile resets to flow layout and hides the connectors.
+================================ */
+
+.svc-section {
+  background: var(--color-background);
+}
+
+.svc-container {
+  /* Rails moved up to the parent .page-rail-group so they read as
+     continuous across Services + FAQ + About. */
+  padding-top: var(--space-4xl);
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Title block + title + subtitle now live in
+   `app/styles/components/_section-header.scss` and render through
+   the shared <SectionHeader> molecule. The `.svc-title-block`
+   classes were byte-identical to FAQ's, so they were extracted
+   into one shared definition. */
+
+/* ── Diagram canvas ─────────────────────────────────────────── */
+
+.svc-diagram {
+  position: relative;
+  width: 100%;
+  /* min-height reserves the canvas the absolutely-positioned children
+     need on desktop. Tallest children: HIW (top 478, height ≈ 250 →
+     bottom ≈ 728), Info (top 620, height ≈ 90 → bottom ≈ 710), Ship
+     (top 288, height ≈ 336 → bottom ≈ 624). 760px clears them all. */
+  min-height: 760px;
+}
+
+@media (max-width: 1023px) {
+  .svc-diagram {
+    min-height: 760px;
+  }
+}
+
+@media (max-width: 767px) {
+  .svc-diagram {
+    /* Switch to vertical flow on small screens. */
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+}
+
+/* ── Connector lines ────────────────────────────────────────── */
+
+.svc-connectors {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.svc-connector {
+  position: absolute;
+  background: transparent;
+}
+
+/* Coordinates derived from the spec image (Image 1) — container is
+   1100px wide with dotted rails at x=0 and x=1100:
+     Search:    top:0,   left:200, w:340   → bottom 48, center.x 370
+     Discovery: top:118, left:240, w:260   → top edge 118, right 500
+     Building:  top:0,   left:596, w:280   → bottom 240, center.x 736
+     Ship:      top:288, left:624, w:280                center.x 764
+*/
+
+/* 1. Search → Discovery (vertical, centered on Search.center.x). */
+.svc-connector--search-discovery {
+  top: 48px;
+  left: 370px;
+  width: 1px;
+  height: 70px;
+  border-left: 1px dashed var(--color-neutral-50);
+}
+
+/* 2. Discovery → Building (horizontal, lying inside both columns'
+   vertical span — Discovery 118-454, Building 0-240, overlap 118-240). */
+.svc-connector--discovery-building {
+  top: 179px;
+  left: 500px;
+  width: 96px;
+  height: 1px;
+  border-top: 1px dashed var(--color-neutral-50);
+}
+
+/* 3. Building → Ship (vertical, between the two columns' centers —
+   Building.center.x 736, Ship.center.x 764, average 750). */
+.svc-connector--building-ship {
+  top: 240px;
+  left: 750px;
+  width: 1px;
+  height: 48px;
+  border-left: 1px dashed var(--color-neutral-50);
+}
+
+@media (max-width: 1023px) {
+  /* Tablet — proportional shifts. Cards re-anchored further down in
+     this file; connectors follow the same new positions. */
+  .svc-connector--search-discovery {
+    left: 320px;
+  }
+  .svc-connector--discovery-building {
+    left: 440px;
+    width: 80px;
+  }
+  .svc-connector--building-ship {
+    left: 660px;
+  }
+}
+
+@media (max-width: 767px) {
+  .svc-connectors {
+    display: none;
+  }
+}
+
+/* ── Search pill ────────────────────────────────────────────── */
+
+.svc-search {
+  position: absolute;
+  /* Spec: 200px from left rail, top edge of kanban (top: 0). Width
+     340px places the right edge at 540 (54px before Building.left). */
+  top: 0;
+  left: 200px;
+  width: 340px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 14px 21px;
+  border-radius: 999px;
+  background: var(--color-neutral-10);
+  box-shadow: 0 2px 13px rgba(0, 0, 0, 0.06);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  color: var(--color-neutral-100);
+}
+
+.svc-search-text {
+  flex: 1 1 auto;
+  white-space: nowrap;
+}
+
+.svc-search-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.85;
+}
+
+/* ── Cursor tags ────────────────────────────────────────────── */
+
+.svc-cursor {
+  position: absolute;
+  z-index: 3;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.svc-cursor-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.svc-cursor-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--color-neutral-10);
+  margin-left: 12px;
+}
+
+.svc-cursor-pill--client {
+  background: var(--color-green-70);
+}
+
+.svc-cursor-pill--designer {
+  background: var(--color-primary-80);
+}
+
+.svc-cursor--client {
+  /* Floats above the Search pill so the cursor reads as the client
+     "interacting with" the search field. The cursor element is ~42px
+     tall (icon + 2px gap + pill); -44 puts the bottom of the pill
+     just above Search.top (0) with a small breathing gap. */
+  top: 30px;
+  left: 430px;
+}
+
+.svc-cursor--designer {
+  /* Floats above Building's "+ Add task" tile. The Building column
+     starts at top:0 and the Add-task button sits at the bottom of
+     the column (~y=210). Placing the cursor at 168 puts its pill
+     just above the button (≈210 - 42 = 168), pointing down at it. */
+  top: 221px;
+  left: 798px;
+}
+
+/* ── Columns ────────────────────────────────────────────────── */
+
+.svc-column {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--color-neutral-10);
+  border: 1px solid var(--color-neutral-20);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.svc-column--discovery {
+  /* Spec: Search.bottom (48) + 70px gap → Discovery.top = 118.
+     left/width chosen so Discovery.center.x equals Search.center.x
+     (370), so the vertical Search→Discovery connector reads centered. */
+  top: 118px;
+  left: 240px;
+  width: 260px;
+}
+
+.svc-column--building {
+  /* Spec: top row aligned with Search (top: 0). left+width chosen so
+     right edge sits 224px before the right rail (1100−876=224), and
+     Discovery.right→Building.left ≈ 96 (close to spec 98). */
+  top: 0;
+  left: 596px;
+  width: 280px;
+}
+
+.svc-column--ship {
+  /* Spec: Building.bottom (240) + 48px gap → Ship.top = 288.
+     Ship.right at 904 puts it 196px before the right rail (matches
+     spec). Ship is offset 28px right of Building per the spec. */
+  top: 288px;
+  left: 624px;
+  width: 280px;
+}
+
+.svc-column--emphasized {
+  /* Slightly larger in width + a stronger shadow so it reads as the
+     focal point. Avoids transform: scale to keep the inner cards
+     legible (no anti-aliased pixel scaling). */
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+}
+
+.svc-column-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 1.2;
+  color: var(--color-neutral-100);
+}
+
+.svc-column-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 8px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--color-neutral-90);
+  align-self: flex-start;
+}
+
+.svc-column-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.svc-column-chip-count {
+  margin-left: 4px;
+  color: var(--color-neutral-80);
+}
+
+.svc-column-chip--neutral {
+  background: var(--color-neutral-20);
+}
+.svc-column-chip--neutral .svc-column-chip-dot {
+  background: var(--color-neutral-70);
+}
+
+.svc-column-chip--primary {
+  background: var(--color-primary-10);
+}
+.svc-column-chip--primary .svc-column-chip-dot {
+  background: var(--color-primary-80);
+}
+
+.svc-column-chip--green {
+  background: var(--color-green-10);
+}
+.svc-column-chip--green .svc-column-chip-dot {
+  background: var(--color-green-70);
+}
+
+/* ── Column cards ───────────────────────────────────────────── */
+
+.svc-column-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.svc-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-neutral-10);
+  border: 1px solid var(--color-neutral-20);
+  border-radius: 8px;
+}
+
+.svc-card-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.svc-card-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.35;
+  color: var(--color-neutral-80);
+}
+
+.svc-card-more {
+  flex: 0 0 auto;
+  color: var(--color-neutral-60);
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* ── Priority chips ─────────────────────────────────────────── */
+
+.svc-priority {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.svc-priority--low {
+  background: var(--color-neutral-20);
+  color: var(--color-neutral-90);
+}
+
+.svc-priority--medium {
+  background: var(--color-orange-20);
+  color: var(--color-orange-90);
+}
+
+.svc-priority--high {
+  background: var(--color-red-20);
+  color: var(--color-red-90);
+}
+
+/* ── Add-task tile ──────────────────────────────────────────── */
+
+.svc-add-task {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--space-sm);
+  border-radius: 8px;
+  border: 1px dashed var(--color-primary-30);
+  background: transparent;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-primary-80);
+  width: 100%;
+}
+
+.svc-add-task--active {
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.svc-add-task--active:hover {
+  background: var(--color-primary-10);
+  border-color: var(--color-primary-50);
+}
+
+.svc-add-task--active:focus-visible {
+  outline: 2px solid var(--color-primary-60);
+  outline-offset: 2px;
+}
+
+/* Neutral state — used by Discovery and Ship & iterate before they
+   are clicked. Same dashed-tile shape as the active state, just
+   muted colours. The button is fully clickable and keyboard-focusable
+   in this state — no `pointer-events: none`. Once clicked, the
+   parent flips the class to `svc-add-task--active` (blue). */
+.svc-add-task--neutral {
+  cursor: pointer;
+  border-color: var(--color-neutral-30);
+  color: var(--color-neutral-60);
+  opacity: 0.6;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    opacity 150ms ease;
+}
+
+.svc-add-task--neutral:hover {
+  opacity: 0.85;
+  border-color: var(--color-neutral-50);
+}
+
+.svc-add-task--neutral:focus-visible {
+  outline: 2px solid var(--color-primary-60);
+  outline-offset: 2px;
+  opacity: 1;
+}
+
+/* ── How-I-work pseudo-dropdown ─────────────────────────────── */
+
+.svc-howiwork {
+  position: absolute;
+  /* Spec: 120px from left rail to HIW.left edge. Sits below Discovery
+     (Discovery.bottom ≈ 454) with a small gap. */
+  top: 440px;
+  left: 120px;
+  z-index: 2;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.svc-howiwork-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--color-neutral-10);
+  border: 1px solid var(--color-neutral-20);
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--color-neutral-100);
+  width: 160px;
+  /* Static — visually a dropdown, not interactive. */
+  cursor: default;
+}
+
+.svc-howiwork-trigger[disabled] {
+  opacity: 1;
+}
+
+.svc-howiwork-menu {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-xs) 0;
+  background: var(--color-neutral-10);
+  border: 1px solid var(--color-neutral-20);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+.svc-howiwork-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--color-neutral-90);
+}
+
+.svc-howiwork-icon {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Info card ──────────────────────────────────────────────── */
+
+.svc-info {
+  position: absolute;
+  /* Spec: Info.right edge sits 42px before the right rail. With
+     width 400, left=658 → right=1058 → gap to right rail = 42. */
+  top: 580px;
+  left: 700px;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  width: 400px;
+  background: var(--color-neutral-10);
+  border: 1px solid var(--color-neutral-20);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.svc-info-icon {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  opacity: 0.7;
+}
+
+.svc-info-text {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--color-neutral-90);
+}
+
+/* ── Tablet — narrower diagram, same vertical layout ────────── */
+
+@media (max-width: 1023px) {
+  /* Tablet: shift everything left to fit a ~960px effective canvas
+     while preserving the spec's relative layout. */
+  .svc-search {
+    left: 160px;
+    width: 280px;
+  }
+  .svc-cursor--client {
+    left: 400px;
+  }
+  .svc-column--discovery {
+    left: 200px;
+    width: 240px;
+  }
+  .svc-column--building {
+    left: 500px;
+    width: 260px;
+  }
+  .svc-cursor--designer {
+    left: 660px;
+  }
+  .svc-column--ship {
+    left: 528px;
+    width: 260px;
+  }
+  .svc-howiwork {
+    left: 80px;
+    width: 240px;
+  }
+  .svc-info {
+    left: 540px;
+    width: 360px;
+  }
+}
+
+/* ── Mobile — vertical stack with one continuous dotted spine ──
+   Cards stack in document order (Search → Client cursor → Discovery
+   → Building → Designer cursor → Ship → How-I-work → Info) and a
+   single dashed vertical line runs through the centre of the
+   diagram from the very top to the very bottom, reading as one
+   continuous flow. The line sits at z-index 0; cards keep their
+   existing z-index 2 (now actually effective because the mobile
+   reset uses position: relative instead of static). The cards'
+   white backgrounds hide the line behind them — it only shows in
+   the gaps between cards, which is the intended "connector" look. */
+
+@media (max-width: 767px) {
+  .svc-section {
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-3xl);
+  }
+
+  .svc-title-block {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+  }
+
+  /* The mobile-only vertical dotted spine. Anchored to the
+     already-relative .svc-diagram, runs full height (top:0 →
+     bottom:0 = top of Search → bottom of Info on mobile because
+     they're the first/last visible flex children). */
+  .svc-diagram::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    border-left: 1px dashed var(--color-neutral-50);
+    transform: translateX(-50%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Reset all absolutely-positioned blocks back to flow layout and
+     let the .svc-diagram flex column stack them in order.
+     position: relative (not static) so the existing z-index: 2 on
+     cards keeps them painting above the ::before spine. */
+  .svc-search,
+  .svc-column,
+  .svc-howiwork,
+  .svc-info,
+  .svc-cursor {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    max-width: 100%;
+    margin-left: var(--space-md);
+    margin-right: var(--space-md);
+  }
+
+  .svc-search {
+    align-self: center;
+  }
+
+  .svc-cursor {
+    margin-left: var(--space-2xl);
+  }
+
+  .svc-column {
+    width: auto;
+  }
+
+  .svc-howiwork-trigger {
+    width: auto;
+  }
+
+  .svc-info {
+    width: auto;
+  }
+}

@@ -1,0 +1,121 @@
+/* ================================
+   BUTTON — design-system primitive
+   Base: .button
+   Variants: .button--dark | .button--light
+   Sizes: .button--lg | .button--sm
+   Layout helpers (full-width, etc.) come from utility classes on the
+   call-site, not here, so the design-system rules stay reusable.
+================================ */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  line-height: 115%;
+  letter-spacing: 0;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  user-select: none;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease,
+    transform 150ms ease,
+    opacity 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-primary-60);
+  outline-offset: 2px;
+}
+
+/* Disabled — supports both <button disabled> and <a aria-disabled="true">. */
+.button:disabled,
+.button[aria-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* ── Sizes ── */
+
+.button--lg {
+  padding: 16px 24px;
+  font-size: clamp(16px, 1.1vw, 21px);
+  min-height: 56px;
+}
+
+.button--sm {
+  padding: 12px 18px;
+  font-size: clamp(14px, 3.8vw, 16px);
+  min-height: 44px;
+}
+
+/* On mobile the default (large) CTA shrinks to small physical
+   dimensions so it fits in headers and inside cards. Components that
+   explicitly request `--sm` already get this size at every breakpoint. */
+@media (max-width: 767px) {
+  .button--lg {
+    padding: 12px 18px;
+    font-size: clamp(14px, 3.8vw, 16px);
+    min-height: 44px;
+  }
+}
+
+/* ── Variants ── */
+
+/* Dark — primary CTA. Dark surface, light text. */
+.button--dark {
+  background: var(--color-neutral-100);
+  color: var(--color-neutral-10);
+}
+
+.button--dark:hover {
+  background: var(--color-neutral-90);
+  transform: translateY(-1px);
+}
+
+.button--dark:active {
+  transform: translateY(0);
+}
+
+/* Light — secondary CTA. Light surface, dark text, hairline border
+   and a soft shadow for surface separation. */
+.button--light {
+  background: var(--color-neutral-10);
+  color: var(--color-neutral-100);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.button--light:hover {
+  background: var(--color-neutral-20);
+}
+
+.button--light:active {
+  transform: translateY(0);
+}
+
+/* Outline — secondary/tertiary CTA. Transparent surface, dark text,
+   1px dark border. Hover + active darken via low-alpha black tint
+   without changing border/text color so the outline reads stable. */
+.button--outline {
+  background-color: transparent;
+  color: var(--color-neutral-100);
+  border-color: var(--color-neutral-100);
+}
+
+.button--outline:hover {
+  background: rgba(11, 14, 46, 0.2);
+}
+
+.button--outline:active {
+  background: rgba(0, 0, 0, 0.08);
+  transform: translateY(0);
+}

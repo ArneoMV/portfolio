@@ -1,0 +1,114 @@
+/* Work section — full-bleed hero composition. The bg photograph
+   fills the section; CrtScreen overlays full-section width but is
+   mask-clipped to the monitor screen; text overlays sit on top.
+   Aspect-ratio is locked per breakpoint so SCREEN_POS percentages
+   line up with the rendered image at each canvas. */
+
+.section {
+  position: relative;
+  width: 100%;
+  /* Aspect-ratio matches the source bg PNG exactly per breakpoint —
+     masks are full-canvas at the same dims, so section + bg + mask
+     all line up pixel-for-pixel. Drifting these breaks alignment. */
+  aspect-ratio: 400 / 800;
+  overflow: hidden;
+  background: #000;
+  isolation: isolate;
+  /* Higher than .projects-section's z:1 so Work paints over the
+     sticky Projects during the reveal scroll inside
+     .projects-work-reveal. */
+  z-index: 2;
+}
+
+@media (min-width: 640px) {
+  .section {
+    aspect-ratio: 1100 / 1080;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section {
+    aspect-ratio: 1920 / 1080;
+  }
+}
+
+.svgDefs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.bg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  z-index: 1;
+}
+
+.bgImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Tint — full-section dark wash sitting above the bg photo and
+   below CrtScreen. Slideshow paints over it (CrtScreen z=3) so the
+   monitor stays unaffected; text overlay (z=4) also paints over it
+   so titles/subtitles read at full contrast. */
+.bgTint {
+  position: absolute;
+  inset: 0;
+  background: #2d333a;
+  opacity: 0.66;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Overlay layer — text content. Sits above bg + tint + CrtScreen.
+   pointer-events: none on the wrapper so clicks pass through to
+   anything underneath; .listRegion re-enables for hover targets. */
+.overlay {
+  position: absolute;
+  inset: 0;
+  padding: clamp(24px, 4vw, 64px) clamp(16px, 4vw, 64px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 3vw, 32px);
+  z-index: 4;
+  pointer-events: none;
+}
+
+.heading {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.92);
+  text-transform: uppercase;
+}
+
+.listRegion {
+  position: relative;
+  width: 100%;
+  pointer-events: auto;
+}
+
+@media (min-width: 1024px) {
+  .overlay {
+    /* 200px top + 200px bottom on large screens so the WORK heading
+       and project list have generous breathing room from the
+       section's top and bottom edges. The bg, bgTint, CrtScreen
+       mask, aspect-ratio, and slideshow positioning are untouched
+       — overlay padding only moves the text-overlay flow inward.
+       Inline padding unchanged. */
+    padding: 200px 200px clamp(32px, 4vw, 64px);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 639px) {
+  .overlay {
+    /* Heading + list anchor at the top; the monitor + slideshow sit
+       below in the bg region the overlay leaves uncovered. */
+    justify-content: flex-start;
+  }
+}

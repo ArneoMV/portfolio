@@ -1,0 +1,229 @@
+@use "../core/mixins" as mix;
+
+/* ================================
+   HOMEPAGE HERO SECTION
+================================ */
+
+.hero-title-block {
+  grid-column: span 7;
+}
+
+@media (max-width: 1439px) and (min-width: 768px) {
+  .hero-title-block {
+    grid-column: span 8;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-title-block {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ── Narrow centered container with dotted vertical guide lines ──
+   Sits inside the h-screen section and runs the full viewport height
+   so the dotted left/right borders read as full-height guides marking
+   the new redesign's content edge. The slideshow frame is a sibling
+   of this container (attached to the section), so its full-bleed
+   cursor-follow + scroll-zoom behavior is unaffected. */
+.hero-container {
+  /* Rails moved up to the parent .page-rail-group so they read as
+     continuous across Hero + Projects. This container only handles
+     content-width and padding now. */
+  width: 100%;
+  max-width: 1100px;
+  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 64px;
+  padding-right: 64px;
+}
+
+@media (max-width: 1439px) and (min-width: 768px) {
+  .hero-container {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* ── Animated hero title (line 1 + line 2) ── */
+
+/* Outer wrapper — dead-centered inside .hero-container via
+   position:absolute + top/left 50% + translate(-50%,-50%). Inner
+   .hero-title-scroll carries the scroll-driven opacity + translateY
+   so this transform stays put. */
+.hero-title-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+  width: 100%;
+  max-width: 100%;
+  padding-left: inherit;
+  padding-right: inherit;
+}
+
+/* Outer scroll wrapper — written every frame by the scroll/cursor
+   rAF loop in HeroSection.tsx (text.style.opacity + translateY).
+   will-change stays on the rule itself because the writes happen
+   continuously while Hero is visible, not just during the intro.
+   The rAF self-terminates when the section scrolls far offscreen
+   (Hero perf batch), so the compositor layer naturally goes idle. */
+.hero-title-scroll {
+  will-change: transform, opacity;
+}
+
+/* Title — unified typography across both lines. Source Sans 3 only
+   (the display serif from the previous revision is gone), weight 600,
+   line-height 1.15. Both lines share these props verbatim; the only
+   difference between --static and --animated is reveal behavior, not
+   typography. */
+.hero-title {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 0;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(36px, 4vw, 56px);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.hero-title-line {
+  display: block;
+  white-space: nowrap;
+  opacity: 0;
+  /* will-change is scoped to .hero-section.is-intro-animating below —
+     these spans only animate during the intro timeline, so allocating
+     a compositor layer for the rest of the page lifetime is wasteful. */
+}
+
+/* Line 1 — visually static after fade-in (no transform). The class
+   inherits all typography from .hero-title; nothing here overrides
+   font/weight/size — both lines render identically. */
+.hero-title-line--static {
+  /* No transform tween; opacity-only reveal owned by the timeline. */
+}
+
+/* Line 2 — receives the scaleY 0.85 → 1 reveal. transform-origin
+   center bottom keeps the rise grounded; final scaleY 1 lands at
+   natural glyph proportions matching line 1. */
+.hero-title-line--animated {
+  transform-origin: center bottom;
+}
+
+@media (max-width: 767px) {
+  .hero-title-line {
+    white-space: normal;
+  }
+}
+
+/* ── Subtitle ── */
+
+.hero-subtitle {
+  margin: 0 auto;
+  margin-top: var(--space-lg);
+  max-width: 720px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(18px, 1.6vw, 24px);
+  line-height: 1.35;
+  color: var(--color-text-secondary);
+  text-align: center;
+  opacity: 0;
+  /* will-change is scoped to .hero-section.is-intro-animating below —
+     subtitle only fades in once via the intro timeline, then stays
+     static. Permanent will-change here was holding a compositor layer
+     for the page lifetime with nothing to composite. */
+}
+
+/* Compositor-layer scope for intro-only tweens. Added by
+   useHeroIntroTimeline before the timeline starts and removed in its
+   onComplete (and in cleanup as a safety net for mid-intro unmount).
+   Reduced-motion path never adds the class, so no layer is allocated
+   when there's no animation to run. */
+.hero-section.is-intro-animating {
+  .hero-title-line {
+    will-change: transform, opacity;
+  }
+
+  .hero-subtitle {
+    will-change: opacity;
+  }
+}
+
+/* ── Preloader backdrop + custom cursor ring ── */
+
+.hero-preloader-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: #ffffff;
+  opacity: 1;
+  transition: opacity 500ms ease;
+  pointer-events: none;
+}
+
+.hero-preloader-backdrop--hidden {
+  opacity: 0;
+}
+
+/* Centered preloader ring — visible only while the counter runs.
+   No JS movement; pure CSS centering survives the ScrollTrigger pin
+   because the ring unmounts before any pin is engaged. */
+.hero-cursor {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-cursor-ring {
+  width: 48px;
+  height: 48px;
+  border: 1.5px solid var(--color-neutral-100);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-cursor-count {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-neutral-100);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Header and FooterToolbar fade out while preloader is on screen. */
+header,
+nav[aria-label="Bottom navigation"] {
+  transition: opacity 400ms ease;
+}
+
+body.is-preloading header,
+body.is-preloading nav[aria-label="Bottom navigation"] {
+  opacity: 0;
+  pointer-events: none;
+}
