@@ -15,7 +15,7 @@
 .svc-container {
   /* Rails moved up to the parent .page-rail-group so they read as
      continuous across Services + FAQ + About. */
-  padding-top: var(--space-4xl);
+  padding-top: var(--space-2xl);
   width: 100%;
   max-width: 1100px;
   margin-left: auto;
@@ -604,7 +604,11 @@
 @media (max-width: 767px) {
   .svc-section {
     padding-top: var(--space-3xl);
-    padding-bottom: var(--space-3xl);
+    /* Toolbar clearance — the global BottomToolbar is `position: fixed`
+       at the viewport bottom (~120px including its --space-lg offset),
+       so the section needs enough trailing padding that the Info card
+       can scroll past the toolbar before FAQ enters. */
+    padding-bottom: var(--space-5xl);
   }
 
   .svc-title-block {
@@ -612,19 +616,29 @@
     padding-right: var(--space-md);
   }
 
-  /* The mobile-only vertical dotted spine. Anchored to the
+  /* Mobile dotted spine — repainted as a 4-on / 24-off linear
+     gradient (vs. the desktop browser-default `border: dashed`) so
+     dash gaps land on the spec's ~24px rhythm. Anchored to the
      already-relative .svc-diagram, runs full height (top:0 →
-     bottom:0 = top of Search → bottom of Info on mobile because
-     they're the first/last visible flex children). */
+     bottom:0). z-index 0 keeps it behind every card and below the
+     pin spacer the GSAP stack creates on mobile. */
   .svc-diagram::before {
     content: "";
     position: absolute;
     top: 0;
     bottom: 0;
     left: 50%;
-    width: 0;
-    border-left: 1px dashed var(--color-neutral-50);
+    width: 1px;
     transform: translateX(-50%);
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-neutral-50) 0,
+      var(--color-neutral-50) 4px,
+      transparent 4px,
+      transparent 28px
+    );
+    background-size: 1px 28px;
+    background-repeat: repeat-y;
     z-index: 0;
     pointer-events: none;
   }
@@ -632,7 +646,11 @@
   /* Reset all absolutely-positioned blocks back to flow layout and
      let the .svc-diagram flex column stack them in order.
      position: relative (not static) so the existing z-index: 2 on
-     cards keeps them painting above the ::before spine. */
+     cards keeps them painting above the ::before spine.
+
+     `.svc-cards-stack .svc-column` is overridden in the no-preference
+     media query below for the animated stacking layout — this rule
+     is the reduced-motion fallback (cards stay in normal flow). */
   .svc-search,
   .svc-column,
   .svc-howiwork,
@@ -655,6 +673,24 @@
     margin-left: var(--space-2xl);
   }
 
+  /* Client cursor — center-aligned with a slight rightward shift so
+     the arrow/pill reads as pointing at the search bar's right end
+     (where the search icon sits) instead of floating in the
+     viewport's left gutter. Overrides the generic
+     `.svc-cursor { margin-left: var(--space-2xl) }` rule above. */
+  .svc-cursor--client {
+    align-self: center;
+    margin-left: 0;
+    margin-right: 0;
+    transform: translateX(56px);
+  }
+
+  /* Designer cursor is hidden on mobile per the redesigned mobile
+     composition — only the Client cursor near Search remains. */
+  .svc-cursor--designer {
+    display: none;
+  }
+
   .svc-column {
     width: auto;
   }
@@ -665,5 +701,113 @@
 
   .svc-info {
     width: auto;
+  }
+
+  /* Cards-stack wrapper — base mobile rule (used by the reduced-
+     motion fallback). Stacks Discovery, Building, Designer cursor,
+     and the Ship-group in normal block order. The animation path
+     below replaces this layout. */
+  .svc-cards-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    width: 100%;
+  }
+
+}
+
+/* Mobile + no-reduced-motion — the scroll-driven stacked-card
+   animation. The pinned element is the WHOLE `.svc-section`, not
+   any inner wrapper. With the section as the pin target, title +
+   subtitle + search + cursor + the cards stack stay together as
+   one fixed unit while the page scroll drives the inner card
+   timeline. How-I-work and Info live OUTSIDE the cards-stack as
+   later siblings of `.svc-diagram` and become visible via NORMAL
+   page scroll AFTER the pin releases — they never animate in with
+   Ship and never need a final lift over the stack to appear.
+
+   Card sequencing inside the stack:
+     - Discovery / Building / Ship: absolutely positioned at
+       staggered tops (0 / 60 / 120) so each card's title peek sits
+       above the one in front.
+     - Ship comes to rest at its abs top:120 in Stage 2 and stays
+       there. There is no Stage 3 lift — Ship would otherwise drift
+       up over the entire stack and clip its own content.
+
+   JS in ServicesSection.tsx animates Building / Ship
+   `y: stackHeight → 0` (so off-screen cards stay clipped by
+   `overflow: hidden` on the stack during their initial state) and
+   tweens widths (front 360 → mid 340 → back 320). The matching
+   gsap.matchMedia query uses the same combined query so the CSS
+   layout and the JS animation engage/disengage together. */
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  /* Section overflow: hidden clips Building / Ship while they're
+     translated `y: stackHeight` (initial off-screen state below the
+     stack box). The mobile section padding-top must clear the
+     auto-hiding global Header (96px tall when visible); 64px keeps
+     the title visible without forcing the section past the
+     Header's gutter. */
+  .svc-section {
+    overflow: hidden;
+    padding-top: var(--space-3xl);
+  }
+
+  .svc-cards-stack {
+    /* Resets the flex layout from the base mobile rule so the
+       absolute children inside drive layout. Height fixed at 560px
+       — large enough to hold the tallest card (Discovery / Ship at
+       ~440 plus their top offset 0 / 120) at their final stacked
+       positions without clipping content, and small enough that
+       the stack doesn't leave huge blank space below Ship's
+       Add-task button. `overflow: hidden` clips Building / Ship
+       during their off-screen state (translated `y: stackHeight`
+       below the stack box) so they don't leak below the section
+       before they rise. */
+    display: block;
+    position: relative;
+    height: 560px;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  /* All three columns inside the stack — absolutely positioned so
+     GSAP can control their entrance translate and width tween
+     without fighting block flow. `left: 0; right: 0; margin-inline:
+     auto` centers each card against its current width (widths
+     360/340/320 stay center-justified without any transform). */
+  .svc-cards-stack .svc-column--discovery,
+  .svc-cards-stack .svc-column--building,
+  .svc-cards-stack .svc-column--ship {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    /* CSS fallback width — the GSAP `set` overrides this with the
+       resolved pixel value at mount so the width tween targets are
+       numeric. */
+    width: min(360px, calc(100vw - 32px));
+  }
+
+  .svc-cards-stack .svc-column--discovery {
+    top: 0;
+    z-index: 1;
+  }
+
+  .svc-cards-stack .svc-column--building {
+    top: 60px;
+    z-index: 2;
+  }
+
+  .svc-cards-stack .svc-column--ship {
+    top: 120px;
+    z-index: 3;
+  }
+
+  /* Designer cursor inside the stack — hidden on mobile already via
+     .svc-cursor--designer { display: none } above; redeclared here
+     for safety so it never grabs an absolute slot inside the
+     stack's positioning context. */
+  .svc-cards-stack .svc-cursor--designer {
+    display: none;
   }
 }

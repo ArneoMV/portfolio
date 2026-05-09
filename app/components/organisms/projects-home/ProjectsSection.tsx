@@ -75,38 +75,55 @@ const PROJECT_ITEMS: ProjectItem[] = [
   },
 ];
 
-// Two-row split per design: row 1 = NEOGOV / HRT / Spona, row 2 =
-// Croatel / Elite Digital. Width/height match each SVG's viewBox.
-const LOGO_ROW_1: ClientLogo[] = [
-  {
-    name: "NEOGOV",
-    src: "/images/home/Neogov_Logo.svg",
-    width: 193,
-    height: 28,
-  },
-  { name: "HRT", src: "/images/home/HRT_Logo.svg", width: 66, height: 32 },
-  {
-    name: "Spona",
-    src: "/images/home/Spona_Logo.svg",
-    width: 140,
-    height: 32,
-  },
+// Individual logo entries — width/height match each SVG's viewBox.
+// Desktop and mobile arrange these into different row groupings (see
+// LOGO_ROWS_DESKTOP / LOGO_ROWS_MOBILE below) without duplicating data.
+const LOGO_NEOGOV: ClientLogo = {
+  name: "NEOGOV",
+  src: "/images/home/Neogov_Logo.svg",
+  width: 193,
+  height: 28,
+};
+const LOGO_HRT: ClientLogo = {
+  name: "HRT",
+  src: "/images/home/HRT_Logo.svg",
+  width: 66,
+  height: 32,
+};
+const LOGO_SPONA: ClientLogo = {
+  name: "Spona",
+  src: "/images/home/Spona_Logo.svg",
+  width: 140,
+  height: 32,
+};
+const LOGO_CROATEL: ClientLogo = {
+  name: "Croatel",
+  // Filename typo is intentional — the file ships as Coatel_Logo.svg.
+  src: "/images/home/Coatel_Logo.svg",
+  width: 185,
+  height: 32,
+};
+const LOGO_ELITE_DIGITAL: ClientLogo = {
+  name: "Elite Digital",
+  src: "/images/home/EliteDigital_Logo.svg",
+  width: 376,
+  height: 30,
+};
+
+// Desktop layout: row 1 = NEOGOV / HRT / Spona, row 2 = Croatel / Elite Digital.
+const LOGO_ROWS_DESKTOP: ClientLogo[][] = [
+  [LOGO_NEOGOV, LOGO_HRT, LOGO_SPONA],
+  [LOGO_CROATEL, LOGO_ELITE_DIGITAL],
 ];
 
-const LOGO_ROW_2: ClientLogo[] = [
-  {
-    name: "Croatel",
-    // Filename typo is intentional — the file ships as Coatel_Logo.svg.
-    src: "/images/home/Coatel_Logo.svg",
-    width: 185,
-    height: 32,
-  },
-  {
-    name: "Elite Digital",
-    src: "/images/home/EliteDigital_Logo.svg",
-    width: 376,
-    height: 30,
-  },
+// Mobile layout (per design): row 1 = Neogov / Spona, row 2 = Elite Digital
+// (full width — too wide to share a row with another logo at 21px height),
+// row 3 = HRT / Croatel. Two trees rendered; CSS toggles display so only
+// the layout matching the current breakpoint is in the accessibility tree.
+const LOGO_ROWS_MOBILE: ClientLogo[][] = [
+  [LOGO_NEOGOV, LOGO_SPONA],
+  [LOGO_ELITE_DIGITAL],
+  [LOGO_HRT, LOGO_CROATEL],
 ];
 
 /**
@@ -169,10 +186,35 @@ export default function ProjectsSection() {
         </div>
 
         <div className="projects-row projects-row--logos">
-          <div className="projects-logos">
-            {[LOGO_ROW_1, LOGO_ROW_2].map((row, rowIndex) => (
+          {/* Two trees — one for ≥768px, one for ≤767px — toggled via
+              `display: none` on the inactive variant in _projects.scss.
+              `display: none` removes the inactive tree from the
+              accessibility tree as well, so screen readers see exactly
+              one logo grid (no duplicates, no aria-hidden bookkeeping). */}
+          <div className="projects-logos projects-logos--desktop">
+            {LOGO_ROWS_DESKTOP.map((row, rowIndex) => (
               <ul
-                key={`logo-row-${rowIndex}`}
+                key={`logo-row-desktop-${rowIndex}`}
+                className="projects-logos-row"
+              >
+                {row.map((logo) => (
+                  <li key={logo.name} className="projects-logos-item">
+                    <Image
+                      src={logo.src}
+                      alt={logo.name}
+                      width={logo.width}
+                      height={logo.height}
+                      className="projects-logos-image"
+                    />
+                  </li>
+                ))}
+              </ul>
+            ))}
+          </div>
+          <div className="projects-logos projects-logos--mobile">
+            {LOGO_ROWS_MOBILE.map((row, rowIndex) => (
+              <ul
+                key={`logo-row-mobile-${rowIndex}`}
                 className="projects-logos-row"
               >
                 {row.map((logo) => (

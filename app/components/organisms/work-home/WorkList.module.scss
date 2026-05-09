@@ -74,3 +74,42 @@
     max-width: 50%;
   }
 }
+
+/* Small/mobile (≤ 767px) — typography + rhythm pass per design.
+   - 24px between work item blocks (title + description), driven by
+     `.list { gap }`. `.row { padding: 0 }` removes the per-row
+     vertical padding so the gap is the sole spacing between blocks
+     (otherwise gap + padding stacks).
+   - 8px between title and description inside a block.
+   - Title: 34px / Bold / line-height 1.3 / white. Bold + white +
+     letter-spacing inherit from the base `.label` rule; only size
+     and line-height change here.
+   - Description: 16px / Semibold / line-height 1.3 / neutral-20.
+     The base rule had `weight: 500` and a translucent-white color
+     scaled with `clamp` — the override pins the design's exact
+     metrics on mobile.
+   - Hover/active opacity behavior (.label opacity 0.6 → 1 +
+     translateX 4px on .labelHovered) is untouched, so taps on
+     mobile keep cycling the slideshow exactly as before. */
+@media (max-width: 767px) {
+  .list {
+    gap: 24px;
+  }
+
+  .row {
+    padding: 0;
+    gap: 8px;
+  }
+
+  .label {
+    font-size: 34px;
+    line-height: 1.3;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-neutral-20);
+  }
+}

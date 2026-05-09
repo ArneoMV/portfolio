@@ -126,15 +126,50 @@
 }
 
 @media (max-width: 767px) {
+  /* Section padding tightens on mobile — the desktop 96px top/bottom
+     pad reads as excessive vertical air on a 360-wide screen. 64px
+     keeps the section feeling intentional without leaving large
+     empty gaps above/below the content. */
+  .projects-section {
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-3xl);
+  }
+
+  /* Mobile container padding — content sits inside the 16px viewport
+     inset that the rest of the homepage uses on small screens. The
+     marquee row drops this padding (full bleed) and re-introduces a
+     16px alignment via padding-left on .projects-marquee, so the
+     first-card edge still lines up with the description above. */
   .projects-row--intro {
     flex-direction: column;
     align-items: stretch;
     gap: var(--space-lg);
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .projects-cta {
     align-self: flex-start;
     padding-top: 0;
+  }
+
+  /* Description — mobile typography per design: 21px / Medium / 130%
+     line-height, left-aligned. Source Sans 3 is the body font; the
+     base rule already pulls in `var(--font-sans)` and color
+     `var(--color-neutral-100)`, so this only overrides what differs
+     from desktop (size, weight, line-height, alignment). */
+  .projects-description {
+    font-size: 21px;
+    font-weight: 500;
+    line-height: 1.3;
+    text-align: left;
+  }
+
+  /* Inter-row spacing on mobile — 48px between intro→marquee and
+     marquee→logos (vs. the desktop 64px). Tighter rhythm reads
+     better on a narrow viewport without feeling cramped. */
+  .projects-row + .projects-row {
+    margin-top: var(--space-2xl);
   }
 }
 
@@ -212,16 +247,54 @@
   color: var(--color-text-primary);
 }
 
+/* Mobile marquee — full-bleed row (no horizontal padding on the row
+   itself) with a 16px padding-left on .projects-marquee so the first
+   card aligns with the description above. The right edge bleeds to
+   the viewport edge; cards exit at the marquee's clipping (border)
+   edge, so labels under cards continue to read as "left-aligned"
+   relative to their parent card. Image height per design: 180px,
+   reached via item width 240 × image aspect-ratio 4/3 = 180. */
+@media (max-width: 767px) {
+  .projects-row--marquee {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .projects-marquee {
+    padding-left: 16px;
+  }
+
+  .projects-marquee-item {
+    width: 240px;
+  }
+
+  .projects-marquee-label {
+    /* Image → label gap tightens to 8px on mobile (~--space-xs) so
+       the label sits closer to its card, matching the design density. */
+    margin-top: var(--space-xs);
+  }
+}
+
 /* ── Row 3 — static client logos ── */
 
-/* Two literal rows (3 + 2) inside a column wrapper, rather than a
-   single wrapping flex — keeps the row split deterministic and the
-   per-row centering simple. */
+/* Two render trees — one for ≥768px (3+2), one for ≤767px (2+1+2).
+   Each is a flex column wrapping per-row centered <ul>s; CSS toggles
+   `display: none` on the inactive variant via the `--desktop` /
+   `--mobile` modifier classes so only one tree contributes to layout
+   and the accessibility tree at any breakpoint. Keeping the row
+   splits deterministic (vs. a single wrapping flex) keeps the per-row
+   centering simple and matches the design's intentional groupings. */
 .projects-logos {
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
   width: 100%;
+}
+
+/* Mobile-only logo grid is hidden by default (desktop). Toggled in
+   the mobile media query below. */
+.projects-logos--mobile {
+  display: none;
 }
 
 .projects-logos-row {
@@ -258,15 +331,114 @@
 }
 
 @media (max-width: 767px) {
+  /* Swap which logo tree is visible. `display: none` removes the
+     desktop tree from the accessibility tree on mobile and vice versa,
+     so screen readers see exactly one logo grid. */
+  .projects-logos--desktop {
+    display: none;
+  }
+
+  .projects-logos--mobile {
+    display: flex;
+  }
+
   .projects-logos {
+    /* Row gap (vertical) per design: 24px between logo rows. */
     gap: var(--space-lg);
   }
 
   .projects-logos-row {
-    gap: var(--space-md) var(--space-2xl);
+    /* Row gap (within wrap): 24px; column gap (between logos in same
+       row): 32px — feels balanced for the smaller 21px wordmarks. */
+    gap: var(--space-lg) var(--space-xl);
   }
 
   .projects-logos-item {
-    height: 24px;
+    /* Per design: 21px logo height. With max-height: 100% on the
+       Image, every wordmark scales down to 21px tall preserving its
+       intrinsic aspect ratio (no crop). */
+    height: 21px;
+  }
+}
+
+/* ================================
+   HERO → PROJECTS MOBILE REVEAL (≤ 767px)
+
+   Mobile-only parallax: as the user scrolls down from Hero, the
+   Projects section rises from the bottom of the viewport upward,
+   covering Hero. Once Projects is fully revealed, normal page
+   scrolling continues. CSS-only — no JS — using `position: sticky`
+   on Hero plus a negative margin on .projects-work-reveal:
+
+     1. The Hero-wrapping rail group (.page-rail-group:has(>
+        .hero-section)) is given min-height: 200vh on mobile, so
+        Hero's sticky containing block has 100vh of travel range
+        beyond Hero's own height.
+
+     2. .hero-section becomes `position: sticky; top: 0`. Hero stays
+        glued to the viewport top from scroll = 0 to scroll = 100vh,
+        then is released at the bottom of its containing block and
+        scrolls up with the page.
+
+     3. .projects-work-reveal gets `margin-top: -100vh` so Projects
+        starts at doc-y = 100vh (right at Hero's bottom) instead of
+        being pushed 100vh down by the rail group's extra height.
+        z-index: 10 on the wrapper keeps Projects painted above
+        Hero's z:2 while they overlap during the reveal.
+
+   Desktop is unchanged: the rail group's :has() selector only
+   applies its min-height inside this `(max-width: 767px)` query,
+   the sticky on Hero is gated to mobile, and .projects-work-reveal
+   keeps its natural top + auto z-index above 768.
+
+   Reduced motion: the override block reverts every property to its
+   stacked-flow equivalent so the user lands on a normal scrolling
+   page with no sticky pin and no negative margin.
+================================ */
+@media (max-width: 767px) {
+  /* :has() targets only the rail group that wraps Hero (the lower
+     content rail group, which wraps Services/FAQ/About/Footer, has
+     no .hero-section descendant and so is unaffected). */
+  .page-rail-group:has(> .hero-section) {
+    min-height: 200vh;
+    min-height: 200dvh;
+  }
+
+  .hero-section {
+    position: sticky;
+    top: 0;
+    /* Hero already carries z-[2] from the JSX className; that keeps
+       it above the rail group's dotted ::before/::after rails (z:1)
+       and below Projects's z:10 on the reveal wrapper. No z-index
+       override needed here. */
+  }
+
+  .projects-work-reveal {
+    /* Pull Projects back up by 100vh so it lands flush with Hero's
+       bottom instead of below the rail group's extended height. */
+    margin-top: -100vh;
+    margin-top: -100dvh;
+    position: relative;
+    z-index: 10;
+  }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  /* Reduced motion: reset to plain stacked flow. Hero is no longer
+     sticky, the rail group is its natural height, and Projects is
+     not pulled up — the user scrolls Hero off normally and Projects
+     follows below. */
+  .page-rail-group:has(> .hero-section) {
+    min-height: 0;
+  }
+
+  .hero-section {
+    position: relative;
+    top: auto;
+  }
+
+  .projects-work-reveal {
+    margin-top: 0;
+    z-index: auto;
   }
 }

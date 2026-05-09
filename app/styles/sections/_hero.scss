@@ -166,6 +166,72 @@
   }
 }
 
+/* ── Small / mobile (≤ 767px) Hero ──────────────────────────
+   Mobile redesign: the cursor-follow rAF + ScrollTrigger pin are
+   gated to (min-width: 768px) inside HeroSection.tsx via
+   gsap.matchMedia, so on mobile no JS writes inline transforms to
+   the frame or title. CSS owns the layout: the section becomes a
+   flex column, the slideshow frame moves to the top via flex
+   `order`, and the title/subtitle render in normal block flow
+   underneath. No cursor tracking, no scroll expansion, no pin —
+   just a stacked Header → image → title → subtitle composition. */
+@media (max-width: 767px) {
+  .hero-section {
+    /* Flex column reorders frame above container without touching
+       the JSX. height: auto lets content set the size; min-height
+       keeps the empty stretch above the fixed BottomToolbar so the
+       Hero still feels like a full first screen. */
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Slideshow frame: drop the desktop `absolute left-0 top-0 w-full
+     h-full` Tailwind utilities (same specificity, main.scss loads
+     after globals.css so this wins) and render as a normal block
+     above the title. Horizontal margin matches .hero-container's
+     16px mobile inset so the image sits inside the same content
+     edge as the rest of the homepage. */
+  .hero-frame {
+    position: relative;
+    inset: auto;
+    width: auto;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    margin: var(--space-3xl) 16px 0;
+    transform: none;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    order: 1;
+  }
+
+  /* .hero-container holds title + subtitle. height: auto removes
+     the desktop 100% stretch so the container hugs its text content
+     and the section's empty bottom space is just the flex column's
+     unused space, not container padding. */
+  .hero-container {
+    height: auto;
+    order: 2;
+    margin-top: var(--space-2xl);
+  }
+
+  /* Title wrapper drops desktop dead-center (position: absolute +
+     translate). Title and subtitle render in normal block flow,
+     inheriting text-align: center from .hero-title / .hero-subtitle. */
+  .hero-title-wrapper {
+    position: static;
+    transform: none;
+  }
+
+  /* Tighter subtitle spacing on mobile — the desktop --space-lg
+     gap reads as a gap when title+subtitle stack tight. */
+  .hero-subtitle {
+    margin-top: var(--space-md);
+  }
+}
+
 /* ── Preloader backdrop + custom cursor ring ── */
 
 .hero-preloader-backdrop {

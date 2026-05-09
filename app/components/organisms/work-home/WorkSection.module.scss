@@ -112,3 +112,33 @@
     justify-content: flex-start;
   }
 }
+
+/* Small/mobile (≤ 767px) — typography + spacing pass aligned to the
+   homepage mobile container (16px viewport inset) and the rest of the
+   homepage section rhythm. The bg photograph, tint, CrtScreen, and
+   slideshow are all untouched here — only the text overlay's padding,
+   gap, and the WORK heading typography change. Anchoring is kept
+   `flex-start` (redeclared so this block is self-contained even if the
+   639 block is removed in a future cleanup). */
+@media (max-width: 767px) {
+  .overlay {
+    /* 48px top → "WORK" matches the design's measured top inset.
+       16px L/R matches the homepage mobile container. 12px gap
+       between WORK and the first work title. Bottom padding equal
+       to top so the overlay's content area reads balanced inside
+       the section (CrtScreen sits separately in absolute-position
+       coords below this overlay's content edge). */
+    padding: 48px 16px;
+    gap: 12px;
+    justify-content: flex-start;
+  }
+
+  .heading {
+    /* H6-equivalent on mobile: 18px (= --h6-size), neutral-30. The
+       weight + uppercase + font-family inherit from `.title-h2` and
+       the base `.heading` rule above, so this override only changes
+       size + color. */
+    font-size: var(--h6-size);
+    color: var(--color-neutral-30);
+  }
+}

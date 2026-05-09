@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-import { ScrollTrigger } from "@/lib/gsap/gsap-init";
+import { gsap, ScrollTrigger } from "@/lib/gsap/gsap-init";
 import { useHeroCursor } from "@/app/features/homepage/hooks/useHeroCursor";
 import { HERO_IMAGES } from "@/app/features/homepage/data/home.data";
 import { useHeroPreloader } from "./useHeroPreloader";
@@ -108,92 +108,115 @@ export default function HeroSection() {
       };
     }
 
-    const st = ScrollTrigger.create({
-      trigger: section,
-      start: "top top",
-      end: "+=150%",
-      pin: true,
-      scrub: true,
-      onUpdate: (self) => {
-        scrollProgress.current = self.progress;
-      },
+    // Mobile (< 768px) skips the ScrollTrigger pin + cursor-follow rAF
+    // entirely. The Tailwind absolute positioning on the slideshow
+    // frame is overridden by the `@media (max-width: 767px)` block in
+    // _hero.scss to render the frame as a normal block above the
+    // title — no transform writes happen here, so CSS owns layout.
+    // gsap.matchMedia handles enter/exit cleanly when the viewport
+    // crosses 768px (resize-out kills ScrollTrigger + rAF + IO; resize
+    // back in re-creates them).
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 768px)", () => {
+      const st = ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "+=150%",
+        pin: true,
+        scrub: true,
+        onUpdate: (self) => {
+          scrollProgress.current = self.progress;
+        },
+      });
+
+      let rafId: number | null = null;
+      let isVisible = true;
+
+      const animate = () => {
+        const p = scrollProgress.current;
+        const c = cursor.current;
+        const w = dimensions.width;
+        const h = dimensions.height;
+
+        if (!c.initialized) {
+          c.currentX = w * 0.7;
+          c.currentY = h * 0.55;
+          c.targetX = c.currentX;
+          c.targetY = c.currentY;
+          c.initialized = true;
+        }
+
+        if (!c.isActive) {
+          c.targetX = lerp(c.targetX, w * 0.7, 0.02);
+          c.targetY = lerp(c.targetY, h * 0.55, 0.02);
+        }
+
+        c.currentX = lerp(c.currentX, c.targetX, 0.1);
+        c.currentY = lerp(c.currentY, c.targetY, 0.1);
+
+        // Desktop final size keeps the 96px breathing gap so the
+        // title/decoration around the frame still has room to read.
+        // (Mobile branch removed — < 768px never enters this callback.)
+        const maxScale = (w - 96) / w;
+        const scale = lerp(0.22, maxScale, p);
+        const scrollBlend = Math.min(1, p * 3);
+
+        const cursorCenterX = c.currentX + (w * 0.22) / 2;
+        const cursorCenterY = c.currentY - (h * 0.22) / 2;
+
+        const finalCenterX = w / 2;
+        const finalCenterY = h / 2;
+
+        const cx = lerp(cursorCenterX, finalCenterX, scrollBlend);
+        const cy = lerp(cursorCenterY, finalCenterY, scrollBlend);
+
+        const tx = cx - (w * scale) / 2;
+        const ty = cy - (h * scale) / 2;
+
+        frame.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+        frame.style.borderRadius = `${lerp(16, 8, p)}px`;
+
+        const textOpacity = Math.max(0, 1 - p * 2.5);
+        text.style.opacity = `${textOpacity}`;
+        text.style.transform = `translateY(${-p * 200}px)`;
+
+        rafId = isVisible ? requestAnimationFrame(animate) : null;
+      };
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          const visible = entries[0]?.isIntersecting ?? false;
+          isVisible = visible;
+          if (visible && rafId === null) {
+            rafId = requestAnimationFrame(animate);
+          }
+        },
+        { rootMargin: "300px 0px", threshold: 0 },
+      );
+      io.observe(section);
+
+      rafId = requestAnimationFrame(animate);
+
+      return () => {
+        if (rafId !== null) cancelAnimationFrame(rafId);
+        io.disconnect();
+        st.kill();
+        // Frame may carry an inline transform from the last rAF write
+        // when the viewport crosses 768→767. Clear it so the mobile
+        // CSS layout (relative block) isn't fighting an absolute-mode
+        // translate left over from desktop. text.style is similarly
+        // reset so the title/subtitle render at full opacity in flow.
+        frame.style.transform = "";
+        frame.style.borderRadius = "";
+        text.style.transform = "";
+        text.style.opacity = "";
+      };
     });
 
-    let rafId: number | null = null;
-    let isVisible = true;
-
-    const animate = () => {
-      const p = scrollProgress.current;
-      const c = cursor.current;
-      const w = dimensions.width;
-      const h = dimensions.height;
-
-      if (!c.initialized) {
-        c.currentX = w * 0.7;
-        c.currentY = h * 0.55;
-        c.targetX = c.currentX;
-        c.targetY = c.currentY;
-        c.initialized = true;
-      }
-
-      if (!c.isActive) {
-        c.targetX = lerp(c.targetX, w * 0.7, 0.02);
-        c.targetY = lerp(c.targetY, h * 0.55, 0.02);
-      }
-
-      c.currentX = lerp(c.currentX, c.targetX, 0.1);
-      c.currentY = lerp(c.currentY, c.targetY, 0.1);
-
-      // Mobile final size respects the same 16px container margin used
-      // elsewhere on the page — frame ends at (16, w-16). Desktop keeps
-      // the 96px breathing gap so the title/decoration around the
-      // frame still has room to read.
-      const isMobile = w < 768;
-      const maxScale = isMobile ? (w - 32) / w : (w - 96) / w;
-      const scale = lerp(0.22, maxScale, p);
-      const scrollBlend = Math.min(1, p * 3);
-
-      const cursorCenterX = c.currentX + (w * 0.22) / 2;
-      const cursorCenterY = c.currentY - (h * 0.22) / 2;
-
-      const finalCenterX = w / 2;
-      const finalCenterY = h / 2;
-
-      const cx = lerp(cursorCenterX, finalCenterX, scrollBlend);
-      const cy = lerp(cursorCenterY, finalCenterY, scrollBlend);
-
-      const tx = cx - (w * scale) / 2;
-      const ty = cy - (h * scale) / 2;
-
-      frame.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
-      frame.style.borderRadius = `${lerp(16, 8, p)}px`;
-
-      const textOpacity = Math.max(0, 1 - p * 2.5);
-      text.style.opacity = `${textOpacity}`;
-      text.style.transform = `translateY(${-p * 200}px)`;
-
-      rafId = isVisible ? requestAnimationFrame(animate) : null;
-    };
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        const visible = entries[0]?.isIntersecting ?? false;
-        isVisible = visible;
-        if (visible && rafId === null) {
-          rafId = requestAnimationFrame(animate);
-        }
-      },
-      { rootMargin: "300px 0px", threshold: 0 },
-    );
-    io.observe(section);
-
-    rafId = requestAnimationFrame(animate);
-
     return () => {
-      if (rafId !== null) cancelAnimationFrame(rafId);
-      io.disconnect();
+      mm.revert();
       ro.disconnect();
-      st.kill();
     };
   }, [cursor]);
 
@@ -268,7 +291,7 @@ export default function HeroSection() {
           behind zero opacity. */}
       <div
         ref={frameRef}
-        className="pointer-events-none absolute left-0 top-0 z-20 h-full w-full origin-top-left overflow-hidden"
+        className="hero-frame pointer-events-none absolute left-0 top-0 z-20 h-full w-full origin-top-left overflow-hidden"
         style={{ willChange: "transform, opacity", opacity: 0 }}
       >
         {HERO_IMAGES.map((src, i) => (
