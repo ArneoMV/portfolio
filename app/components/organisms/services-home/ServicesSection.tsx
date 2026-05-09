@@ -277,6 +277,16 @@ export default function ServicesSection() {
             className="svc-cursor svc-cursor--client"
           />
 
+          {/* Mobile-only dotted connector segments. Rendered as three
+              identical 24px / 1px / 4-on-8-off vertical lines between
+              Search→Discovery, Ship→HowIWork, and HowIWork→Info per
+              the mobile spec — replaces the previous single-spine
+              `.svc-diagram::before` global line. Hidden on desktop and
+              tablet via `.svc-mobile-connector { display: none }` and
+              flipped on at `(max-width: 767px)`. aria-hidden because
+              they are purely visual flow indicators. */}
+          <span className="svc-mobile-connector" aria-hidden="true" />
+
           <div className="svc-cards-stack">
             <Column
               position="discovery"
@@ -324,6 +334,8 @@ export default function ServicesSection() {
               pinned card animation releases — they never animate in
               with Ship and never need Ship to "lift over" the stack
               to appear. */}
+          <span className="svc-mobile-connector" aria-hidden="true" />
+
           <div className="svc-howiwork">
             <button
               type="button"
@@ -350,6 +362,8 @@ export default function ServicesSection() {
               ))}
             </ul>
           </div>
+
+          <span className="svc-mobile-connector" aria-hidden="true" />
 
           <div className="svc-info">
             <Image
