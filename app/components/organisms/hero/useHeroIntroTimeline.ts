@@ -9,9 +9,9 @@ interface UseHeroIntroTimelineArgs {
   /**
    * Hero <section> root — receives the temporary `is-intro-animating`
    * class while the timeline is active. SCSS scopes will-change for
-   * `.hero-title-line` / `.hero-subtitle` to that class so the
-   * compositor layer is only allocated for the duration of the intro,
-   * not permanently for the page lifetime.
+   * `.hero-title-line` to that class so the compositor layer is only
+   * allocated for the duration of the intro, not permanently for the
+   * page lifetime.
    */
   sectionRef: RefObject<HTMLElement | null>;
   /** Title line 1 — fades in (no transform). */
@@ -21,8 +21,6 @@ interface UseHeroIntroTimelineArgs {
    * (lands at natural proportions, no overshoot, no font-axis tween).
    */
   line2Ref: RefObject<HTMLSpanElement | null>;
-  /** Subtitle below the title — fades in alongside the slideshow. */
-  subtitleRef: RefObject<HTMLParagraphElement | null>;
   /** Cursor-follow slideshow frame — fades in within this same timeline. */
   frameRef: RefObject<HTMLDivElement | null>;
 }
@@ -30,15 +28,7 @@ interface UseHeroIntroTimelineArgs {
 /**
  * Hero typography + slideshow-reveal intro timeline.
  *
- * The slideshow reveal lives in this same hook (not a separate one)
- * because its trigger point is "70% of the *text timeline's actual
- * duration*" — that reference is only meaningful while the text and
- * frame tweens share a single timeline. Splitting them would either
- * require recomputing the text duration externally (timing drift) or
- * driving two timelines in sync (added plumbing for no readability
- * win), so they stay co-located.
- *
- * Sequence:
+ * Sequence (desktop / tablet, ≥768px):
  *   1. Line 1 fades in (1.6s, expo.out). Opacity-only — typography is
  *      static; no slide / blur / letter-spacing tween. The duration is
  *      preserved so the slideshow reveal still lands at the same
@@ -49,18 +39,24 @@ interface UseHeroIntroTimelineArgs {
  *      feels grounded as it settles to its natural height. Lands at
  *      scaleY 1 — no overshoot, no permanent vertical stretch.
  *   4. Frame fade-in 0 → 1 (3s, power2.out) starting at 70% of the
- *      text timeline's actual duration. Subtitle fades in at the same
- *      point so it lands with the slideshow rather than the title.
+ *      text timeline's actual duration.
  *
- * Reduced-motion: skips the timeline; sets all elements to their
- * final on-screen state instantly so the page is usable.
+ * Mobile (≤767px): timeline is skipped entirely. Title lines and
+ * frame appear statically without animation — the mobile SCSS owns
+ * the visible-on-mount state via `.hero-title-line { opacity: 1 }`
+ * and `.hero-frame { opacity: 1 }` inside the mobile @media. Hook
+ * still runs to keep ref plumbing identical across breakpoints, but
+ * its early-return path short-circuits before any tween is created.
+ *
+ * Reduced-motion: same early-return as mobile — sets all elements
+ * to their final on-screen state instantly via gsap.set so the page
+ * is usable without animation.
  */
 export function useHeroIntroTimeline({
   heroReady,
   sectionRef,
   line1Ref,
   line2Ref,
-  subtitleRef,
   frameRef,
 }: UseHeroIntroTimelineArgs) {
   useEffect(() => {
@@ -68,24 +64,28 @@ export function useHeroIntroTimeline({
     const section = sectionRef.current;
     const line1 = line1Ref.current;
     const line2 = line2Ref.current;
-    const subtitle = subtitleRef.current;
     const frame = frameRef.current;
-    if (!section || !line1 || !line2 || !subtitle || !frame) return;
+    if (!section || !line1 || !line2 || !frame) return;
 
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
 
-    if (reduced) {
+    if (reduced || isMobile) {
+      // Static path — mobile and reduced-motion both skip the timeline
+      // and land elements on their final state without animation. On
+      // mobile the SCSS already paints them at opacity 1 from server
+      // render; gsap.set here covers the case where the page was first
+      // rendered on desktop and then resized to mobile before the
+      // intro could complete (inline transform/opacity left over from
+      // gsap would otherwise hide the frame on the new breakpoint).
       gsap.set(line1, { opacity: 1 });
       gsap.set(line2, { opacity: 1, scaleY: 1 });
-      gsap.set(subtitle, { opacity: 1 });
-      // Cursor-follow slideshow visible immediately under reduced
-      // motion — no timed reveal.
       gsap.set(frame, { opacity: 1 });
-      // Reduced-motion path never adds is-intro-animating, so the
-      // intro-scoped will-change rules in _hero.scss never activate
-      // and no compositor layer is allocated.
+      // Reduced-motion / mobile paths never add is-intro-animating,
+      // so the intro-scoped will-change rule in _hero.scss never
+      // activates and no compositor layer is allocated.
       return;
     }
 
@@ -129,22 +129,17 @@ export function useHeroIntroTimeline({
       },
     );
 
-    // Cursor-follow slideshow + subtitle reveal — fade in at 70% of
-    // the text timeline's total duration. Position is computed from
-    // the timeline's actual length at this point (authoritative), so
-    // any future tween-duration change keeps the 70% rule correct.
-    // The cursor-follow rAF loop writes transform/borderRadius on the
-    // frame; GSAP only writes opacity, so they don't conflict.
+    // Cursor-follow slideshow reveal — fades in at 70% of the text
+    // timeline's total duration. Position is computed from the
+    // timeline's actual length at this point (authoritative), so any
+    // future tween-duration change keeps the 70% rule correct. The
+    // cursor-follow rAF loop writes transform/borderRadius on the
+    // frame; GSAP only writes opacity here, so they don't conflict.
     const textDuration = tl.duration();
     tl.fromTo(
       frame,
       { opacity: 0 },
       { opacity: 1, duration: 3, ease: "power2.out" },
-      textDuration * 0.7,
-    ).fromTo(
-      subtitle,
-      { opacity: 0 },
-      { opacity: 1, duration: 1.2, ease: "power2.out" },
       textDuration * 0.7,
     );
 
@@ -152,5 +147,5 @@ export function useHeroIntroTimeline({
       tl.kill();
       section.classList.remove("is-intro-animating");
     };
-  }, [heroReady, sectionRef, line1Ref, line2Ref, subtitleRef, frameRef]);
+  }, [heroReady, sectionRef, line1Ref, line2Ref, frameRef]);
 }

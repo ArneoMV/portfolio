@@ -47,6 +47,16 @@
   --color-red-90: #580507;
   --color-red-100: #380203;
 
+  /* Purple — used by the Services "System" category tag. */
+  --color-purple-10: #f3f1ff;
+  --color-purple-20: #c8c3f9;
+  --color-purple-30: #a8a0f3;
+  --color-purple-50: #7e74ed;
+  --color-purple-70: #4f44d8;
+  --color-purple-80: #3128cd;
+  --color-purple-90: #1c09c7;
+  --color-purple-100: #0e0464;
+
   /* Orange */
   --color-orange-10: #fff8ed;
   --color-orange-20: #fdeed6;
@@ -143,4 +153,12 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-pill: 999px;
+
+  /* Layout chrome — single source of truth for the Header's outer
+     height so sections that need to clear it (Hero mobile, etc.)
+     don't have to hardcode the value. Derived from `.site-header-inner`:
+     32px padding-top + ~59px content (2 lines × 21px × 130% +
+     4px gap) + 32px padding-bottom ≈ 123px. Rounded to 124 for a
+     small safety buffer against subpixel rendering. */
+  --header-height: 124px;
 }

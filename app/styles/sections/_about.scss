@@ -64,10 +64,6 @@
   order: 2;
 }
 
-.about-title {
-  margin: 0;
-}
-
 /* Paragraphs — vertical stack with breathing room between each. */
 .about-text-body {
   display: flex;
@@ -96,6 +92,9 @@
 /* Mobile — stack text first, slideshow second. No follow-scroll
    animation runs on this breakpoint (gated in AboutSection.tsx). */
 @media (max-width: 767px) {
+  .about-section {
+    padding-bottom: var(--space-sm);
+  }
   .about-text-col {
     grid-column: 1 / -1;
     order: 1;
@@ -107,6 +106,6 @@
   }
 
   .insta-image {
-    height: 310px;
+    height: 420px;
   }
 }

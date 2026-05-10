@@ -28,6 +28,7 @@
   .faq-container {
     padding-left: 48px;
     padding-right: 48px;
+    
   }
 }
 
@@ -35,6 +36,12 @@
   .faq-container {
     padding-left: 16px;
     padding-right: 16px;
+    /* Owns the full Services → FAQ visual gap on mobile (64px).
+       `.svc-section { padding-bottom: 0 }` on mobile pulls Services'
+       trailing edge flush with Info, so the gap before FAQ's first
+       content equals this padding-top. Desktop keeps the larger
+       96px (`var(--space-4xl)`) padding-top from the rule above. */
+    padding-top: var(--space-3xl);
   }
 }
 
@@ -148,9 +155,13 @@
 
 .faq-answer {
   margin: 0;
-  /* Indent the answer so its left edge aligns with the question
-     text (trigger padding 24 + icon 18 + gap 16 = 58). */
-  padding: 0 24px 24px 58px;
+  /* Left padding matches the trigger's left padding so the answer's
+     left edge aligns with the question's flush-left edge (the icon
+     sits on the right end of the title row, so the answer no longer
+     needs to skip past it). Right padding leaves room before the
+     item's right border; bottom padding sets the visual spacing
+     between the last line of the answer and the bottom of the item. */
+  padding: 0 24px 24px 24px;
   font-family: var(--font-sans);
   font-weight: 500;
   font-size: 18px;
@@ -164,8 +175,9 @@
   }
 
   .faq-answer {
-    /* 20 + 18 + 16 = 54 to keep the same alignment pattern. */
-    padding: 0 20px 20px 54px;
+    /* Mobile trigger uses 20px horizontal padding — answer matches
+       so the left edges of question and answer line up. */
+    padding: 0 20px 20px 20px;
   }
 }
 
@@ -175,3 +187,8 @@
     transition: none;
   }
 }
+
+/* SectionHeader typography lives in the shared
+   `_section-header.scss` molecule stylesheet — no FAQ-scoped
+   overrides here. Wrapper bottom margin (8 / 24 / 48 across Small /
+   Medium / Large) is also defined globally on `.section-header`. */

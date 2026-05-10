@@ -1,3 +1,5 @@
+import SectionHeader from "@/app/components/molecules/section-header/SectionHeader";
+
 interface AboutTextProps {
   textRef: React.RefObject<HTMLDivElement | null>;
 }
@@ -11,6 +13,10 @@ const ABOUT_PARAGRAPHS = [
 /**
  * Text column for the About section. Title + three paragraphs.
  *
+ * The heading renders through the shared `<SectionHeader>` molecule,
+ * matching Services / FAQ / Work — typography and bottom margin are
+ * defined once in `app/styles/components/_section-header.scss`.
+ *
  * No word-slot infrastructure here anymore — the previous word-by-word
  * reveal scroll effect was replaced by a single translateY scrub on
  * the slideshow column (driven from AboutSection). The text now
@@ -19,15 +25,9 @@ const ABOUT_PARAGRAPHS = [
 export default function AboutText({ textRef }: AboutTextProps) {
   return (
     <div ref={textRef} className="about-text-col">
-      {/* Plain h2 inside a regular div — NOT a <header>, since the
-          global `header { position: absolute }` rule applies to every
-          <header> element on the page and would pull the title out
-          of flow. */}
-      <h2 className="title-h2 text-[var(--color-neutral-40)] about-title">
-        GET TO KNOW ME
-      </h2>
+      <SectionHeader title="Get to know me" />
 
-      <div className="about-text-body body-lg mt-[var(--space-md)] text-[var(--color-text-primary)]">
+      <div className="about-text-body body-lg text-[var(--color-text-primary)]">
         {ABOUT_PARAGRAPHS.map((paragraph, i) => (
           <p key={i} className="about-paragraph">
             {paragraph}

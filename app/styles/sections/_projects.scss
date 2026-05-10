@@ -25,7 +25,12 @@
   padding-top: var(--space-4xl);
   padding-bottom: var(--space-4xl);
   background: var(--color-background);
-  position: relative;
+  /* Sticks at viewport top while Work scrolls up over it, covered by
+     Work's z:2. Containing block is `.projects-work-reveal`; sticky
+     travel = Work's height. Applies on every breakpoint — desktop
+     and mobile share the same reveal mechanism. */
+  position: sticky;
+  top: 0;
   /* Lower than .work-section's z:2 so Work paints on top during the
      reveal scroll. */
   z-index: 1;
@@ -68,18 +73,6 @@
   right: max(0px, calc(50% - 550px));
 }
 
-/* Desktop+: Projects sticks at viewport top while Work scrolls up
-   over it, covering Projects via its higher z-index. Containing
-   block is .projects-work-reveal; sticky travel = Work's height.
-   Mobile keeps normal flow — short viewports don't have room for
-   the reveal to feel right and the user prefers stable stacking. */
-@media (min-width: 768px) {
-  .projects-section {
-    position: sticky;
-    top: 0;
-  }
-}
-
 /* Rails moved up to the parent .page-rail-group so they read as
    continuous across Hero + Projects. This container only handles
    content-width / centering — content spans edge-to-edge inside
@@ -108,15 +101,22 @@
   padding-right: 64px;
 }
 
+/* Typography unified with `.about-paragraph` (homepage body-paragraph
+   source of truth, inherits from `.body-lg`) and
+   `.section-header__subtitle`. Same `clamp()` font-size /
+   line-height / weight / colour across every breakpoint — no mobile
+   override needed. Layout properties (flex / max-width) stay
+   distinct per the spec's "preserve layout, unify typography"
+   guidance. */
 .projects-description {
   flex: 1 1 auto;
   max-width: 600px;
   margin: 0;
   font-family: var(--font-sans);
-  font-weight: 400;
-  font-size: clamp(20px, 2.3vw, 30px);
-  line-height: 1.35;
-  color: var(--color-neutral-100);
+  font-weight: 500;
+  font-size: clamp(24px, 2.5vw, 36px);
+  line-height: 115%;
+  color: var(--color-text-primary);
 }
 
 .projects-cta {
@@ -153,17 +153,11 @@
     padding-top: 0;
   }
 
-  /* Description — mobile typography per design: 21px / Medium / 130%
-     line-height, left-aligned. Source Sans 3 is the body font; the
-     base rule already pulls in `var(--font-sans)` and color
-     `var(--color-neutral-100)`, so this only overrides what differs
-     from desktop (size, weight, line-height, alignment). */
-  .projects-description {
-    font-size: 21px;
-    font-weight: 500;
-    line-height: 1.3;
-    text-align: left;
-  }
+  /* Description typography on mobile is owned by the base rule's
+     unified `clamp(24px, 2.5vw, 36px)` font-size + 115% line-height
+     + weight 500 (same spec as `.about-paragraph` and
+     `.section-header__subtitle`). No mobile override here — clamp
+     handles the small breakpoint by landing at 24px. */
 
   /* Inter-row spacing on mobile — 48px between intro→marquee and
      marquee→logos (vs. the desktop 64px). Tighter rhythm reads
@@ -361,84 +355,9 @@
   }
 }
 
-/* ================================
-   HERO → PROJECTS MOBILE REVEAL (≤ 767px)
-
-   Mobile-only parallax: as the user scrolls down from Hero, the
-   Projects section rises from the bottom of the viewport upward,
-   covering Hero. Once Projects is fully revealed, normal page
-   scrolling continues. CSS-only — no JS — using `position: sticky`
-   on Hero plus a negative margin on .projects-work-reveal:
-
-     1. The Hero-wrapping rail group (.page-rail-group:has(>
-        .hero-section)) is given min-height: 200vh on mobile, so
-        Hero's sticky containing block has 100vh of travel range
-        beyond Hero's own height.
-
-     2. .hero-section becomes `position: sticky; top: 0`. Hero stays
-        glued to the viewport top from scroll = 0 to scroll = 100vh,
-        then is released at the bottom of its containing block and
-        scrolls up with the page.
-
-     3. .projects-work-reveal gets `margin-top: -100vh` so Projects
-        starts at doc-y = 100vh (right at Hero's bottom) instead of
-        being pushed 100vh down by the rail group's extra height.
-        z-index: 10 on the wrapper keeps Projects painted above
-        Hero's z:2 while they overlap during the reveal.
-
-   Desktop is unchanged: the rail group's :has() selector only
-   applies its min-height inside this `(max-width: 767px)` query,
-   the sticky on Hero is gated to mobile, and .projects-work-reveal
-   keeps its natural top + auto z-index above 768.
-
-   Reduced motion: the override block reverts every property to its
-   stacked-flow equivalent so the user lands on a normal scrolling
-   page with no sticky pin and no negative margin.
-================================ */
-@media (max-width: 767px) {
-  /* :has() targets only the rail group that wraps Hero (the lower
-     content rail group, which wraps Services/FAQ/About/Footer, has
-     no .hero-section descendant and so is unaffected). */
-  .page-rail-group:has(> .hero-section) {
-    min-height: 200vh;
-    min-height: 200dvh;
-  }
-
-  .hero-section {
-    position: sticky;
-    top: 0;
-    /* Hero already carries z-[2] from the JSX className; that keeps
-       it above the rail group's dotted ::before/::after rails (z:1)
-       and below Projects's z:10 on the reveal wrapper. No z-index
-       override needed here. */
-  }
-
-  .projects-work-reveal {
-    /* Pull Projects back up by 100vh so it lands flush with Hero's
-       bottom instead of below the rail group's extended height. */
-    margin-top: -100vh;
-    margin-top: -100dvh;
-    position: relative;
-    z-index: 10;
-  }
-}
-
-@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
-  /* Reduced motion: reset to plain stacked flow. Hero is no longer
-     sticky, the rail group is its natural height, and Projects is
-     not pulled up — the user scrolls Hero off normally and Projects
-     follows below. */
-  .page-rail-group:has(> .hero-section) {
-    min-height: 0;
-  }
-
-  .hero-section {
-    position: relative;
-    top: auto;
-  }
-
-  .projects-work-reveal {
-    margin-top: 0;
-    z-index: auto;
-  }
-}
+/* Note: a prior mobile-only Hero → Projects reveal (Hero sticky,
+   rail-group min-height 200vh, .projects-work-reveal margin-top
+   -100vh) was removed when the desktop Projects → Work sticky was
+   extended to all breakpoints above. Mobile now mirrors desktop:
+   Hero scrolls off in normal flow, Projects sticks at top:0 while
+   Work scrolls up over it. */

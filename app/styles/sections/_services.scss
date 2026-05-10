@@ -1,12 +1,78 @@
 @use "../core/mixins" as mix;
 
 /* ================================
-   SERVICES SECTION (homepage redesign)
+   SERVICES SECTION (homepage)
 
-   Static UI illustration of the design + dev process. The diagram is
-   a position: relative wrapper with absolutely-placed cards on
-   desktop. Mobile resets to flow layout and hides the connectors.
+   The kanban diagram uses three layouts:
+
+     • Large (≥1024px) — two-column absolute layout. Left column
+       stacks Search → Discovery → How I work → Info. Right column
+       stacks Building → Ship & iterate (offset downward for visual
+       balance). One horizontal dotted connector links Discovery →
+       Building at the Strategy task level. All other connectors are
+       vertical dotted lines drawn behind the cards (z-index: 0 vs
+       cards' z-index: 2).
+     • Tablet (768–1023px) — same two-column shape with tighter
+       card widths and column X positions so the layout fits at
+       the 768px viewport floor.
+     • Mobile (≤767px) — single centered column with five identical
+       32px dotted connectors between every element.
+
+   Each phase carries its own colour palette via the `card-theme`
+   mixin below. Connectors share a base `.svc-connector` class that
+   draws a 1px / 4px dot / 8px gap dotted line via background-image
+   (linear-gradient), with separate vertical / horizontal orientation
+   modifiers and per-segment position modifiers.
+
+   The earlier scroll-pinned mobile stacked-card GSAP animation and
+   the `+ Add task` → TaskSidePanel trigger logic are both gone —
+   CTAs link to real destinations (Calendly, /work, Behance).
 ================================ */
+
+/* ── Phase theme mixin ──────────────────────────────────────── */
+
+/* Each phase card calls this mixin with its colour palette. The
+   mixin sets the card background, the phase title colour, the
+   status-pill background / foreground (the dot inherits the
+   foreground), and the CTA's background / text / dashed-border
+   colour. Phase cards have no border line — the pastel background
+   plus shadow define the card edge. Per-category tag chips
+   (Strategy, Direction, UI, System, Frontend, Polish) are NOT
+   themed via this mixin — they're independent `.svc-tag--{id}`
+   rules further down, each with its own pastel pair to read as
+   distinct chips inside the card. */
+@mixin card-theme(
+  $card-bg,
+  $title-color,
+  $status-bg,
+  $status-color,
+  $cta-bg,
+  $cta-color,
+  $cta-border
+) {
+  background: $card-bg;
+
+  .svc-column-title {
+    color: $title-color;
+  }
+
+  .svc-column-status {
+    background: $status-bg;
+    color: $status-color;
+  }
+
+  .svc-column-status-dot {
+    background: $status-color;
+  }
+
+  .svc-cta {
+    background: $cta-bg;
+    color: $cta-color;
+    border-color: $cta-border;
+  }
+}
+
+/* ── Section / container shell ──────────────────────────────── */
 
 .svc-section {
   background: var(--color-background);
@@ -14,7 +80,14 @@
 
 .svc-container {
   /* Rails moved up to the parent .page-rail-group so they read as
-     continuous across Services + FAQ + About. */
+     continuous across Services + FAQ + About.
+
+     No horizontal padding here on purpose — the kanban diagram
+     (`.svc-diagram`, sibling of `.svc-header-wrap`) absolute-
+     positions its cards at hardcoded `left: …px` coords relative
+     to itself, and any container-level inset would visibly shift
+     the entire kanban. Heading inset is handled by
+     `.svc-header-wrap` below. */
   padding-top: var(--space-2xl);
   width: 100%;
   max-width: 1100px;
@@ -22,42 +95,73 @@
   margin-right: auto;
 }
 
-/* Title block + title + subtitle now live in
-   `app/styles/components/_section-header.scss` and render through
-   the shared <SectionHeader> molecule. The `.svc-title-block`
-   classes were byte-identical to FAQ's, so they were extracted
-   into one shared definition. */
+/* SectionHeader inset — matches the standard `.faq-container` /
+   `.about-container` 64 / 48 / 16 horizontal padding so the
+   Services heading visually aligns with FAQ's "Additional answers"
+   and About's "Get to know me" on every breakpoint. Wrapping just
+   the heading (not the whole container) keeps the kanban diagram's
+   absolute-positioned card coords intact. */
+.svc-header-wrap {
+  padding-left: 64px;
+  padding-right: 64px;
+}
+
+@media (max-width: 1439px) and (min-width: 768px) {
+  .svc-header-wrap {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .svc-header-wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
 
 /* ── Diagram canvas ─────────────────────────────────────────── */
 
 .svc-diagram {
   position: relative;
   width: 100%;
-  /* min-height reserves the canvas the absolutely-positioned children
-     need on desktop. Tallest children: HIW (top 478, height ≈ 250 →
-     bottom ≈ 728), Info (top 620, height ≈ 90 → bottom ≈ 710), Ship
-     (top 288, height ≈ 336 → bottom ≈ 624). 760px clears them all. */
-  min-height: 760px;
+  /* Reserves the canvas the absolutely-positioned children need on
+     desktop. Tallest child in the new two-column layout is Info
+     (left column, top 855, estimated height ≈ 112 → bottom ≈ 967).
+     1000px clears it with comfortable buffer for slight content
+     reflow (e.g. task titles wrapping to two lines). */
+  min-height: 1000px;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1023px) and (min-width: 768px) {
   .svc-diagram {
-    min-height: 760px;
+    min-height: 1000px;
   }
 }
 
 @media (max-width: 767px) {
   .svc-diagram {
-    /* Switch to vertical flow on small screens. */
+    /* Switch to vertical flow on small screens. `gap: 0` because the
+       five identical 32px `.svc-mobile-connector` segments provide
+       the explicit visual spacing between Search → Discovery →
+       Building → Ship → How-I-work → Info; an additional flex gap
+       on top would loosen the rhythm. */
     min-height: auto;
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: 0;
   }
 }
 
-/* ── Connector lines ────────────────────────────────────────── */
+/* ── Desktop / tablet connector lines ───────────────────────── */
 
+/* `.svc-connectors` is a non-interactive overlay that spans the full
+   diagram. Its children (`.svc-connector--*`) are absolutely
+   positioned segments. `z-index: 0` sits behind the phase cards
+   (`.svc-column { z-index: 2 }`) so any visual overlap is hidden
+   under the card; pointer-events disabled because connectors are
+   decorative. Hidden on mobile (≤767px) — the `.svc-mobile-connector`
+   span siblings handle that layout. */
 .svc-connectors {
   position: absolute;
   inset: 0;
@@ -68,57 +172,135 @@
 .svc-connector {
   position: absolute;
   background: transparent;
+  pointer-events: none;
 }
 
-/* Coordinates derived from the spec image (Image 1) — container is
-   1100px wide with dotted rails at x=0 and x=1100:
-     Search:    top:0,   left:200, w:340   → bottom 48, center.x 370
-     Discovery: top:118, left:240, w:260   → top edge 118, right 500
-     Building:  top:0,   left:596, w:280   → bottom 240, center.x 736
-     Ship:      top:288, left:624, w:280                center.x 764
-*/
+/* Vertical segments — 1px wide, dotted via a vertical
+   `linear-gradient`: 4px dot + 8px gap, repeating every 12px in
+   neutral-90. Same pattern as the mobile connector for visual
+   continuity. Individual segments set `top` / `left` / `height`. */
+.svc-connector--search-discovery,
+.svc-connector--discovery-howiwork,
+.svc-connector--howiwork-info,
+.svc-connector--building-ship {
+  width: 1px;
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-neutral-90) 0,
+    var(--color-neutral-90) 4px,
+    transparent 4px,
+    transparent 12px
+  );
+  background-size: 1px 12px;
+  background-repeat: repeat-y;
+}
 
-/* 1. Search → Discovery (vertical, centered on Search.center.x). */
+/* Horizontal segment — same 4/8 dotted pattern rotated to a
+   horizontal repeat. 1px tall, width spans the gap between
+   Discovery's right edge and Building's left edge. */
+.svc-connector--discovery-building {
+  height: 1px;
+  background-image: linear-gradient(
+    to right,
+    var(--color-neutral-90) 0,
+    var(--color-neutral-90) 4px,
+    transparent 4px,
+    transparent 12px
+  );
+  background-size: 12px 1px;
+  background-repeat: repeat-x;
+}
+
+/* Large (≥1024px) — positions derived from the two-column layout:
+
+     LEFT column (X = 140, phase card center.x = 330)
+       Search       top:0     bottom ≈ 48
+       (connector Search→Discovery, height 120, top 48 → 168)
+       Discovery    top:170   bottom ≈ 485
+       (connector Discovery→HIW, height 30, top 485 → 515)
+       How I work   top:515   bottom ≈ 775
+       (connector HIW→Info, height 80, top 775 → 855)
+       Info         top:855   bottom ≈ 965
+
+     RIGHT column (X = 610, phase card center.x = 800)
+       Building     top:70    bottom ≈ 385
+       (connector Building→Ship, height 140, top 385 → 525)
+       Ship         top:525   bottom ≈ 840
+
+   Horizontal Discovery→Building connector sits at Discovery_top + 100
+   = 270, level with the Strategy task card area inside Discovery.
+
+   Vertical connector `left` values are column_center - 0.5 (rounded
+   to nearest integer) so the 1px line visually centers on the column.
+   Phase card heights are content-driven; Y values are estimates that
+   tolerate ±15px height drift without breaking the visual rhythm. */
+
 .svc-connector--search-discovery {
   top: 48px;
-  left: 370px;
-  width: 1px;
-  height: 70px;
-  border-left: 1px dashed var(--color-neutral-50);
+  left: 329px;
+  height: 122px;
 }
 
-/* 2. Discovery → Building (horizontal, lying inside both columns'
-   vertical span — Discovery 118-454, Building 0-240, overlap 118-240). */
 .svc-connector--discovery-building {
-  top: 179px;
-  left: 500px;
-  width: 96px;
-  height: 1px;
-  border-top: 1px dashed var(--color-neutral-50);
+  top: 270px;
+  left: 520px;
+  width: 90px;
 }
 
-/* 3. Building → Ship (vertical, between the two columns' centers —
-   Building.center.x 736, Ship.center.x 764, average 750). */
+.svc-connector--discovery-howiwork {
+  top: 485px;
+  left: 329px;
+  height: 30px;
+}
+
+.svc-connector--howiwork-info {
+  top: 775px;
+  left: 329px;
+  height: 80px;
+}
+
 .svc-connector--building-ship {
-  top: 240px;
-  left: 750px;
-  width: 1px;
-  height: 48px;
-  border-left: 1px dashed var(--color-neutral-50);
+  top: 385px;
+  left: 799px;
+  height: 140px;
 }
 
-@media (max-width: 1023px) {
-  /* Tablet — proportional shifts. Cards re-anchored further down in
-     this file; connectors follow the same new positions. */
+/* Tablet (768–1023px) — same two-column shape, tighter coords:
+
+     LEFT column (X = 34, phase card center.x = 184)
+     RIGHT column (X = 434, phase card center.x = 584)
+     Card widths: 300 (phase), 260 (Search), 300 (HIW), 300 (Info)
+     Column gap: 100px (Discovery right 334 → Building left 434)
+
+   Y values match Large since vertical connector heights stay the
+   same per spec. At wider tablet widths (1024-... wait, this
+   carve-out only runs to 1023). Container at 768 viewport = 768;
+   layout right edge = 734, fits with 34px buffer. */
+@media (max-width: 1023px) and (min-width: 768px) {
   .svc-connector--search-discovery {
-    left: 320px;
+    top: 48px;
+    left: 183px;
+    height: 122px;
   }
   .svc-connector--discovery-building {
-    left: 440px;
-    width: 80px;
+    top: 270px;
+    left: 334px;
+    width: 100px;
+  }
+  .svc-connector--discovery-howiwork {
+    top: 485px;
+    left: 183px;
+    height: 30px;
+  }
+  .svc-connector--howiwork-info {
+    top: 775px;
+    left: 183px;
+    height: 80px;
   }
   .svc-connector--building-ship {
-    left: 660px;
+    top: 385px;
+    left: 583px;
+    height: 140px;
   }
 }
 
@@ -130,13 +312,10 @@
 
 /* ── Mobile-only dotted connector segments ──────────────────── */
 
-/* Three discrete 24px dotted lines between (1) Search → Discovery /
-   cards-stack, (2) Ship → How-I-work, (3) How-I-work → Info. They
-   replace the previous single continuous `.svc-diagram::before`
-   spine so each visible segment is an identical, well-defined unit
-   (vs. relying on card backgrounds to mask one long line).
-   Hidden by default — flipped on inside the mobile media query
-   below (applies to both reduced-motion and animation paths). */
+/* Five 32px dotted vertical lines on mobile, between Search →
+   Discovery, Discovery → Building, Building → Ship, Ship →
+   How-I-work, How-I-work → Info. Hidden by default — flipped on
+   inside the mobile media query below. */
 .svc-mobile-connector {
   display: none;
 }
@@ -145,11 +324,9 @@
 
 .svc-search {
   position: absolute;
-  /* Spec: 200px from left rail, top edge of kanban (top: 0). Width
-     340px places the right edge at 540 (54px before Building.left). */
   top: 0;
-  left: 200px;
-  width: 340px;
+  left: 165px;
+  width: 330px;
   z-index: 2;
   display: inline-flex;
   align-items: center;
@@ -174,165 +351,115 @@
   opacity: 0.85;
 }
 
-/* ── Cursor tags ────────────────────────────────────────────── */
+/* ── Phase cards (Discovery / Building / Ship) ──────────────── */
 
-.svc-cursor {
-  position: absolute;
-  z-index: 3;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-}
-
-.svc-cursor-icon {
-  width: 18px;
-  height: 18px;
-}
-
-.svc-cursor-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--color-neutral-10);
-  margin-left: 12px;
-}
-
-.svc-cursor-pill--client {
-  background: var(--color-green-70);
-}
-
-.svc-cursor-pill--designer {
-  background: var(--color-primary-80);
-}
-
-.svc-cursor--client {
-  /* Floats above the Search pill so the cursor reads as the client
-     "interacting with" the search field. The cursor element is ~42px
-     tall (icon + 2px gap + pill); -44 puts the bottom of the pill
-     just above Search.top (0) with a small breathing gap. */
-  top: 30px;
-  left: 430px;
-}
-
-.svc-cursor--designer {
-  /* Floats above Building's "+ Add task" tile. The Building column
-     starts at top:0 and the Add-task button sits at the bottom of
-     the column (~y=210). Placing the cursor at 168 puts its pill
-     just above the button (≈210 - 42 = 168), pointing down at it. */
-  top: 221px;
-  left: 798px;
-}
-
-/* ── Columns ────────────────────────────────────────────────── */
-
+/* Base shape shared by all three. Theme colours arrive via the
+   `card-theme` mixin in the per-phase rules below — this base
+   sets only layout, padding, gap, radius, and the default border
+   line-width. Desktop / tablet keep the absolute kanban coords;
+   mobile resets to position: relative + safe-area width below. */
 .svc-column {
   position: absolute;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  padding: var(--space-md);
-  background: var(--color-neutral-10);
-  border: 1px solid var(--color-neutral-20);
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  box-sizing: border-box;
 }
 
 .svc-column--discovery {
-  /* Spec: Search.bottom (48) + 70px gap → Discovery.top = 118.
-     left/width chosen so Discovery.center.x equals Search.center.x
-     (370), so the vertical Search→Discovery connector reads centered. */
-  top: 118px;
-  left: 240px;
-  width: 260px;
+  top: 170px;
+  left: 140px;
+  width: 380px;
+
+  @include card-theme(
+    $card-bg: var(--color-primary-10),
+    $title-color: var(--color-primary-90),
+    $status-bg: var(--color-primary-60),
+    $status-color: var(--color-neutral-10),
+    $cta-bg: transparent,
+    $cta-color: var(--color-primary-90),
+    $cta-border: var(--color-primary-60)
+  );
 }
 
 .svc-column--building {
-  /* Spec: top row aligned with Search (top: 0). left+width chosen so
-     right edge sits 224px before the right rail (1100−876=224), and
-     Discovery.right→Building.left ≈ 96 (close to spec 98). */
-  top: 0;
-  left: 596px;
-  width: 280px;
+  top: 70px;
+  left: 610px;
+  width: 380px;
+
+  @include card-theme(
+    $card-bg: var(--color-green-10),
+    $title-color: var(--color-green-90),
+    $status-bg: var(--color-green-70),
+    $status-color: var(--color-neutral-10),
+    $cta-bg: transparent,
+    $cta-color: var(--color-green-90),
+    $cta-border: var(--color-green-70)
+  );
 }
 
 .svc-column--ship {
-  /* Spec: Building.bottom (240) + 48px gap → Ship.top = 288.
-     Ship.right at 904 puts it 196px before the right rail (matches
-     spec). Ship is offset 28px right of Building per the spec. */
-  top: 288px;
-  left: 624px;
-  width: 280px;
+  top: 525px;
+  left: 610px;
+  width: 380px;
+
+  @include card-theme(
+    $card-bg: var(--color-orange-10),
+    $title-color: var(--color-orange-90),
+    $status-bg: var(--color-orange-70),
+    $status-color: var(--color-neutral-10),
+    $cta-bg: transparent,
+    $cta-color: var(--color-orange-90),
+    $cta-border: var(--color-orange-70)
+  );
 }
 
-.svc-column--emphasized {
-  /* Slightly larger in width + a stronger shadow so it reads as the
-     focal point. Avoids transform: scale to keep the inner cards
-     legible (no anti-aliased pixel scaling). */
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+/* Title + status row */
+
+.svc-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  width: 100%;
 }
 
 .svc-column-title {
   margin: 0;
   font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 26px;
+  font-weight: 700;
+  font-size: 24px;
   line-height: 1.2;
-  color: var(--color-neutral-100);
+  /* Colour set by the per-phase `card-theme` mixin. */
 }
 
-.svc-column-chip {
+.svc-column-status {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 10px 4px 8px;
+  gap: 6px;
+  padding: 4px 10px;
+  border: none;
   border-radius: 999px;
   font-family: var(--font-sans);
   font-weight: 500;
   font-size: 13px;
-  color: var(--color-neutral-90);
-  align-self: flex-start;
+  line-height: 1;
+  flex: 0 0 auto;
+  /* Background + foreground set by the per-phase `card-theme`
+     mixin. The dot inherits the foreground colour. */
 }
 
-.svc-column-chip-dot {
+.svc-column-status-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   flex: 0 0 auto;
 }
 
-.svc-column-chip-count {
-  margin-left: 4px;
-  color: var(--color-neutral-80);
-}
-
-.svc-column-chip--neutral {
-  background: var(--color-neutral-20);
-}
-.svc-column-chip--neutral .svc-column-chip-dot {
-  background: var(--color-neutral-70);
-}
-
-.svc-column-chip--primary {
-  background: var(--color-primary-10);
-}
-.svc-column-chip--primary .svc-column-chip-dot {
-  background: var(--color-primary-80);
-}
-
-.svc-column-chip--green {
-  background: var(--color-green-10);
-}
-.svc-column-chip--green .svc-column-chip-dot {
-  background: var(--color-green-70);
-}
-
-/* ── Column cards ───────────────────────────────────────────── */
+/* ── Task cards (inside each phase) ─────────────────────────── */
 
 .svc-column-cards {
   list-style: none;
@@ -340,24 +467,17 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 12px;
 }
 
 .svc-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
+  gap: 12px;
+  padding: 16px;
   background: var(--color-neutral-10);
   border: 1px solid var(--color-neutral-20);
   border-radius: 8px;
-}
-
-.svc-card-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-sm);
 }
 
 .svc-card-title {
@@ -366,114 +486,148 @@
   font-weight: 500;
   font-size: 16px;
   line-height: 1.35;
-  color: var(--color-neutral-80);
+  color: var(--color-neutral-100);
 }
 
-.svc-card-more {
-  flex: 0 0 auto;
-  color: var(--color-neutral-60);
-  font-size: 18px;
-  line-height: 1;
-}
+/* ── Category tag chips ─────────────────────────────────────── */
 
-/* ── Priority chips ─────────────────────────────────────────── */
+/* Independent pastel pairs per category — not themed via the
+   phase mixin. Each tag is a soft background colour + readable
+   foreground, sized as a small inline pill below the task title. */
 
-.svc-priority {
+.svc-tag {
   align-self: flex-start;
-  padding: 2px 10px;
+  padding: 4px 10px;
+  border: none;
   border-radius: 4px;
   font-family: var(--font-sans);
   font-weight: 500;
   font-size: 14px;
+  line-height: 1.2;
 }
 
-.svc-priority--low {
-  background: var(--color-neutral-20);
-  color: var(--color-neutral-90);
+.svc-tag--strategy {
+  background: var(--color-red-10);
+  color: var(--color-red-80);
 }
 
-.svc-priority--medium {
+.svc-tag--direction {
   background: var(--color-orange-20);
   color: var(--color-orange-90);
 }
 
-.svc-priority--high {
+.svc-tag--ui {
+  background: var(--color-green-20);
+  color: var(--color-green-90);
+}
+
+.svc-tag--system {
+  background: var(--color-purple-20);
+  color: var(--color-purple-90);
+}
+
+.svc-tag--frontend {
   background: var(--color-red-20);
   color: var(--color-red-90);
 }
 
-/* ── Add-task tile ──────────────────────────────────────────── */
+.svc-tag--polish {
+  background: var(--color-primary-20);
+  color: var(--color-primary-90);
+}
 
-.svc-add-task {
+/* ── Phase CTA button ───────────────────────────────────────── */
+
+/* Rendered as `<a>` (external) or Next.js `<Link>` (internal); the
+   shared `.svc-cta` styles are identical regardless of underlying
+   element so external and internal CTAs are visually
+   indistinguishable. Dashed border + label + "+" icon on the
+   right per design reference. Phase colour comes from the
+   `card-theme` mixin. */
+
+.svc-cta {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: var(--space-sm);
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px dashed transparent;
   border-radius: 8px;
-  border: 1px dashed var(--color-primary-30);
-  background: transparent;
   font-family: var(--font-sans);
   font-weight: 600;
   font-size: 14px;
-  color: var(--color-primary-80);
+  line-height: 1;
   width: 100%;
-}
-
-.svc-add-task--active {
+  text-decoration: none;
   cursor: pointer;
   transition:
     background-color 150ms ease,
     border-color 150ms ease;
 }
 
-.svc-add-task--active:hover {
-  background: var(--color-primary-10);
-  border-color: var(--color-primary-50);
+.svc-cta:hover {
+  /* Subtle darken on hover — uses currentColor mixed with a sliver
+     of opacity through `color-mix` to avoid hardcoding a hover
+     value per phase. Falls back to the base colour on browsers
+     without `color-mix`. */
+  background: color-mix(in srgb, currentColor 8%, transparent);
 }
 
-.svc-add-task--active:focus-visible {
-  outline: 2px solid var(--color-primary-60);
+.svc-cta:focus-visible {
+  outline: 2px solid currentColor;
   outline-offset: 2px;
 }
 
-/* Neutral state — used by Discovery and Ship & iterate before they
-   are clicked. Same dashed-tile shape as the active state, just
-   muted colours. The button is fully clickable and keyboard-focusable
-   in this state — no `pointer-events: none`. Once clicked, the
-   parent flips the class to `svc-add-task--active` (blue). */
-.svc-add-task--neutral {
-  cursor: pointer;
-  border-color: var(--color-neutral-30);
-  color: var(--color-neutral-60);
-  opacity: 0.6;
-  transition:
-    background-color 150ms ease,
-    border-color 150ms ease,
-    opacity 150ms ease;
+.svc-cta-icon {
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 600;
 }
 
-.svc-add-task--neutral:hover {
-  opacity: 0.85;
-  border-color: var(--color-neutral-50);
+/* ── Client cursor badge on Discovery card ──────────────────── */
+
+/* Anchored to Discovery's bottom-right corner, overlapping the
+   border by 12px outward. Discovery is the positioned ancestor
+   (`.svc-column { position: absolute }` on desktop, overridden to
+   `position: relative` on mobile via the bulk reset below — either
+   way it's a valid containing block for absolute children). */
+.svc-column-client {
+  position: absolute;
+  bottom: -12px;
+  right: -12px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
 }
 
-.svc-add-task--neutral:focus-visible {
-  outline: 2px solid var(--color-primary-60);
-  outline-offset: 2px;
-  opacity: 1;
+.svc-column-client-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.svc-column-client-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--color-green-70);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-neutral-10);
 }
 
 /* ── How-I-work pseudo-dropdown ─────────────────────────────── */
 
 .svc-howiwork {
   position: absolute;
-  /* Spec: 120px from left rail to HIW.left edge. Sits below Discovery
-     (Discovery.bottom ≈ 454) with a small gap. */
-  top: 440px;
-  left: 120px;
+  top: 515px;
+  left: 150px;
   z-index: 2;
-  width: 260px;
+  width: 360px;
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
@@ -492,7 +646,6 @@
   font-size: 18px;
   color: var(--color-neutral-100);
   width: 160px;
-  /* Static — visually a dropdown, not interactive. */
   cursor: default;
 }
 
@@ -533,16 +686,14 @@
 
 .svc-info {
   position: absolute;
-  /* Spec: Info.right edge sits 42px before the right rail. With
-     width 400, left=658 → right=1058 → gap to right rail = 42. */
-  top: 580px;
-  left: 700px;
+  top: 855px;
+  left: 140px;
   z-index: 2;
   display: flex;
   align-items: flex-start;
   gap: var(--space-sm);
   padding: var(--space-md);
-  width: 400px;
+  width: 380px;
   background: var(--color-neutral-10);
   border: 1px solid var(--color-neutral-20);
   border-radius: 8px;
@@ -566,83 +717,73 @@
   color: var(--color-neutral-90);
 }
 
-/* ── Tablet — narrower diagram, same vertical layout ────────── */
+/* ── Tablet (768–1023px) — same two-column shape, tighter coords
 
-@media (max-width: 1023px) {
-  /* Tablet: shift everything left to fit a ~960px effective canvas
-     while preserving the spec's relative layout. */
+   Left column (X = 34): Search 260 / Discovery 300 / How I work 300
+   / Info 300. Search is left-offset (54) so it visually centers on
+   Discovery's column center (184). Right column (X = 434): Building
+   and Ship at 300 wide. Gap between columns is 100px. Layout right
+   edge sits at 734, leaving 34px buffer at the 768px viewport floor.
+   Y values match Large because vertical connector heights stay the
+   same per spec. */
+
+@media (max-width: 1023px) and (min-width: 768px) {
   .svc-search {
-    left: 160px;
-    width: 280px;
-  }
-  .svc-cursor--client {
-    left: 400px;
+    left: 54px;
+    width: 260px;
   }
   .svc-column--discovery {
-    left: 200px;
-    width: 240px;
+    left: 34px;
+    width: 300px;
   }
   .svc-column--building {
-    left: 500px;
-    width: 260px;
-  }
-  .svc-cursor--designer {
-    left: 660px;
+    left: 434px;
+    width: 300px;
   }
   .svc-column--ship {
-    left: 528px;
-    width: 260px;
+    left: 434px;
+    width: 300px;
   }
   .svc-howiwork {
-    left: 80px;
-    width: 240px;
+    left: 34px;
+    width: 300px;
   }
   .svc-info {
-    left: 540px;
-    width: 360px;
+    left: 34px;
+    width: 300px;
   }
 }
 
-/* ── Mobile — vertical stack with three discrete dotted connectors ──
-   Cards stack in document order (Search → Client cursor →
-   `.svc-mobile-connector` → cards-stack → `.svc-mobile-connector` →
-   How-I-work → `.svc-mobile-connector` → Info). Each connector is a
-   24px / 1px / neutral-90 segment painted by a `.svc-mobile-connector`
-   span (rules above this media block); they sit between the major
-   blocks rather than running through them, so card backgrounds no
-   longer need to mask any line. */
+/* ── Mobile — vertical stack with five discrete dotted connectors
+   Cards stack in document order (Search → Discovery → Building →
+   Ship → How-I-work → Info). Each connector is a 1px / 32px /
+   neutral-90 segment with 4px dash + 8px gap. Cards stop using the
+   desktop absolute positioning and become flex-flow siblings; the
+   per-card `width: calc(100vw - 32px); max-width: 360px;
+   margin-inline: auto;` rule reads as one centered 16px safe-area
+   column on every mobile viewport size.
+
+   No GSAP scroll-pin animation — that system was removed alongside
+   the TaskSidePanel CTA repointing. */
 
 @media (max-width: 767px) {
   .svc-section {
-    /* 48px from the top edge of the section to the title is provided
-       by `.svc-container { padding-top: var(--space-2xl) }` (48px)
-       alone — no extra section-level top padding on mobile. */
     padding-top: 0;
-    /* Toolbar clearance — the global BottomToolbar is `position: fixed`
-       at the viewport bottom (~120px including its --space-lg offset),
-       so the section needs enough trailing padding that the Info card
-       can scroll past the toolbar before FAQ enters. */
-    padding-bottom: var(--space-5xl);
+    /* Bottom padding 0 — the Services → FAQ visual gap is owned by
+       `.faq-container { padding-top: var(--space-3xl) }` mobile. */
+    padding-bottom: 0;
   }
 
-  /* Mobile-only override of the shared SectionHeader's bottom margin —
-     scoped to .svc-section so FAQ's SectionHeader is unaffected. */
-  .svc-section .section-header {
-    margin-bottom: 32px;
-  }
-
-  /* Mobile dotted connector — three identical 24px / 1px segments
-     painted by `.svc-mobile-connector` spans rendered between Search
-     → cards-stack, Ship → How-I-work, and How-I-work → Info. The
-     gradient repeats every 12px (4px dash + 8px gap) so the 24px
-     line shows two complete dash cycles. `align-self: center` keeps
-     each segment horizontally centered inside the .svc-diagram flex
-     column, matching the cards-stack and Search pill above/below. */
+  /* Mobile dotted connectors — five identical 1px / 32px /
+     neutral-90 vertical segments. The gradient repeats every 12px
+     (4px dash + 8px gap), so a 32px segment shows ~2.5 dash cycles.
+     `align-self: center` keeps every segment horizontally centered
+     inside the `.svc-diagram` flex column. */
   .svc-mobile-connector {
     display: block;
     align-self: center;
     width: 1px;
-    height: 24px;
+    height: 32px;
     background-image: linear-gradient(
       to bottom,
       var(--color-neutral-90) 0,
@@ -655,178 +796,25 @@
     pointer-events: none;
   }
 
-  .svc-title-block {
-    padding-left: var(--space-md);
-    padding-right: var(--space-md);
-  }
-
-  /* Reset all absolutely-positioned blocks back to flow layout and
-     let the .svc-diagram flex column stack them in order.
-     position: relative (not static) so the cards' z-index: 2 stays
-     effective (was originally needed when a single `.svc-diagram::before`
-     spine ran behind the column; the discrete `.svc-mobile-connector`
-     spans now sit between siblings, but keeping `relative` is the
-     least invasive way to leave the existing stacking context alone).
-
-     `.svc-cards-stack .svc-column` is overridden in the no-preference
-     media query below for the animated stacking layout — this rule
-     is the reduced-motion fallback (cards stay in normal flow). */
+  /* Bulk reset — every major mobile element shares the same
+     centered safe-area width. Each element is at most 360px wide
+     and never wider than the viewport minus 32px (16px gutter on
+     each side via `margin-inline: auto`). `box-sizing: border-box`
+     keeps per-element padding inside that 360px budget. */
   .svc-search,
   .svc-column,
   .svc-howiwork,
-  .svc-info,
-  .svc-cursor {
+  .svc-info {
     position: relative;
     top: auto;
     left: auto;
-    width: auto;
-    max-width: 100%;
-    margin-left: var(--space-md);
-    margin-right: var(--space-md);
-  }
-
-  .svc-search {
-    align-self: center;
-  }
-
-  .svc-cursor {
-    margin-left: var(--space-2xl);
-  }
-
-  /* Client cursor — center-aligned with a slight rightward shift so
-     the arrow/pill reads as pointing at the search bar's right end
-     (where the search icon sits) instead of floating in the
-     viewport's left gutter. Overrides the generic
-     `.svc-cursor { margin-left: var(--space-2xl) }` rule above. */
-  .svc-cursor--client {
-    align-self: center;
-    margin-left: 0;
-    margin-right: 0;
-    transform: translateX(56px);
-  }
-
-  /* Designer cursor is hidden on mobile per the redesigned mobile
-     composition — only the Client cursor near Search remains. */
-  .svc-cursor--designer {
-    display: none;
-  }
-
-  .svc-column {
-    width: auto;
+    width: calc(100vw - 32px);
+    max-width: 360px;
+    margin-inline: auto;
+    box-sizing: border-box;
   }
 
   .svc-howiwork-trigger {
-    width: auto;
-  }
-
-  .svc-info {
-    width: auto;
-  }
-
-  /* Cards-stack wrapper — base mobile rule (used by the reduced-
-     motion fallback). Stacks Discovery, Building, Designer cursor,
-     and the Ship-group in normal block order. The animation path
-     below replaces this layout. */
-  .svc-cards-stack {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
     width: 100%;
-  }
-
-}
-
-/* Mobile + no-reduced-motion — the scroll-driven stacked-card
-   animation. The pinned element is the WHOLE `.svc-section`, not
-   any inner wrapper. With the section as the pin target, title +
-   subtitle + search + cursor + the cards stack stay together as
-   one fixed unit while the page scroll drives the inner card
-   timeline. How-I-work and Info live OUTSIDE the cards-stack as
-   later siblings of `.svc-diagram` and become visible via NORMAL
-   page scroll AFTER the pin releases — they never animate in with
-   Ship and never need a final lift over the stack to appear.
-
-   Card sequencing inside the stack:
-     - Discovery / Building / Ship: absolutely positioned at
-       staggered tops (0 / 60 / 120) so each card's title peek sits
-       above the one in front.
-     - Ship comes to rest at its abs top:120 in Stage 2 and stays
-       there. There is no Stage 3 lift — Ship would otherwise drift
-       up over the entire stack and clip its own content.
-
-   JS in ServicesSection.tsx animates Building / Ship
-   `y: stackHeight → 0` (so off-screen cards stay clipped by
-   `overflow: hidden` on the stack during their initial state) and
-   tweens widths (front 360 → mid 340 → back 320). The matching
-   gsap.matchMedia query uses the same combined query so the CSS
-   layout and the JS animation engage/disengage together. */
-@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
-  /* Section overflow: hidden clips Building / Ship while they're
-     translated `y: stackHeight` (initial off-screen state below the
-     stack box). Section `padding-top: 0` is inherited from the base
-     mobile rule above — the container's 48px padding-top is the
-     sole contributor to the title's distance from the section's top
-     edge on mobile, per the spec. */
-  .svc-section {
-    overflow: hidden;
-  }
-
-  .svc-cards-stack {
-    /* Resets the flex layout from the base mobile rule so the
-       absolute children inside drive layout. Height fixed at 560px
-       — large enough to hold the tallest card (Discovery / Ship at
-       ~440 plus their top offset 0 / 120) at their final stacked
-       positions without clipping content, and small enough that
-       the stack doesn't leave huge blank space below Ship's
-       Add-task button. `overflow: hidden` clips Building / Ship
-       during their off-screen state (translated `y: stackHeight`
-       below the stack box) so they don't leak below the section
-       before they rise. */
-    display: block;
-    position: relative;
-    height: 560px;
-    overflow: hidden;
-    width: 100%;
-  }
-
-  /* All three columns inside the stack — absolutely positioned so
-     GSAP can control their entrance translate and width tween
-     without fighting block flow. `left: 0; right: 0; margin-inline:
-     auto` centers each card against its current width (widths
-     360/340/320 stay center-justified without any transform). */
-  .svc-cards-stack .svc-column--discovery,
-  .svc-cards-stack .svc-column--building,
-  .svc-cards-stack .svc-column--ship {
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin-inline: auto;
-    /* CSS fallback width — the GSAP `set` overrides this with the
-       resolved pixel value at mount so the width tween targets are
-       numeric. */
-    width: min(360px, calc(100vw - 32px));
-  }
-
-  .svc-cards-stack .svc-column--discovery {
-    top: 0;
-    z-index: 1;
-  }
-
-  .svc-cards-stack .svc-column--building {
-    top: 60px;
-    z-index: 2;
-  }
-
-  .svc-cards-stack .svc-column--ship {
-    top: 120px;
-    z-index: 3;
-  }
-
-  /* Designer cursor inside the stack — hidden on mobile already via
-     .svc-cursor--designer { display: none } above; redeclared here
-     for safety so it never grabs an absolute slot inside the
-     stack's positioning context. */
-  .svc-cards-stack .svc-cursor--designer {
-    display: none;
   }
 }

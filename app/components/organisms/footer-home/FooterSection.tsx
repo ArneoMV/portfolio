@@ -6,6 +6,13 @@ import Link from "next/link";
 // dividers that match the vertical rail style (4px dash, 8px gap,
 // neutral-80). The copyright row below has no dividers — its top
 // edge is the bottom edge of the links block.
+//
+// On mobile (≤767px) the three columns collapse to three centered
+// stacked sections (Work/Lab/Contact, Store/Dribbble/Linkedin,
+// Privacy policy) where each link is a 48px-tall full-width tap
+// target. The copyright row becomes a single horizontal flex row
+// with copyright left and "Zagreb, Croatia" right. See _footer.scss
+// for the mobile carve-out.
 
 const LINK_GROUPS: { href: string; label: string }[][] = [
   [
@@ -18,10 +25,7 @@ const LINK_GROUPS: { href: string; label: string }[][] = [
     { href: "#", label: "Dribbble" },
     { href: "#", label: "Linkedin" },
   ],
-  [
-    { href: "#", label: "1-on-1 Coaching" },
-    { href: "#", label: "Privacy policy" },
-  ],
+  [{ href: "#", label: "Privacy policy" }],
 ];
 
 export default function FooterSection() {
@@ -51,7 +55,6 @@ export default function FooterSection() {
           <p className="footer-meta-item footer-meta-item--left">
             © 2026 Arneo All rights reserved.
           </p>
-          <p className="footer-meta-item footer-meta-item--center">Arneo</p>
           <p className="footer-meta-item footer-meta-item--right">
             Zagreb, Croatia
           </p>

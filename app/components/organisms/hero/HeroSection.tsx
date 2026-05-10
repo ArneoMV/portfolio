@@ -18,7 +18,6 @@ export default function HeroSection() {
   const frameRef = useRef<HTMLDivElement>(null);
   const line1Ref = useRef<HTMLSpanElement>(null);
   const line2Ref = useRef<HTMLSpanElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
   const scrollProgress = useRef(0);
   const cursor = useHeroCursor(sectionRef);
   const [activeImage, setActiveImage] = useState(0);
@@ -30,7 +29,6 @@ export default function HeroSection() {
     sectionRef,
     line1Ref,
     line2Ref,
-    subtitleRef,
     frameRef,
   });
 
@@ -275,24 +273,25 @@ export default function HeroSection() {
                 that help ideas grow and scale.
               </span>
             </h1>
-            <p ref={subtitleRef} className="hero-subtitle">
-              I work with teams to shape products people understand, enjoy
-              using, and keep coming back to.
-            </p>
           </div>
         </div>
       </div>
 
-      {/* Floating image frame — cursor follow + scroll zoom. Initial
-          opacity 0 so it stays invisible through the preloader and the
-          first ~70% of the text timeline; useHeroIntroTimeline fades
-          it to 1 via the same shared timeline. Cursor-follow transform
-          is still being applied in the rAF loop the whole time — just
-          behind zero opacity. */}
+      {/* Floating image frame — cursor follow + scroll zoom on
+          desktop. Initial opacity 0 is owned by `.hero-frame` in
+          `_hero.scss` (base rule) so it stays invisible through the
+          preloader and the first ~70% of the desktop text timeline;
+          `useHeroIntroTimeline` fades it to 1 via the shared
+          timeline. On mobile the SCSS mobile override sets opacity 1
+          so the frame is visible immediately (no entrance animation
+          on small breakpoints — title and frame appear statically).
+          Cursor-follow transform writes still happen in the rAF loop
+          on desktop the whole time — just behind zero opacity during
+          the preloader. */}
       <div
         ref={frameRef}
         className="hero-frame pointer-events-none absolute left-0 top-0 z-20 h-full w-full origin-top-left overflow-hidden"
-        style={{ willChange: "transform, opacity", opacity: 0 }}
+        style={{ willChange: "transform, opacity" }}
       >
         {HERO_IMAGES.map((src, i) => (
           <Image

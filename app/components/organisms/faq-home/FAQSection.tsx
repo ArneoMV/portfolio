@@ -96,6 +96,7 @@ export default function FAQSection() {
           aria-expanded={isOpen}
           aria-controls={panelId}
         >
+          <span className="faq-question">{item.question}</span>
           <Image
             src={isOpen ? X_ICON : PLUS_ICON}
             alt=""
@@ -103,7 +104,6 @@ export default function FAQSection() {
             height={18}
             className="faq-icon"
           />
-          <span className="faq-question">{item.question}</span>
         </button>
 
         <div
@@ -124,10 +124,7 @@ export default function FAQSection() {
     <section className="faq-section">
       <div className="faq-container">
         {/* Shared SectionHeader — same molecule used by Services. */}
-        <SectionHeader
-          title="Additional answers"
-          subtitle="If you still have the questions, the answers might be here. You can always find out more by asking us."
-        />
+        <SectionHeader title="Additional answers" />
 
         {/* Two independent flex columns — opening an item in one
             column only reflows that column's items. Previously this
@@ -139,9 +136,7 @@ export default function FAQSection() {
             {FAQ_ITEMS.slice(0, 4).map((item, j) => renderFaqItem(item, j))}
           </div>
           <div className="faq-column">
-            {FAQ_ITEMS.slice(4, 8).map((item, j) =>
-              renderFaqItem(item, j + 4),
-            )}
+            {FAQ_ITEMS.slice(4, 8).map((item, j) => renderFaqItem(item, j + 4))}
           </div>
         </div>
       </div>

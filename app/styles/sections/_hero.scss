@@ -132,23 +132,15 @@
   }
 }
 
-/* ── Subtitle ── */
-
-.hero-subtitle {
-  margin: 0 auto;
-  margin-top: var(--space-lg);
-  max-width: 720px;
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: clamp(18px, 1.6vw, 24px);
-  line-height: 1.35;
-  color: var(--color-text-secondary);
-  text-align: center;
+/* ── Slideshow frame initial state ──
+   Hidden behind the preloader on desktop / tablet; the intro
+   timeline (`useHeroIntroTimeline`) fades it to 1 alongside the
+   title reveal. Owning the initial opacity in CSS instead of an
+   inline `style={{ opacity: 0 }}` lets the mobile @media block
+   below override it cleanly (no `!important` needed) so the frame
+   is visible immediately on mobile without animation. */
+.hero-frame {
   opacity: 0;
-  /* will-change is scoped to .hero-section.is-intro-animating below —
-     subtitle only fades in once via the intro timeline, then stays
-     static. Permanent will-change here was holding a compositor layer
-     for the page lifetime with nothing to composite. */
 }
 
 /* Compositor-layer scope for intro-only tweens. Added by
@@ -160,75 +152,135 @@
   .hero-title-line {
     will-change: transform, opacity;
   }
-
-  .hero-subtitle {
-    will-change: opacity;
-  }
 }
 
 /* ── Small / mobile (≤ 767px) Hero ──────────────────────────
    Mobile redesign: the cursor-follow rAF + ScrollTrigger pin are
    gated to (min-width: 768px) inside HeroSection.tsx via
    gsap.matchMedia, so on mobile no JS writes inline transforms to
-   the frame or title. CSS owns the layout: the section becomes a
-   flex column, the slideshow frame moves to the top via flex
-   `order`, and the title/subtitle render in normal block flow
-   underneath. No cursor tracking, no scroll expansion, no pin —
-   just a stacked Header → image → title → subtitle composition. */
+   the frame or title. The intro timeline in useHeroIntroTimeline
+   is also skipped on mobile (early return) — title and frame
+   appear statically without animation.
+
+   Layout: the section becomes a flex column with
+   justify-content: space-between, so the title container sits at
+   the top of the section and the slideshow frame sits at the
+   bottom. Flex `order` puts container first / frame second in the
+   visual stack. The section's min-height is calc(100vh - 130px)
+   so its bottom edge lands 8px above the fixed FooterToolbar's
+   top edge (toolbar = 24px bottom offset + 98px shell + 8px gap). */
 @media (max-width: 767px) {
   .hero-section {
-    /* Flex column reorders frame above container without touching
-       the JSX. height: auto lets content set the size; min-height
-       keeps the empty stretch above the fixed BottomToolbar so the
-       Hero still feels like a full first screen. */
+    /* Flex column with space-between pushes container to the top
+       and frame to the bottom; the empty middle fills the section's
+       remaining vertical space. height: auto lets content drive
+       size, and min-height calc carves the section so its bottom
+       sits 8px above the FooterToolbar's top edge. The 130px is
+       hardcoded because no CSS variable currently exposes the
+       toolbar's outer height — its anchor (`bottom: var(--space-lg)
+       = 24px`) + collapsed shell (`max-height: 98px`) + designed
+       gap (8px) = 130px. Toolbar expansion (max-height: 600px) is
+       a user-triggered state, not the default; expanded toolbar
+       will overlap Hero's bottom, which is acceptable. */
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     height: auto;
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: calc(100vh - 130px);
+    min-height: calc(100dvh - 130px);
   }
 
   /* Slideshow frame: drop the desktop `absolute left-0 top-0 w-full
      h-full` Tailwind utilities (same specificity, main.scss loads
      after globals.css so this wins) and render as a normal block
-     above the title. Horizontal margin matches .hero-container's
-     16px mobile inset so the image sits inside the same content
-     edge as the rest of the homepage. */
+     at the bottom of the section. Fixed 240px height (per design);
+     `aspect-ratio: auto` overrides the desktop 4/3 so the explicit
+     height wins. Horizontal margin matches .hero-container's 16px
+     mobile inset so the image sits inside the same content edge
+     as the rest of the homepage. `opacity: 1` overrides the base
+     `.hero-frame { opacity: 0 }` so the frame is visible
+     immediately on mount — the intro timeline is skipped on mobile
+     (see useHeroIntroTimeline), so no fade is needed. */
   .hero-frame {
     position: relative;
     inset: auto;
     width: auto;
-    height: auto;
-    aspect-ratio: 4 / 3;
-    margin: var(--space-3xl) 16px 0;
+    height: 240px;
+    aspect-ratio: auto;
+    margin: 0 16px;
     transform: none;
     border-radius: var(--radius-sm);
     overflow: hidden;
-    order: 1;
+    order: 2;
+    opacity: 1;
   }
 
-  /* .hero-container holds title + subtitle. height: auto removes
-     the desktop 100% stretch so the container hugs its text content
-     and the section's empty bottom space is just the flex column's
-     unused space, not container padding. */
+  /* `.hero-container` holds the title. height: auto removes the
+     desktop 100% stretch so the container hugs its text content;
+     the section's flex space-between handles the empty middle.
+     `order: 1` puts it at the top of the section. `margin-top`
+     clears the fixed Header overlay plus a 16px gap so the title's
+     top edge lands exactly 16px below the Header's bottom edge.
+     The top gap (16px) is intentionally larger than the bottom
+     gap (frame → FooterToolbar = 8px) by design — asymmetric on
+     purpose. */
   .hero-container {
     height: auto;
-    order: 2;
-    margin-top: var(--space-2xl);
+    order: 1;
+    margin-top: calc(var(--header-height) + 16px);
   }
 
   /* Title wrapper drops desktop dead-center (position: absolute +
-     translate). Title and subtitle render in normal block flow,
-     inheriting text-align: center from .hero-title / .hero-subtitle. */
+     translate). Title renders in normal block flow at the top of
+     the section. */
   .hero-title-wrapper {
     position: static;
     transform: none;
   }
 
-  /* Tighter subtitle spacing on mobile — the desktop --space-lg
-     gap reads as a gap when title+subtitle stack tight. */
-  .hero-subtitle {
-    margin-top: var(--space-md);
+  /* `.hero-title-scroll` becomes a flex column on mobile so the
+     existing will-change/transform writes from the desktop
+     scroll-driven rAF loop are no-ops here (the rAF is gated to
+     min-width: 768px, so the loop never runs on mobile). The
+     subtitle that used to live inside this wrapper was removed
+     globally; the title is now the only child. */
+  .hero-title-scroll {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Unified small-mobile title — same spec applied to Work, FAQ,
+     About on the same breakpoint, except Hero preserves its darker
+     `var(--color-text-primary)` color (= --color-neutral-100,
+     #2d333a) instead of switching to neutral-70. The h1 tag is
+     retained so the page still has a single h1 for semantics; only
+     the visual styling changes. `align-items: flex-start` overrides
+     the base `.hero-title { align-items: center }` so the line1 /
+     line2 spans inside (still flex children of `.hero-title`)
+     left-align on mobile. */
+  .hero-title {
+    align-items: flex-start;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 130%;
+    color: var(--color-text-primary);
+    text-transform: none;
+    text-align: left;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    letter-spacing: normal;
+  }
+
+  .hero-title-line {
+    /* `white-space: normal` is set in the earlier mobile block so
+       lines wrap on small viewports; here we override the default
+       `text-align` chain so each line reads left-aligned. Mobile
+       skips the intro timeline (early return in
+       useHeroIntroTimeline), so the title is visible immediately —
+       overriding the base `opacity: 0` to 1 here. */
+    text-align: left;
+    opacity: 1;
   }
 }
 

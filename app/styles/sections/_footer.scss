@@ -201,41 +201,81 @@
   text-align: right;
 }
 
-/* ── Mobile — stack everything vertically ──
-   Keep the dotted top/bottom dividers around the links block
-   (they're on the wrapper, not the columns, so they survive the
-   layout change). Centre column items return to left alignment for
-   readability when the columns are stacked. */
+/* ── Mobile — centered stacked sections + horizontal copyright row ──
+
+   Layout transforms from a 12-col grid into:
+     - Three stacked sections (Work/Lab/Contact, Store/Dribbble/
+       Linkedin, Privacy policy). 32px row-gap between sections, 24px
+       padding top/bottom on the wrapper. The dotted ::before /
+       ::after dividers survive the layout change because they're on
+       the wrapper, not the columns.
+     - Inside each section, links are full-width 48px-tall tap
+       targets (flex-centered text, no extra gap between links — the
+       48px height creates the rhythm).
+     - The copyright `.footer-meta` flips from a 12-col grid to a
+       single flex row with copyright left + "Zagreb, Croatia" right
+       (justify-content: space-between). 16px top/bottom internal
+       padding; left/right comes from the `.footer-container`'s
+       existing 16px mobile padding so text lands 16px from the
+       viewport edge.
+   The "Arneo" standalone center line was removed from the JSX
+   (`FooterSection.tsx` `.footer-meta`) so this block doesn't need
+   to hide it. */
 @media (max-width: 767px) {
   .footer-links {
     grid-template-columns: 1fr;
-    row-gap: var(--space-lg);
-    padding: var(--space-xl) 0;
+    row-gap: 32px;
+    padding: 24px 0;
   }
 
   .footer-links-col--left,
   .footer-links-col--center,
   .footer-links-col--right {
     grid-column: 1 / -1;
-    text-align: left;
-    align-items: flex-start;
-  }
-
-  .footer-meta {
-    grid-template-columns: 1fr;
-    row-gap: var(--space-xs);
-    padding-top: var(--space-lg);
-  }
-
-  .footer-meta-item--left,
-  .footer-meta-item--center,
-  .footer-meta-item--right {
-    grid-column: 1 / -1;
-    text-align: left;
+    /* `align-items: stretch` lets each `<li>` fill the column's full
+       width so the `<a>.footer-link` inside can render as a 48px tap
+       target that spans the section. `gap: 0` removes the 12px stack
+       gap inherited from `.footer-links-col` — the 48px min-height
+       on each link provides the visual rhythm instead. */
+    text-align: center;
+    align-items: stretch;
+    gap: 0;
   }
 
   .footer-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 48px;
     font-size: 18px;
+  }
+
+  .footer-meta {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    /* Override the desktop grid template + row-gap so the flex
+       declarations above take effect. */
+    grid-template-columns: none;
+    row-gap: 0;
+    column-gap: 0;
+    padding: 16px 0;
+  }
+
+  .footer-meta-item--left,
+  .footer-meta-item--right {
+    /* Reset desktop grid-column placement so flex order is used. */
+    grid-column: auto;
+  }
+
+  .footer-meta-item--left {
+    text-align: left;
+  }
+
+  .footer-meta-item--right {
+    text-align: right;
   }
 
   .footer-meta-item {

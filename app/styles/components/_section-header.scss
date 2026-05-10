@@ -1,42 +1,105 @@
 /* ================================
    SECTION HEADER (shared)
 
-   Centred title + optional subtitle block. Used by the homepage
-   Services and FAQ sections via the SectionHeader React component.
-   Extracted from the previously duplicated `.svc-title-*` and
-   `.faq-title-*` rules, which were byte-identical.
+   Single source of truth for every standard section heading on the
+   homepage. Used by SERVICES, FAQ, WORK, and ABOUT via the
+   `<SectionHeader>` molecule (`app/components/molecules/
+   section-header/SectionHeader.tsx`). Hero opts out — it has its
+   own animated `.hero-title` system (no subtitle; subtitle was
+   removed from Hero on every breakpoint).
 
-   Per-section spacing tweaks (e.g. extra `margin-bottom`) belong
-   on the parent element via the component's optional `className`
-   prop, not in here.
+   Layout:
+     - Wrapper is a flex column, full width, with an 8px gap so the
+       title↔subtitle spacing is owned here when both children are
+       present (the gap is a no-op when only the title renders).
+     - Wrapper bottom margin scales 8 / 24 / 48 across Small /
+       Medium / Large so adjacent section content gets pushed down
+       in line with the homepage rhythm.
+
+   Typography:
+     - Title (h2): 32 / 48 / 60 px across Small / Medium / Large,
+       weight 700, line-height 130 / 120 / 115 %, neutral-70 colour,
+       sentence-case (no `text-transform`), left-aligned, full
+       width, no margin.
+     - Subtitle (p): unified with the homepage's body-paragraph
+       style — same typography as `.about-paragraph` (which inherits
+       from `.body-lg`) and `.projects-description`. Responsive
+       font-size via `clamp(24px, 2.5vw, 36px)`: 24 at Small / floats
+       between 24 and 36 across Medium / 36 at Large. Weight 500,
+       line-height 115 %, `--color-text-primary` colour, left-aligned,
+       full width, no margin.
+
+   Per-section overrides are intentionally not supported — the goal
+   of this consolidation is one consistent heading style across
+   every consumer. If a section needs a different appearance, it
+   should not use this molecule.
 ================================ */
 
 .section-header {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-bottom: 48px;
+  width: 100%;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .section-header__title {
   margin: 0;
+  width: 100%;
+  max-width: none;
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: clamp(36px, 5vw, 64px);
-  line-height: 1.1;
-  color: var(--color-neutral-50);
-  letter-spacing: -0.01em;
+  font-size: 32px;
+  line-height: 130%;
+  color: var(--color-neutral-70);
+  text-transform: none;
+  text-align: left;
+  letter-spacing: normal;
 }
 
+/* Subtitle typography unified with `.about-paragraph` (the homepage
+   body-paragraph source of truth, which inherits from `.body-lg`) and
+   `.projects-description`. Responsive `clamp()` handles every
+   breakpoint in a single declaration — no @media overrides needed. */
 .section-header__subtitle {
-  /* No top margin — the title's line-height already gives the
-     visual separation; an explicit gap was reading as too loose. */
-  margin: 0 auto;
-  max-width: 540px;
+  margin: 0;
+  width: 100%;
+  max-width: none;
   font-family: var(--font-sans);
   font-weight: 500;
-  font-size: clamp(16px, 1vw, 21px);
-  line-height: 1.5;
-  color: var(--color-neutral-90);
+  font-size: clamp(24px, 2.5vw, 36px);
+  line-height: 115%;
+  color: var(--color-text-primary);
+  text-transform: none;
+  text-align: left;
+}
+
+/* Medium (tablet) — 768px to 1439px. Title scales up; subtitle
+   stays at 21px because the design holds it constant from Small
+   through Medium. Wrapper bottom margin grows to 24px to match the
+   homepage's tablet section rhythm. */
+@media (min-width: 768px) and (max-width: 1439px) {
+  .section-header {
+    margin-bottom: 24px;
+  }
+
+  .section-header__title {
+    font-size: 48px;
+    line-height: 120%;
+  }
+}
+
+/* Large (desktop) — 1440px and up. Title scales up; wrapper bottom
+   margin grows to 48px. Subtitle font-size is owned by the base
+   `clamp()` declaration and lands at 36px from 1440 onward, so no
+   subtitle override is needed here anymore. */
+@media (min-width: 1440px) {
+  .section-header {
+    margin-bottom: 48px;
+  }
+
+  .section-header__title {
+    font-size: 60px;
+    line-height: 115%;
+  }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import SectionHeader from "@/app/components/molecules/section-header/SectionHeader";
 import WorkList from "./WorkList";
 import CrtScreen from "./CrtScreen";
 import { WORKS } from "./workData";
@@ -50,12 +51,9 @@ export default function WorkSection() {
       <CrtScreen activeWork={activeWork} />
 
       <div className={styles.overlay}>
-        <h2 className={`title-h2 ${styles.heading}`}>WORK</h2>
+        <SectionHeader title="Work" />
         <div className={styles.listRegion}>
-          <WorkList
-            activeWorkId={activeWorkId}
-            onActivate={setActiveWorkId}
-          />
+          <WorkList activeWorkId={activeWorkId} onActivate={setActiveWorkId} />
         </div>
       </div>
 
@@ -63,12 +61,7 @@ export default function WorkSection() {
           filter: url(#redChannel) / url(#blueChannel). Defined once
           at the section root for the GSAP glitch effect that arrives
           in a follow-up step. */}
-      <svg
-        width="0"
-        height="0"
-        className={styles.svgDefs}
-        aria-hidden="true"
-      >
+      <svg width="0" height="0" className={styles.svgDefs} aria-hidden="true">
         <defs>
           <filter id="redChannel">
             <feColorMatrix
