@@ -11,7 +11,7 @@ export default function SiteLayout({
     <>
       <ScrollTriggerCleanup />
       <Header />
-      <main>{children}</main>
+      <main className="site-main">{children}</main>
       <FooterToolbar />
     </>
   );
