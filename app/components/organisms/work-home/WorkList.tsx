@@ -59,10 +59,8 @@ export default function WorkList({ activeWorkId, onActivate }: Props) {
               }
             }}
           >
-            <div className={styles.row}>
-              <span className={labelClass}>{work.label}</span>
-              <span className={styles.subtitle}>{work.subtitle}</span>
-            </div>
+            <span className={labelClass}>{work.label}</span>
+            <span className={styles.subtitle}>{work.subtitle}</span>
           </li>
         );
       })}

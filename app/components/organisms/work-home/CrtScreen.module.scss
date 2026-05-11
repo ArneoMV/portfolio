@@ -37,8 +37,10 @@
 
 @media (min-width: 1024px) {
   .screen {
-    -webkit-mask-image: url("/images/home/work/large-mask.png");
-            mask-image: url("/images/home/work/large-mask.png");
+    /* Large mask is `.webp` (not `.png` like the other two masks).
+       Mismatch was a latent 404 until this fix. */
+    -webkit-mask-image: url("/images/home/work/large-mask.webp");
+            mask-image: url("/images/home/work/large-mask.webp");
   }
 }
 

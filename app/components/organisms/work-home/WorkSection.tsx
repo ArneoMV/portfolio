@@ -8,15 +8,22 @@ import { WORKS } from "./workData";
 import styles from "./WorkSection.module.scss";
 
 /**
- * WorkSection — full-bleed hero composition.
+ * WorkSection — container-constrained kanban composition.
  *
- * Layout: the background photograph fills the section (object-fit:
- * cover), CrtScreen overlays the whole section but is mask-clipped to
- * the monitor screen, and the WORK heading + project list render as
- * text overlays on top.
+ * Layout: the section root carries the dotted page rails (z:1) at
+ * `calc(50% ± 550px)`. Inside, a `.container` (max-width 1100, no
+ * horizontal padding) is the masked canvas — its aspect-ratio per
+ * breakpoint matches the source bg image so SCREEN_POS percentages
+ * line up. The bg photograph fills the container, CrtScreen is
+ * mask-clipped to the monitor shape within that same canvas, and a
+ * content overlay (SectionHeader + WorkList) layers above with its
+ * own padding inset. Mobile (≤639px) keeps the historical full-
+ * bleed behaviour — the container drops its max-width on Small.
  *
- * State: hover on a project row switches the active work, which cycles
- * the slideshow (CrtScreen) and reveals the subtitle inside the row.
+ * State: hover on a project row switches the active work, which
+ * cycles the slideshow (CrtScreen). The WorkList is now a two-
+ * column grid on ≥640px (labels left, tag subtitles right) so the
+ * tag rows align vertically across all four projects.
  *
  * Header + FooterToolbar are NOT rendered here — they live globally
  * in app/(site)/layout.tsx and would otherwise duplicate.
@@ -27,33 +34,41 @@ export default function WorkSection() {
 
   return (
     <section className={styles.section}>
-      <picture className={styles.bg}>
-        <source
-          srcSet="/images/home/work/Large_-_Work.webp"
-          media="(min-width: 1024px)"
-        />
-        <source
-          srcSet="/images/home/work/Medium_-_Work.webp"
-          media="(min-width: 640px)"
-        />
-        <img
-          src="/images/home/work/Small_-_Work.png"
-          alt=""
-          className={styles.bgImg}
-        />
-      </picture>
+      <div className={styles.container}>
+        <picture className={styles.bg}>
+          <source
+            srcSet="/images/home/work/Large_-_Work.webp"
+            media="(min-width: 1024px)"
+          />
+          <source
+            srcSet="/images/home/work/Medium_-_Work.webp"
+            media="(min-width: 640px)"
+          />
+          <img
+            src="/images/home/work/Small_-_Work.png"
+            alt=""
+            className={styles.bgImg}
+          />
+        </picture>
 
-      {/* Tint — sits between bg and CrtScreen so the slideshow stays
-          fully opaque over it (CrtScreen at higher z-index paints on
-          top). Darkens only the bg photograph behind the text/list. */}
-      <div className={styles.bgTint} aria-hidden="true" />
+        {/* Tint — sits between bg and CrtScreen so the slideshow stays
+            fully opaque over it (CrtScreen at higher z-index paints on
+            top). Darkens only the bg photograph behind the text/list. */}
+        <div className={styles.bgTint} aria-hidden="true" />
 
-      <CrtScreen activeWork={activeWork} />
+        <CrtScreen activeWork={activeWork} />
 
-      <div className={styles.overlay}>
-        <SectionHeader title="Work" />
-        <div className={styles.listRegion}>
-          <WorkList activeWorkId={activeWorkId} onActivate={setActiveWorkId} />
+        <div className={styles.overlay}>
+          {/* `.headerSlot` scopes a Work-only color override that makes
+              the shared `SectionHeader` title render white over the
+              dark photograph (default colour is `--color-neutral-70`,
+              which would disappear against the bg tint). */}
+          <div className={styles.headerSlot}>
+            <SectionHeader title="Work" />
+          </div>
+          <div className={styles.listRegion}>
+            <WorkList activeWorkId={activeWorkId} onActivate={setActiveWorkId} />
+          </div>
         </div>
       </div>
 

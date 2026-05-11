@@ -1,10 +1,18 @@
 /**
- * Detects the red marker rectangle in each Work-section background PNG
- * and writes the resulting bounding-box percentages into the
+ * Detects the red marker rectangle in each Work-section MASK file and
+ * writes the resulting bounding-box percentages into the
  * AUTO-GENERATED block of `app/components/organisms/work-home/workData.ts`.
  *
- * Run once after dropping new background assets:
+ * Run once after dropping new mask assets:
  *   npx tsx scripts/detect-red-area.ts
+ *
+ * Source files: the mask files (not the background photographs) — they
+ * exist specifically to define screen position with a red marker
+ * rectangle, so they're the authoritative source. PNG is preferred
+ * because it's lossless: the red threshold (R>230, G<60, B<60) catches
+ * pure-red pixels reliably, while WebP compression can shift those
+ * values slightly. Large currently falls back to `large-mask.webp`
+ * because no `.png` variant exists in the folder.
  *
  * Strategy:
  *   1. Threshold the image to a binary red mask (R>230, G<60, B<60).
@@ -40,10 +48,17 @@ type BBoxPx = { x: number; y: number; w: number; h: number };
 
 const REPO_ROOT = path.resolve(__dirname, "..");
 
+// Mask files — these carry the red marker rectangle that defines
+// the CRT screen's position. Medium and Small use `.png` (lossless,
+// reliable red threshold); Large falls back to `.webp` because no
+// `.png` variant of the large mask exists in the folder. CSS still
+// references the `.webp` for production size optimisation — script
+// vs. CSS asset paths are intentionally allowed to differ per
+// breakpoint.
 const SOURCES: Record<Breakpoint, string> = {
-  large: path.join(REPO_ROOT, "public/images/home/work/Large_-_Work.webp"),
-  medium: path.join(REPO_ROOT, "public/images/home/work/Medium_-_Work.webp"),
-  small: path.join(REPO_ROOT, "public/images/home/work/Small_-_Work.png"),
+  large: path.join(REPO_ROOT, "public/images/home/work/large-mask.webp"),
+  medium: path.join(REPO_ROOT, "public/images/home/work/medium-mask.png"),
+  small: path.join(REPO_ROOT, "public/images/home/work/small-mask.png"),
 };
 
 const WORK_DATA_PATH = path.join(

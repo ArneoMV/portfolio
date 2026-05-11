@@ -71,8 +71,8 @@ export const WORKS: WorkItem[] = [
 
 // >>> AUTO-GENERATED:SCREEN_POS:START — do not edit manually
 export const SCREEN_POS: ScreenPositions = {
-  large: { top: "18.43%", left: "37.40%", width: "26.04%", height: "36.67%" },
+  large: { top: "51.34%", left: "33.61%", width: "32.25%", height: "25.90%" },
   medium: { top: "17.96%", left: "28.18%", width: "45.45%", height: "36.67%" },
-  small: { top: "51.50%", left: "12.50%", width: "74.50%", height: "29.63%" },
+  small: { top: "51.50%", left: "12.50%", width: "74.75%", height: "29.63%" },
 };
 // >>> AUTO-GENERATED:SCREEN_POS:END

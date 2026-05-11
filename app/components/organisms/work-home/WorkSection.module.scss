@@ -1,34 +1,107 @@
-/* Work section — full-bleed hero composition. The bg photograph
-   fills the section; CrtScreen overlays full-section width but is
-   mask-clipped to the monitor screen; text overlays sit on top.
-   Aspect-ratio is locked per breakpoint so SCREEN_POS percentages
-   line up with the rendered image at each canvas. */
+/* Work section — container-constrained composition on Medium+
+   (≥640px) with full-bleed retained on Small (≤639px).
+
+   Layer stack (z-index inside `.container`'s isolation scope):
+     1 — `.bg` photograph (filled to container box, object-fit: cover)
+     2 — `.bgTint` dark wash
+     3 — `.screen` slideshow (mask-clipped to monitor shape)
+     4 — `.overlay` text content (SectionHeader + WorkList)
+
+   The `.section` root carries the dotted page rails (z:1) at
+   `calc(50% ± 550px)`, same pattern Projects uses via
+   `.projects-section::before/::after`. Rails are hidden on Small
+   because the section is full-bleed there and the rails would land
+   at the viewport edges, conflicting with the section's own edge.
+
+   Aspect-ratio lives on `.container` (not `.section`) so the
+   bg/mask/overlay all line up pixel-for-pixel with the source
+   images. SCREEN_POS percentages in `workData.ts` are derived from
+   those exact pixel dimensions; drifting the aspect-ratio breaks
+   monitor alignment. */
 
 .section {
   position: relative;
   width: 100%;
-  /* Aspect-ratio matches the source bg PNG exactly per breakpoint —
-     masks are full-canvas at the same dims, so section + bg + mask
-     all line up pixel-for-pixel. Drifting these breaks alignment. */
-  aspect-ratio: 400 / 800;
-  overflow: hidden;
-  background: #000;
-  isolation: isolate;
-  /* Higher than .projects-section's z:1 so Work paints over the
+  /* Higher than `.projects-section`'s z:1 so Work paints over the
      sticky Projects during the reveal scroll inside
-     .projects-work-reveal. */
+     `.projects-work-reveal`. */
   z-index: 2;
 }
 
+/* Page rails — dotted vertical lines at `calc(50% ± 550px)`,
+   identical to `.projects-section::before/::after`. Painted z:1
+   relative to `.section`; the inner `.container`'s `isolation:
+   isolate` creates a fresh stacking context so its z-layers don't
+   poke through the rails. */
+.section::before,
+.section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  pointer-events: none;
+  z-index: 1;
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-neutral-80) 0,
+    var(--color-neutral-80) 4px,
+    transparent 4px,
+    transparent 12px
+  );
+  background-size: 1px 12px;
+  background-repeat: repeat-y;
+}
+
+.section::before {
+  left: max(0px, calc(50% - 550px));
+}
+
+.section::after {
+  right: max(0px, calc(50% - 550px));
+}
+
+/* Rails hidden on Small — section is full-bleed there. */
+@media (max-width: 639px) {
+  .section::before,
+  .section::after {
+    display: none;
+  }
+}
+
+/* Container — the masked canvas. Aspect-ratio matches the source
+   bg image per breakpoint so SCREEN_POS percentages line up.
+     Small  (≤639) :  400 × 800   → 400/800
+     Medium (≥640) : 1100 × 1080  → 1100/1080
+     Large  (≥1024): 1104 × 1081  → 1104/1081 */
+.container {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #000;
+  isolation: isolate;
+  aspect-ratio: 400 / 800;
+}
+
 @media (min-width: 640px) {
-  .section {
+  .container {
     aspect-ratio: 1100 / 1080;
   }
 }
 
 @media (min-width: 1024px) {
-  .section {
-    aspect-ratio: 1920 / 1080;
+  .container {
+    aspect-ratio: 1104 / 1081;
+  }
+}
+
+/* Small keeps full-bleed behaviour — drop the max-width so the
+   container spans the viewport edge-to-edge. */
+@media (max-width: 639px) {
+  .container {
+    max-width: none;
   }
 }
 
@@ -53,7 +126,7 @@
   display: block;
 }
 
-/* Tint — full-section dark wash sitting above the bg photo and
+/* Tint — full-canvas dark wash sitting above the bg photo and
    below CrtScreen. Slideshow paints over it (CrtScreen z=3) so the
    monitor stays unaffected; text overlay (z=4) also paints over it
    so titles/subtitles read at full contrast. */
@@ -66,18 +139,19 @@
   z-index: 2;
 }
 
-/* Overlay layer — text content. Sits above bg + tint + CrtScreen.
+/* Overlay — text content. Sits above bg + tint + CrtScreen.
    pointer-events: none on the wrapper so clicks pass through to
-   anything underneath; .listRegion re-enables for hover targets. */
+   anything underneath; `.listRegion` re-enables for hover targets. */
 .overlay {
   position: absolute;
   inset: 0;
-  padding: clamp(24px, 4vw, 64px) clamp(16px, 4vw, 64px);
+  padding: 48px 16px;
   display: flex;
   flex-direction: column;
-  gap: clamp(16px, 3vw, 32px);
+  gap: 12px;
   z-index: 4;
   pointer-events: none;
+  justify-content: flex-start;
 }
 
 .listRegion {
@@ -86,44 +160,45 @@
   pointer-events: auto;
 }
 
-@media (min-width: 1024px) {
+/* Work-scoped colour override — the shared `SectionHeader` title
+   defaults to `--color-neutral-70`, which disappears against Work's
+   dark photograph. Scoping via the local `.headerSlot` (CSS module
+   class) keeps the override Work-only; the global SectionHeader
+   class is targeted with `:global(...)` because it's defined
+   outside this module's hashed namespace. */
+.headerSlot :global(.section-header__title) {
+  color: #ffffff;
+}
+
+/* Medium + Large overlay padding — clears the CRT area at the
+   bottom of the bg photograph so the title + list sit in the upper
+   portion of the canvas above the monitor. The exact bottom pad is
+   approximate (designed against the 1100×1080 / 1104×1081 images);
+   tune in follow-up if the list visually clashes with the CRT. */
+@media (min-width: 640px) {
   .overlay {
-    /* 200px top + 200px bottom on large screens so the WORK heading
-       and project list have generous breathing room from the
-       section's top and bottom edges. The bg, bgTint, CrtScreen
-       mask, aspect-ratio, and slideshow positioning are untouched
-       — overlay padding only moves the text-overlay flow inward.
-       Inline padding unchanged. */
-    padding: 200px 200px clamp(32px, 4vw, 64px);
+    padding: clamp(48px, 6vw, 80px) 48px clamp(200px, 30vh, 380px);
     gap: 24px;
   }
 }
 
-@media (max-width: 639px) {
+@media (min-width: 1024px) {
   .overlay {
-    /* Heading + list anchor at the top; the monitor + slideshow sit
-       below in the bg region the overlay leaves uncovered. */
-    justify-content: flex-start;
+    padding: clamp(56px, 6vw, 80px) 64px clamp(280px, 35vh, 480px);
+    gap: 32px;
   }
 }
 
-/* Small/mobile (≤ 767px) — overlay padding + gap pass aligned to the
-   homepage mobile container (16px viewport inset). The bg photograph,
-   tint, CrtScreen, and slideshow are all untouched here — only the
-   text overlay's padding/gap. Heading typography lives in the shared
-   `_section-header.scss` (the heading is now rendered by
-   `<SectionHeader>`). Anchoring is kept `flex-start` (redeclared so
-   this block is self-contained even if the 639 block is removed in
-   a future cleanup). */
+/* Small/mobile (≤ 767px) — kept from the prior mobile pass.
+   16px horizontal matches the homepage mobile container; 48px top
+   inset for the heading; bottom mirrors top so the overlay's
+   content area reads balanced inside the section (CrtScreen sits
+   separately in absolute-position coords below this overlay's
+   content edge). */
 @media (max-width: 767px) {
   .overlay {
-    /* 16px L/R matches the homepage mobile container. 48px top
-       inset for the heading; bottom padding mirrors top so the
-       overlay's content area reads balanced inside the section
-       (CrtScreen sits separately in absolute-position coords below
-       this overlay's content edge). */
     padding: 48px 16px;
-    gap: 12px;
+    gap: 16px;
     justify-content: flex-start;
   }
 }
