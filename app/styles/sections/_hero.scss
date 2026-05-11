@@ -183,24 +183,23 @@
        a user-triggered state, not the default; expanded toolbar
        will overlap Hero's bottom, which is acceptable.
 
-       Viewport cascade — guards against iOS Safari/Brave URL-bar
-       dynamics that can squeeze the title+frame layout when the
-       bar expands:
-         1. `100vh` — legacy fallback for browsers without small/
-            dynamic viewport units (Safari <15.4, ~2022). 100vh on
-            iOS Safari historically equalled "largest viewport"
-            (URL bar collapsed), which is generous but stale.
+       Viewport cascade — uses the smallest stable viewport so the
+       section size doesn't change as the iOS Safari/Brave URL bar
+       collapses/expands during scroll. A prior revision used `dvh`
+       as the preferred final value, which made the section grow
+       when the URL bar collapsed; combined with
+       `justify-content: space-between`, the frame visibly drifted
+       down during scroll. Pinning to `svh` instead keeps the
+       layout fixed — there will be a small empty gap below
+       FooterToolbar at maximally-collapsed scroll positions
+       (URL bar gone, extra screen real estate unused), which is
+       the accepted trade-off for a stable layout.
+         1. `100vh` — legacy fallback for browsers without small
+            viewport units (Safari <15.4, ~2022).
          2. `100svh` — small viewport height: the smallest stable
-            value (URL bar always assumed visible). Acts as the
-            conservative floor — when used as a min-height, the
-            layout reserves the smallest height the device can
-            offer, so the URL bar appearing doesn't push frame up
-            into title.
-         3. `100dvh` — dynamic viewport: updates as URL bar
-            collapses/expands. Preferred on supporting browsers.
-            With `min-height`, this is effectively a floor that
-            grows; the visible behaviour is the section getting
-            taller when URL bar collapses, never shorter than svh.
+            value (URL bar always assumed visible). Preferred
+            final — `min-height` floors the section to this value
+            regardless of URL-bar state, so the frame never moves.
        `env(safe-area-inset-bottom, 0px)` subtracts the home-
        indicator inset on notched iPhones (~34px) so the section's
        bottom edge stays above the inset, not under it. */
@@ -210,7 +209,6 @@
     height: auto;
     min-height: calc(100vh - 130px);
     min-height: calc(100svh - 130px - env(safe-area-inset-bottom, 0px));
-    min-height: calc(100dvh - 130px - env(safe-area-inset-bottom, 0px));
   }
 
   /* Slideshow frame: drop the desktop `absolute left-0 top-0 w-full
@@ -228,7 +226,7 @@
     position: relative;
     inset: auto;
     width: auto;
-    height: 240px;
+    height: 210px;
     aspect-ratio: auto;
     margin: 0 16px;
     transform: none;
