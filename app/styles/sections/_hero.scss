@@ -181,13 +181,36 @@
        = 24px`) + collapsed shell (`max-height: 98px`) + designed
        gap (8px) = 130px. Toolbar expansion (max-height: 600px) is
        a user-triggered state, not the default; expanded toolbar
-       will overlap Hero's bottom, which is acceptable. */
+       will overlap Hero's bottom, which is acceptable.
+
+       Viewport cascade — guards against iOS Safari/Brave URL-bar
+       dynamics that can squeeze the title+frame layout when the
+       bar expands:
+         1. `100vh` — legacy fallback for browsers without small/
+            dynamic viewport units (Safari <15.4, ~2022). 100vh on
+            iOS Safari historically equalled "largest viewport"
+            (URL bar collapsed), which is generous but stale.
+         2. `100svh` — small viewport height: the smallest stable
+            value (URL bar always assumed visible). Acts as the
+            conservative floor — when used as a min-height, the
+            layout reserves the smallest height the device can
+            offer, so the URL bar appearing doesn't push frame up
+            into title.
+         3. `100dvh` — dynamic viewport: updates as URL bar
+            collapses/expands. Preferred on supporting browsers.
+            With `min-height`, this is effectively a floor that
+            grows; the visible behaviour is the section getting
+            taller when URL bar collapses, never shorter than svh.
+       `env(safe-area-inset-bottom, 0px)` subtracts the home-
+       indicator inset on notched iPhones (~34px) so the section's
+       bottom edge stays above the inset, not under it. */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: auto;
     min-height: calc(100vh - 130px);
-    min-height: calc(100dvh - 130px);
+    min-height: calc(100svh - 130px - env(safe-area-inset-bottom, 0px));
+    min-height: calc(100dvh - 130px - env(safe-area-inset-bottom, 0px));
   }
 
   /* Slideshow frame: drop the desktop `absolute left-0 top-0 w-full
