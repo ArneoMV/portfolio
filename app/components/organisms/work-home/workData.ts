@@ -12,6 +12,14 @@ export type WorkItem = {
   serif?: boolean;
   subtitle: string;
   images: string[];
+  /**
+   * Optional video shown in the CRT in place of the `images` slideshow.
+   * When set, `CrtScreen` renders a single autoplaying `<video>` and
+   * skips the image-cycling setInterval; `images` is still required as
+   * a data baseline and as a fallback for any future render mode that
+   * doesn't support video. MP4/H.264 recommended for broad support.
+   */
+  video?: string;
 };
 
 export type ScreenPosition = {
@@ -57,6 +65,7 @@ export const WORKS: WorkItem[] = [
       "/images/home/work/slideshow/image-7.webp",
       "/images/home/work/slideshow/image-8.webp",
     ],
+    video: "/images/home/work/spona/spona-scene.mp4",
   },
   {
     id: "croatel",

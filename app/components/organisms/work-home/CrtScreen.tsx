@@ -11,16 +11,16 @@ type Props = {
 const SLIDESHOW_INTERVAL_MS = 2800;
 
 /**
- * CrtScreen — mask-clipped slideshow.
+ * CrtScreen — mask-clipped slideshow OR video.
  *
  * Container fills the entire section (inset: 0) and is mask-clipped
- * to the monitor screen shape. Inner <img>s are positioned at the
- * SCREEN_POS rect via CSS variables that the section root provides;
- * each is faded in/out as `imageIndex` advances.
+ * to the monitor screen shape. When `activeWork.video` is set, a single
+ * autoplaying `<video>` is rendered in the mask; otherwise the inner
+ * `<img>`s fade-cycle via `imageIndex` every SLIDESHOW_INTERVAL_MS.
  *
- * Autoplay: setInterval cycles imageIndex every SLIDESHOW_INTERVAL_MS.
- * Resets to 0 when activeWork changes so a new project always starts
- * on its first slide. Cleared on unmount and on dependency change.
+ * The slideshow interval is skipped for video projects so it doesn't
+ * race the video loop. `setImageIndex(0)` still runs on every project
+ * switch so returning to an image project always starts on slide 0.
  */
 export default function CrtScreen({ activeWork }: Props) {
   const [imageIndex, setImageIndex] = useState(0);
@@ -28,7 +28,7 @@ export default function CrtScreen({ activeWork }: Props) {
   useEffect(() => {
     setImageIndex(0);
 
-    if (activeWork.images.length <= 1) return;
+    if (activeWork.video || activeWork.images.length <= 1) return;
 
     // Diagnostic — confirms the interval is wired during browser
     // smoke-tests. Safe to remove once the slideshow is verified.
@@ -46,17 +46,36 @@ export default function CrtScreen({ activeWork }: Props) {
 
   return (
     <div className={styles.screen} aria-hidden="true">
-      {activeWork.images.map((src, i) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={src}
-          src={src}
-          alt=""
-          className={`${styles.image} ${
-            i === imageIndex ? styles.imageActive : ""
-          }`}
+      {activeWork.video ? (
+        // `key` on activeWork.id forces a fresh remount (and a restart
+        // of the video from frame 0) when the user switches projects
+        // away and back. `.image .imageActive` reuses the same
+        // positioning/mask styling as the slideshow `<img>`s — see the
+        // SCSS file for the dual-use note. autoplay+muted+playsInline
+        // is the standard combo for mobile autoplay (iOS Safari blocks
+        // unmuted autoplay outright).
+        <video
+          key={activeWork.id}
+          src={activeWork.video}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className={`${styles.image} ${styles.imageActive}`}
         />
-      ))}
+      ) : (
+        activeWork.images.map((src, i) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={src}
+            src={src}
+            alt=""
+            className={`${styles.image} ${
+              i === imageIndex ? styles.imageActive : ""
+            }`}
+          />
+        ))
+      )}
     </div>
   );
 }

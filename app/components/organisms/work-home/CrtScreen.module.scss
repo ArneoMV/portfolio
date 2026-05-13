@@ -44,6 +44,12 @@
   }
 }
 
+/* `.image` is also applied to the `<video>` element rendered when an
+   `activeWork` has a `video` field (see CrtScreen.tsx). Every property
+   here works on both `<img>` and `<video>`: object-fit, object-position,
+   opacity, background, and display: block are all supported on media
+   elements. The class name reads "image" for legacy reasons — the
+   shape is "media item that fills and clips to the screen mask". */
 .image {
   position: absolute;
   inset: 0;
@@ -59,4 +65,27 @@
 
 .imageActive {
   opacity: 1;
+}
+
+/* Defensive override for `<video>` inside `.screen`. Tailwind v4's
+   Preflight ships a `video { max-width: 100%; height: auto }` reset
+   (see `node_modules/tailwindcss/preflight.css`) which, under certain
+   `@layer` orderings, can win over a CSS-module class selector even
+   though spec-level specificity would favour the class. This compound
+   selector (`.screen video`, specificity 0,1,1) outranks both the
+   class (0,1,0) and the preflight element rule (0,0,1) deterministically,
+   so the video always fills the masked area exactly as the slideshow
+   `<img>` does — same position, same dimensions, same object-fit
+   crop behaviour. `display: block` and `background` are restated here
+   so this rule is self-sufficient if the `.image` class is ever
+   removed from the video element. */
+.screen video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  background: #000;
 }
