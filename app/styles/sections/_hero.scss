@@ -175,11 +175,11 @@
        and frame to the bottom; the empty middle fills the section's
        remaining vertical space. height: auto lets content drive
        size, and min-height calc carves the section so its bottom
-       sits 8px above the FooterToolbar's top edge. The 130px is
+       sits 16px above the FooterToolbar's top edge. The 138px is
        hardcoded because no CSS variable currently exposes the
        toolbar's outer height — its anchor (`bottom: var(--space-lg)
        = 24px`) + collapsed shell (`max-height: 98px`) + designed
-       gap (8px) = 130px. Toolbar expansion (max-height: 600px) is
+       gap (16px) = 138px. Toolbar expansion (max-height: 600px) is
        a user-triggered state, not the default; expanded toolbar
        will overlap Hero's bottom, which is acceptable.
 
@@ -207,8 +207,8 @@
     flex-direction: column;
     justify-content: space-between;
     height: auto;
-    min-height: calc(100vh - 130px);
-    min-height: calc(100svh - 130px - env(safe-area-inset-bottom, 0px));
+    min-height: calc(100vh - 138px);
+    min-height: calc(100svh - 138px - env(safe-area-inset-bottom, 0px));
   }
 
   /* Slideshow frame: drop the desktop `absolute left-0 top-0 w-full

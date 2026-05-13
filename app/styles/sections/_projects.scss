@@ -134,19 +134,21 @@
      `min-height` is also overridden here with the same toolbar-aware
      viewport math Hero uses. Without this, the base rule's `100vh /
      100dvh` makes the sticky-pinned Projects fill the full mobile
-     viewport, and the FooterToolbar (fixed at the bottom, 130px
-     outer footprint) covers the bottom of Projects' content — most
-     visibly the logo grid (Neogov / Spona). `svh` is preferred over
-     `dvh` for the same reason Hero uses it: it's the smallest
-     stable viewport, so the pinned section's bottom edge doesn't
-     drift up/down as the URL bar collapses/expands during scroll.
-     `env(safe-area-inset-bottom, 0px)` subtracts the home-indicator
-     inset on notched devices (~34px). */
+     viewport, and the FooterToolbar (fixed at the bottom, 122px
+     outer footprint from viewport bottom to toolbar top) covers
+     the bottom of Projects' content — most visibly the logo grid
+     (Neogov / Spona). The 138px subtraction = 122 toolbar footprint
+     + 16 designed gap above the toolbar's top edge. `svh` is
+     preferred over `dvh` for the same reason Hero uses it: it's
+     the smallest stable viewport, so the pinned section's bottom
+     edge doesn't drift up/down as the URL bar collapses/expands
+     during scroll. `env(safe-area-inset-bottom, 0px)` subtracts
+     the home-indicator inset on notched devices (~34px). */
   .projects-section {
     padding-top: var(--space-3xl);
     padding-bottom: var(--space-3xl);
-    min-height: calc(100vh - 130px);
-    min-height: calc(100svh - 130px - env(safe-area-inset-bottom, 0px));
+    min-height: calc(100vh - 138px);
+    min-height: calc(100svh - 138px - env(safe-area-inset-bottom, 0px));
   }
 
   /* Mobile container padding — content sits inside the 16px viewport

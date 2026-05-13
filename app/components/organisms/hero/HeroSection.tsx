@@ -64,9 +64,18 @@ export default function HeroSection() {
     if (!section || !text || !frame) return;
 
     const dimensions = { width: 0, height: 0 };
+    // Breathing gap on each side of the frame at its max-scrolled
+    // size. 64px on Large (≥1024px), 48px on Medium (768–1023px).
+    // Updated alongside `dimensions` so a viewport resize that
+    // crosses the 1024px boundary picks up the new value next frame
+    // without needing a separate matchMedia listener — the same
+    // ResizeObserver that recaches width/height also recomputes
+    // this constant.
+    let sideMargin = 0;
     const refreshDimensions = () => {
       dimensions.width = section.clientWidth;
       dimensions.height = section.clientHeight;
+      sideMargin = window.matchMedia("(min-width: 1024px)").matches ? 64 : 48;
     };
     refreshDimensions();
 
@@ -90,7 +99,7 @@ export default function HeroSection() {
       const tx = w * 0.7;
       const ty = h * 0.55 - h * scale;
       frame.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
-      frame.style.borderRadius = `16px`;
+      frame.style.borderRadius = `12px`;
     };
 
     const ro = new ResizeObserver(() => {
@@ -153,10 +162,15 @@ export default function HeroSection() {
         c.currentX = lerp(c.currentX, c.targetX, 0.1);
         c.currentY = lerp(c.currentY, c.targetY, 0.1);
 
-        // Desktop final size keeps the 96px breathing gap so the
-        // title/decoration around the frame still has room to read.
-        // (Mobile branch removed — < 768px never enters this callback.)
-        const maxScale = (w - 96) / w;
+        // Final scaled size leaves a breathing gap on each side so
+        // the surrounding rails / title still have room to read.
+        // `sideMargin` is breakpoint-aware (64 on Large ≥1024, 48
+        // on Medium 768–1023) and recomputed by `refreshDimensions`
+        // when the viewport resizes across the 1024px boundary, so
+        // this reads the current cached value every frame without
+        // calling matchMedia in the hot loop. (Mobile branch
+        // removed — < 768px never enters this callback.)
+        const maxScale = (w - sideMargin * 2) / w;
         const scale = lerp(0.22, maxScale, p);
         const scrollBlend = Math.min(1, p * 3);
 
@@ -173,7 +187,10 @@ export default function HeroSection() {
         const ty = cy - (h * scale) / 2;
 
         frame.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
-        frame.style.borderRadius = `${lerp(16, 8, p)}px`;
+        // Border-radius GROWS on scroll: 12px at rest (small, crisp
+        // corners on the thumbnail), 24px when fully scaled (softer,
+        // matches the larger frame's visual weight).
+        frame.style.borderRadius = `${lerp(12, 24, p)}px`;
 
         const textOpacity = Math.max(0, 1 - p * 2.5);
         text.style.opacity = `${textOpacity}`;
@@ -299,10 +316,10 @@ export default function HeroSection() {
             src={src}
             alt={`Project preview ${i + 1}`}
             fill
-            className="object-cover transition-opacity duration-500 ease-in-out"
+            className="object-cover transition-opacity duration-500 ease-in-out rounded-[inherit]"
             style={{ opacity: i === activeImage ? 1 : 0 }}
-            sizes="100vw"
-            priority={i === 0}
+            sizes="92vw"
+            loading="eager"
           />
         ))}
       </div>
