@@ -233,6 +233,20 @@
   margin-right: 24px;
 }
 
+/* HRT entries ship at 500×240 (aspect 25/12) instead of the 320×240
+   (4/3) standard set. The wider card width matches the same 1.5625×
+   scale factor on the native source dimensions (500/320 = 240/240 ÷
+   3/4 × 4/3), so when both card widths are at their respective clamp
+   max the rendered image heights are identical (320 × 3/4 = 240 and
+   500 × 12/25 = 240). At smaller viewports the two clamps shrink
+   proportionally so heights stay within a few px of each other; the
+   marquee track's default flex `stretch` then equalises the final row
+   height. The aspect override on the nested `.projects-marquee-image`
+   keeps the HRT screenshot at its native 25/12 framing — no crop. */
+.projects-marquee-item--wide {
+  width: clamp(340px, 42vw, 500px);
+}
+
 .projects-marquee-image {
   position: relative;
   width: 100%;
@@ -240,6 +254,10 @@
   overflow: hidden;
   border-radius: var(--radius-sm);
   background: var(--color-neutral-30);
+}
+
+.projects-marquee-item--wide .projects-marquee-image {
+  aspect-ratio: 25 / 12;
 }
 
 .projects-marquee-label {
@@ -276,6 +294,17 @@
 
   .projects-marquee-item {
     width: 240px;
+  }
+
+  /* Mobile wide-card width is set so the rendered image height matches
+     standard items exactly: 240 × 3/4 = 180 (standard), and we want the
+     wide image (aspect 25/12) to also be 180 tall → width 180 × 25/12 =
+     375. Without this override the desktop clamp's 340px floor would
+     win on mobile and leave a 17px height gap between wide and standard
+     cards, which would visibly desync the row even with flex stretch
+     pulling the cells. */
+  .projects-marquee-item--wide {
+    width: 375px;
   }
 
   .projects-marquee-label {

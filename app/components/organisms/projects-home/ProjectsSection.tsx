@@ -5,6 +5,11 @@ interface ProjectItem {
   label: string;
   image: string;
   alt: string;
+  // HRT screenshots ship at 500×240 instead of the 320×240 standard.
+  // `wide: true` adds the `.projects-marquee-item--wide` modifier, which
+  // bumps the card width clamp and overrides the image's 4/3 aspect to
+  // 25/12 so the native HRT framing is preserved without cropping.
+  wide?: boolean;
 }
 
 /**
@@ -20,12 +25,23 @@ interface ClientLogo {
 }
 
 // Real project previews drawn from /public/images/home/projects-marquee-image.
-// Display order matches the design brief: Neogov first, then the remaining
-// active projects, then the recent additions. Labels are stored in their
-// natural casing here; the SCSS rule on .projects-marquee-label still
-// applies `text-transform: uppercase`, so on-screen casing is unchanged.
-// Alt text uses the same natural casing for screen-reader friendliness.
+// Order interleaves the three HRT entries with the eight single-client
+// entries so no two adjacent cards share a client and the wider HRT cards
+// (positions 1 / 5 / 9, spacing of four) read as evenly distributed across
+// the loop. The marquee duplicates the array once for a seamless wrap; the
+// loop boundary (position 11 → position 1 = Dr. Hertzeg → HRT) is also a
+// different-client transition, so the duplicated set doesn't violate the
+// no-adjacent rule either. Labels are stored in natural casing here; the
+// SCSS rule on `.projects-marquee-label` still applies `text-transform:
+// uppercase`, so on-screen casing is unchanged. Alt text uses the same
+// natural casing for screen-reader friendliness.
 const PROJECT_ITEMS: ProjectItem[] = [
+  {
+    label: "HRT",
+    image: "/images/home/projects-marquee-image/hrt-1.png",
+    alt: "HRT project preview",
+    wide: true,
+  },
   {
     label: "Neogov",
     image: "/images/home/projects-marquee-image/neogov-04.png",
@@ -42,6 +58,12 @@ const PROJECT_ITEMS: ProjectItem[] = [
     alt: "Spona project preview",
   },
   {
+    label: "HRT",
+    image: "/images/home/projects-marquee-image/hrt-2.png",
+    alt: "HRT project preview",
+    wide: true,
+  },
+  {
     label: "Azimut International",
     image:
       "/images/home/projects-marquee-image/azimut-international-01.png",
@@ -53,20 +75,21 @@ const PROJECT_ITEMS: ProjectItem[] = [
     alt: "Union Rail project preview",
   },
   {
+    label: "Continental Dynamics",
+    image:
+      "/images/home/projects-marquee-image/continental-dynamics-01.png",
+    alt: "Continental Dynamics project preview",
+  },
+  {
     label: "HRT",
-    image: "/images/home/projects-marquee-image/hrt-1.png",
+    image: "/images/home/projects-marquee-image/hrt-3.png",
     alt: "HRT project preview",
+    wide: true,
   },
   {
     label: "Elite Media",
     image: "/images/home/projects-marquee-image/elite-media-04.png",
     alt: "Elite Media project preview",
-  },
-  {
-    label: "Continental Dynamics",
-    image:
-      "/images/home/projects-marquee-image/continental-dynamics-01.png",
-    alt: "Continental Dynamics project preview",
   },
   {
     label: "Dr. Hertzeg",
@@ -164,7 +187,9 @@ export default function ProjectsSection() {
               {[...PROJECT_ITEMS, ...PROJECT_ITEMS].map((item, i) => (
                 <div
                   key={`${item.label}-${i}`}
-                  className="projects-marquee-item"
+                  className={`projects-marquee-item${
+                    item.wide ? " projects-marquee-item--wide" : ""
+                  }`}
                   // Duplicates are decorative — only the first set is
                   // exposed to assistive tech.
                   aria-hidden={i >= PROJECT_ITEMS.length || undefined}
