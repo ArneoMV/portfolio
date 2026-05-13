@@ -67,25 +67,53 @@
   opacity: 1;
 }
 
-/* Defensive override for `<video>` inside `.screen`. Tailwind v4's
-   Preflight ships a `video { max-width: 100%; height: auto }` reset
-   (see `node_modules/tailwindcss/preflight.css`) which, under certain
-   `@layer` orderings, can win over a CSS-module class selector even
-   though spec-level specificity would favour the class. This compound
-   selector (`.screen video`, specificity 0,1,1) outranks both the
-   class (0,1,0) and the preflight element rule (0,0,1) deterministically,
-   so the video always fills the masked area exactly as the slideshow
-   `<img>` does — same position, same dimensions, same object-fit
-   crop behaviour. `display: block` and `background` are restated here
-   so this rule is self-sufficient if the `.image` class is ever
-   removed from the video element. */
+/* `<video>` inside `.screen` is positioned directly to the monitor's
+   screen rectangle instead of inheriting `inset: 0` like the slideshow
+   `<img>` does. The reason: CSS `mask-image` on `.screen` clips `<img>`
+   children reliably across browsers, but `<video>` clipping under the
+   same mask is inconsistent (Chromium honours it; Safari/Firefox have
+   historically rendered the video unclipped or with seam artefacts).
+   By positioning the video at the SCREEN_POS rectangle directly, the
+   video never extends past the monitor's screen area regardless of
+   whether the mask clips it or not — the mask becomes belt-and-braces
+   rather than load-bearing.
+
+   Percentages mirror `SCREEN_POS` in `app/components/organisms/work-home/
+   workData.ts`. If `scripts/detect-red-area.ts` is re-run and rewrites
+   that block, these values must be updated by hand to match — there is
+   no compile-time link between the two. Mobile-first cascade matches
+   the `.screen` mask-image breakpoints above: small (default) → medium
+   (≥640px) → large (≥1024px). Specificity 0,1,1 still beats Tailwind
+   v4's preflight `video` reset and the `.image` class. */
 .screen video {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  /* small — workData.ts SCREEN_POS.small */
+  top: 51.50%;
+  left: 12.50%;
+  width: 74.75%;
+  height: 29.63%;
   object-fit: cover;
   object-position: center;
   display: block;
   background: #000;
+}
+
+@media (min-width: 640px) {
+  .screen video {
+    /* medium — workData.ts SCREEN_POS.medium */
+    top: 17.96%;
+    left: 28.18%;
+    width: 45.45%;
+    height: 36.67%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .screen video {
+    /* large — workData.ts SCREEN_POS.large */
+    top: 51.34%;
+    left: 33.61%;
+    width: 32.25%;
+    height: 25.90%;
+  }
 }
