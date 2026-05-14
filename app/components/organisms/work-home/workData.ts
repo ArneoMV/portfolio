@@ -56,6 +56,7 @@ export const WORKS: WorkItem[] = [
       "/images/home/work/slideshow/image-5.webp",
       "/images/home/work/slideshow/image-6.webp",
     ],
+    video: "/images/home/work/neogov-animation.mp4",
   },
   {
     id: "spona",
@@ -65,7 +66,7 @@ export const WORKS: WorkItem[] = [
       "/images/home/work/slideshow/image-7.webp",
       "/images/home/work/slideshow/image-8.webp",
     ],
-    video: "/images/home/work/spona/spona-scene.mp4",
+    video: "/images/home/work/spona-animation.mp4",
   },
   {
     id: "croatel",
