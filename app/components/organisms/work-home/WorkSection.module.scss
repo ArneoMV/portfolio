@@ -28,6 +28,23 @@
   z-index: 2;
 }
 
+/* Medium + Large: pin the section to a single viewport height with the
+   bottom clipped. At the spec viewports (1920×1080 Large, 1100×1080
+   Medium) the container's aspect-ratio (~1:1, height ~1080) lines up
+   exactly with `100vh`, so nothing is visually clipped. At taller
+   viewports a small empty band can appear below the container — the
+   trade-off for not breaking SCREEN_POS by changing the container's
+   aspect-ratio. At shorter viewports the bottom of the container is
+   clipped (overflow: hidden), and `.bgImg`'s object-position: center
+   top below anchors the image to the top so the Work heading + project
+   list area stays visible. */
+@media (min-width: 640px) {
+  .section {
+    height: 100vh;
+    overflow: hidden;
+  }
+}
+
 /* Page rails — dotted vertical lines at `calc(50% ± 550px)`,
    identical to `.projects-section::before/::after`. Painted z:1
    relative to `.section`; the inner `.container`'s `isolation:
@@ -126,6 +143,19 @@
   display: block;
 }
 
+/* Medium + Large: anchor the bg image to the top so when `.section`'s
+   100vh clip eats into the container's natural height (on viewports
+   shorter than the container's aspect-ratio-derived height), the
+   bottom of the photograph is what gets cropped — not the top, which
+   carries the Work heading area and the visual context for the
+   project list. Small keeps the default `center` so the portrait
+   image stays centred in its 400/800 canvas. */
+@media (min-width: 640px) {
+  .bgImg {
+    object-position: center top;
+  }
+}
+
 /* Tint — full-canvas dark wash sitting above the bg photo and
    below CrtScreen. Slideshow paints over it (CrtScreen z=3) so the
    monitor stays unaffected; text overlay (z=4) also paints over it
@@ -172,20 +202,24 @@
 
 /* Medium + Large overlay padding — clears the CRT area at the
    bottom of the bg photograph so the title + list sit in the upper
-   portion of the canvas above the monitor. The exact bottom pad is
-   approximate (designed against the 1100×1080 / 1104×1081 images);
-   tune in follow-up if the list visually clashes with the CRT. */
+   portion of the canvas above the monitor. Top pad and `gap` are
+   fixed (48px from the section's top edge, 24px between heading and
+   list) so vertical rhythm doesn't drift with viewport size; only
+   the bottom CRT-clearance pad keeps its clamp() to scale with the
+   bg image height across breakpoints. Horizontal pad differs per
+   breakpoint (48px Medium / 64px Large) to match the container-inset
+   used elsewhere on the page. */
 @media (min-width: 640px) {
   .overlay {
-    padding: clamp(48px, 6vw, 80px) 48px clamp(200px, 30vh, 380px);
+    padding: 48px 48px clamp(200px, 30vh, 380px);
     gap: 24px;
   }
 }
 
 @media (min-width: 1024px) {
   .overlay {
-    padding: clamp(56px, 6vw, 80px) 64px clamp(280px, 35vh, 480px);
-    gap: 32px;
+    padding: 48px 64px clamp(280px, 35vh, 480px);
+    gap: 24px;
   }
 }
 

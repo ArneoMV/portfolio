@@ -45,12 +45,15 @@
   letter-spacing: -0.01em;
   opacity: 0.6;
   /* opacity + transform are composited — no layout reflow per frame.
-     Both inactive→active and active→inactive use the same 180ms
-     easing, so the dim-out of the previous title pairs with the
-     brighten-in of the new one. */
+     `color` is included so the Medium/Large state swap from neutral-50
+     (inactive) to neutral-10 (active) animates on the same 180ms
+     curve as the opacity/translateX tween. On Small the label colour
+     never changes between states, so this transition is a no-op there
+     — harmless. */
   transition:
     opacity 180ms ease,
-    transform 180ms ease;
+    transform 180ms ease,
+    color 180ms ease;
 }
 
 .labelHovered {
@@ -66,6 +69,11 @@
   color: var(--color-neutral-20);
   opacity: 1;
   text-align: left;
+  /* Same 180ms ease as `.label`, but colour-only — subtitle has no
+     opacity/transform tween. Required for Medium/Large state swap
+     (neutral-50 → neutral-10); no-op on Small where the subtitle's
+     colour stays constant across states. */
+  transition: color 180ms ease;
 }
 
 /* Medium + Large (≥640px) — two-column grid. `.list` defines
@@ -98,17 +106,35 @@
 
   .label {
     grid-column: 1;
-    font-size: clamp(32px, 5.5vw, 80px);
+    font-size: 38px;
     line-height: 1;
+    /* Medium/Large: drop the Small `opacity: 0.6 → 1` reveal and use
+       colour to express state instead. Inactive sits at neutral-50
+       (muted grey over the dark photograph); `.labelHovered` swaps to
+       neutral-10 below for the active row. Opacity locked at 1 so the
+       `.labelHovered` opacity: 1 from the base rule is a no-op here. */
+    color: var(--color-neutral-50);
+    opacity: 1;
+  }
+
+  .labelHovered {
+    color: var(--color-neutral-10);
   }
 
   .subtitle {
     grid-column: 2;
     justify-self: end;
-    font-size: 21px;
+    font-size: 24px;
     font-weight: 600;
-    color: #ffffff;
+    /* Inactive description: same neutral-50 as the inactive label so the
+       two move together. Active swap below toggles to neutral-10
+       alongside `.labelHovered`. */
+    color: var(--color-neutral-50);
     text-align: right;
     max-width: 100%;
+  }
+
+  .itemActive .subtitle {
+    color: var(--color-neutral-10);
   }
 }
