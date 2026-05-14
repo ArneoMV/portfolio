@@ -49,26 +49,4 @@ export const WORK_PROJECTS: Project[] = [
       "/images/home/work-project-03.png",
     ],
   },
-  {
-    slug: "metro-ui-library",
-    title: "Metro UI Library",
-    description: "Component Library, Design Tokens, Documentation",
-    images: [
-      "/images/home/work-project-01.png",
-      "/images/home/work-project-02.png",
-      "/images/home/work-project-03.png",
-      "/images/home/work-project-04.png",
-    ],
-  },
-  {
-    slug: "glasacki-list",
-    title: "Glasački list",
-    description: "Civic Tech, Information Design, Accessibility",
-    images: [
-      "/images/home/work-project-02.png",
-      "/images/home/work-project-03.png",
-      "/images/home/work-project-04.png",
-      "/images/home/work-project-01.png",
-    ],
-  },
 ];
