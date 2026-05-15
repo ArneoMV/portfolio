@@ -7,7 +7,7 @@ export const WORK_PROJECTS: Project[] = [
     description: "Product Design, Design Systems, Collaboration",
     logo: "/images/projects/logo-neogov.svg",
     images: [
-      "/images/home/work-project-01.png",
+      "/images/work/neogov_work.webp",
       "/images/home/work-project-02.png",
       "/images/home/work-project-03.png",
       "/images/home/work-project-04.png",
@@ -19,7 +19,7 @@ export const WORK_PROJECTS: Project[] = [
     description: "Web Design, UX Structure, Dev Handoff",
     logo: "/images/projects/logo-eliteDigital.svg",
     images: [
-      "/images/home/work-project-02.png",
+      "/images/work/elite_digital_work.webp",
       "/images/home/work-project-01.png",
       "/images/home/work-project-03.png",
       "/images/home/work-project-04.png",
@@ -31,7 +31,7 @@ export const WORK_PROJECTS: Project[] = [
     description: "End-to-End, UX Architecture, Platform Design",
     logo: "/images/projects/logo-spona.svg",
     images: [
-      "/images/home/work-project-03.png",
+      "/images/work/spona_work.webp",
       "/images/home/work-project-02.png",
       "/images/home/work-project-01.png",
       "/images/home/work-project-04.png",
@@ -40,10 +40,15 @@ export const WORK_PROJECTS: Project[] = [
   {
     slug: "croatel",
     title: "Croatel",
+    // Listing preview uses `hrt_work.webp` — Croatel was outsourced from
+    // HRT, so the asset filename reflects the original project owner
+    // even though the project is filed under the Croatel slug. Mobile
+    // variant is `hrt_work_small.webp` (derived by `toSmallVariant` in
+    // the listing page).
     description: "Broadcast, Motion, TV",
     logo: "/images/projects/logo-croatel.svg",
     images: [
-      "/images/home/work-project-04.png",
+      "/images/work/hrt_work.webp",
       "/images/home/work-project-01.png",
       "/images/home/work-project-02.png",
       "/images/home/work-project-03.png",

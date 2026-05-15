@@ -54,8 +54,13 @@ const PROJECT_FOOTER_LINKS: [
  * Services → Contact rail group). No internal z-index changes
  * here, so rails paint symmetrically above every section.
  *
- * Static for Task 1 — no pin/parallax behaviour on the dark band
- * yet; that lands in Task 2.
+ * The dark band has scroll-driven pin + scrub on its right column
+ * via GSAP ScrollTrigger (see `ProjectDarkSection`). The pin only
+ * activates when the right-track's content overflows the viewport
+ * (`maxY > 0`) — with the current placeholder copy the overflow is
+ * small enough that the scrub is imperceptible; the effect will
+ * read as intended once each project's real case-study copy and
+ * imagery land in `PROJECT_DETAILS`.
  */
 export default function ProjectDetailTemplate({
   project,

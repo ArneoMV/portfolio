@@ -33,7 +33,9 @@ export default function ProjectHeroSection({ project }: ProjectHeroSectionProps)
         <h1 className="project-detail-title">{project.title}</h1>
 
         <div className="project-detail-row project-detail-row--type-desc">
-          <p className="project-detail-row-label">{project.typeLabel}</p>
+          <p className="project-detail-row-label">
+            {project.typeOfWorkLabel ?? "Type of work"}
+          </p>
           <p className="project-detail-row-body">{project.description}</p>
         </div>
 

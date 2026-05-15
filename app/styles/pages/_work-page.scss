@@ -49,22 +49,25 @@
    narrow screen, and touch has no hover state anyway.
 ================================ */
 
-/* Asymmetric horizontal padding for the listing — the global
-   `.container` class normally pads both sides 64/48/16 per breakpoint
-   (homepage symmetric rail-inset pattern). On `/work` the project
-   images need to sit flush against the LEFT dotted rail, so we strip
-   `padding-left` to 0 here while leaving `.container`'s `padding-right`
-   intact (still 64/48/16 from the right rail for text breathing room).
-   Specificity 0,2,0 (.work-page-shell + .container) outranks the
-   global rule's 0,1,0 across every breakpoint, so we don't need
-   per-breakpoint overrides — the single rule wins everywhere.
-   Scope via `.work-page-shell` is what keeps the override off the
-   homepage (which uses `.container` symmetrically) and off the
-   detail page (whose `ProjectDetailTemplate` uses
-   `project-detail-*-container` classes instead of the global
-   `.container`). */
-.work-page-shell .container {
-  padding-left: 0;
+/* Asymmetric horizontal padding for the listing — DESKTOP ONLY.
+   On desktop (≥768px) the project images sit flush against the RIGHT
+   dotted rail (padding-right stripped to 0), while `.container`'s
+   per-breakpoint `padding-left` stays intact (64/48) for the text
+   block's breathing room from the left rail. Mirrors the previous
+   asymmetric layout, just flipped — image is now the right-aligned
+   element in each row. On mobile (<768px) we want symmetric 16/16
+   inset matching the homepage rail pattern, so this override is
+   gated to `min-width: 768px` — under that, `.container`'s normal
+   mobile rule (16px on both sides) wins.
+
+   Scope via `.work-page-shell` keeps the override off the homepage
+   (which uses `.container` symmetrically) and off the detail page
+   (whose `ProjectDetailTemplate` uses `project-detail-*-container`
+   classes instead of the global `.container`). */
+@media (min-width: 768px) {
+  .work-page-shell .container {
+    padding-right: 0;
+  }
 }
 
 .work-listing {
@@ -117,7 +120,11 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  text-align: right;
+  /* Left-aligned to track the row's left rail edge — text block sits
+     in the left half of each row on desktop (with image on the right
+     flush against the right rail). Mobile keeps the same left-align,
+     so no per-breakpoint override is needed. */
+  text-align: left;
 }
 
 .work-listing-title {
@@ -159,29 +166,36 @@
 }
 
 /* Mobile — stack image on top, text below; lock the image to the
-   row's full width and disable hover expansion. */
+   row's full width with a fixed 200px height (the new `_small.webp`
+   sources are 360×200 native, so the box matches the source's height
+   exactly at 1× DPR). `order: -1` on the image overrides DOM order
+   (text comes first in DOM for screen readers) so the image still
+   renders on top of the column. Row gap is 24px (`--space-lg`); the
+   in-row image→text gap is 8px. Hover expansion is disabled because
+   touch has no hover state and the larger image would push the next
+   row off a narrow screen. */
 @media (max-width: 767px) {
+  .work-listing {
+    gap: var(--space-lg);
+  }
+
   .work-listing-link {
     flex-direction: column;
     align-items: stretch;
-    gap: 16px;
+    gap: 8px;
   }
 
   .work-listing-image {
     width: 100%;
-    height: auto;
-    aspect-ratio: 1 / 1;
+    height: 200px;
     transition: none;
+    order: -1;
   }
 
   .work-listing-link:hover .work-listing-image,
   .work-listing-link:focus-visible .work-listing-image {
     width: 100%;
-    height: auto;
-  }
-
-  .work-listing-text {
-    text-align: left;
+    height: 200px;
   }
 
   .work-listing-title {

@@ -1,9 +1,19 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import FooterSection from "@/app/components/organisms/footer-home/FooterSection";
 import { WORK_PROJECTS } from "@/app/features/projects/data/projects.data";
+
+/**
+ * Map a regular preview path to its mobile variant by inserting
+ * `_small` before the extension. The naming convention (underscore
+ * separators on the project images) is enforced on disk:
+ *   /images/work/elite_digital_work.webp
+ *     → /images/work/elite_digital_work_small.webp
+ * The regex matches the final dot+extension and inserts `_small`
+ * just before it, preserving any extension (webp / png / jpg).
+ */
+const toSmallVariant = (src: string) => src.replace(/(\.[^./]+)$/, "_small$1");
 
 const WORK_PAGE_TITLE = "Work — Arneo";
 const WORK_PAGE_DESCRIPTION =
@@ -38,11 +48,14 @@ export const metadata: Metadata = {
  * the image, pushing later rows down in normal flow — no overlap or
  * absolute positioning, native page scroll only.
  *
- * The image is rendered at its hover-state dimensions (360×320) so the
- * source variant Next.js fetches doesn't change when the row expands;
- * CSS scales the `.work-listing-image` box down to 260×260 in the rest
- * state. Source files are 634×821 portrait, so both states are sharp
- * on 2× DPR displays with no upscale.
+ * Images use `<picture>` + `<source media>` for per-breakpoint source
+ * swap: desktop (≥768px) loads the regular `.webp`, mobile (<768px)
+ * loads the `_small.webp` variant via `toSmallVariant`. The mobile
+ * variant has a wider 1.8 aspect (intentionally different composition
+ * for the stacked mobile layout); width/height on the `<img>` fallback
+ * is set to 360×200 to match — CSS still controls actual rendered size.
+ * The first row's image preloads (`loading="eager"`) because it's above
+ * the fold on both desktop and mobile; the rest stay lazy.
  */
 export default function WorkPage() {
   return (
@@ -59,7 +72,7 @@ export default function WorkPage() {
             detail page. */}
         <div className="container">
           <ul className="work-listing">
-            {WORK_PROJECTS.map((project) => {
+            {WORK_PROJECTS.map((project, i) => {
               const previewImage = project.images[0];
               return (
                 <li key={project.slug} className="work-listing-item">
@@ -67,23 +80,39 @@ export default function WorkPage() {
                     href={`/work/${project.slug}`}
                     className="work-listing-link"
                   >
-                    <div className="work-listing-image">
-                      {previewImage && (
-                        <Image
-                          src={previewImage}
-                          alt={project.title}
-                          width={360}
-                          height={320}
-                          sizes="(max-width: 767px) 100vw, 360px"
-                          className="work-listing-image-img"
-                        />
-                      )}
-                    </div>
+                    {/* Text first in DOM order on every breakpoint. On
+                        desktop the flex `row` direction parks it on the
+                        left (with the image on the right via natural
+                        order). On mobile the flex flips to `column` and
+                        the image is moved to the top via CSS
+                        `order: -1` — see `_work-page.scss`. Keeping the
+                        title/description first in DOM order is also
+                        better for screen readers (heading + summary
+                        precede the decorative preview). */}
                     <div className="work-listing-text">
                       <h2 className="work-listing-title">{project.title}</h2>
                       <p className="work-listing-description">
                         {project.description}
                       </p>
+                    </div>
+                    <div className="work-listing-image">
+                      {previewImage && (
+                        <picture>
+                          <source
+                            media="(min-width: 768px)"
+                            srcSet={previewImage}
+                          />
+                          <img
+                            src={toSmallVariant(previewImage)}
+                            alt={project.title}
+                            width={360}
+                            height={200}
+                            loading={i === 0 ? "eager" : "lazy"}
+                            decoding="async"
+                            className="work-listing-image-img"
+                          />
+                        </picture>
+                      )}
                     </div>
                   </Link>
                 </li>

@@ -17,7 +17,13 @@ export interface ProjectDetailDarkSection {
 export interface ProjectDetail {
   slug: string;
   title: string;
-  typeLabel: string;
+  /**
+   * Label that prefixes the project description in the hero row
+   * (e.g. "Challenge", "Brief", "Project context"). Optional —
+   * `ProjectHeroSection` falls back to `"Type of work"` if absent so
+   * legacy data without this field still renders cleanly.
+   */
+  typeOfWorkLabel?: string;
   description: string;
   heroImage?: string;
   heroImageAlt?: string;
