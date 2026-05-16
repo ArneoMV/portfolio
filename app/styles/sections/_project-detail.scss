@@ -417,8 +417,19 @@
      left cell — sticky doesn't work inside a stretched grid item
      because the item's height equals the grid track's height, so
      it never has anywhere to scroll within. The grid's existing
-     `align-items: start` (above) is the primary guarantor. */
-  .project-detail-dark-left {
+     `align-items: start` (above) is the primary guarantor.
+
+     Scoped to `.project-detail-dark.is-sticky-active` — the class
+     is added by `ProjectDarkSection.tsx` via a scroll listener
+     once the section's top edge has scrolled up to the header's
+     bottom line. Before that, the left column has no special
+     positioning and scrolls in lockstep with the right column as
+     the section enters the viewport from below. Without this gate,
+     the browser treats the sticky element as eligible from the
+     moment its containing block enters the viewport, which read
+     as "right column scrolling past left column before the user
+     has reached the section." */
+  .project-detail-dark.is-sticky-active .project-detail-dark-left {
     position: sticky;
     top: calc(var(--header-height) + 24px);
     align-self: start;
