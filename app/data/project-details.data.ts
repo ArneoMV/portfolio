@@ -85,8 +85,9 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     typeOfWorkLabel: "What I built",
     description:
       "Digital agency delivering web products across multiple industries. Built the design system and component library that lets them ship fast without losing consistency.",
-    heroImage: "/images/home/work-project-02.png",
-    heroImageAlt: "Elite Digital project preview",
+    heroImage: "/images/projects/elite-digital/hero-thumbnail.png",
+    heroImageAlt:
+      "Elite Digital project hero image showcasing the agency's design direction",
     meta: {
       responsibility: "Web Design",
       projectType: "Web / Marketing",
@@ -97,30 +98,62 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       "Elite Digital is an agency that designs and builds websites at agency pace, which usually means fast. I worked on structure and layout systems, shared components, and the documentation around them, so the team could keep extending things after handoff without a designer in the loop for every change. The brief was as much about flexibility as polish.",
     darkSection: {
       leftText:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "Working with Elite Digital was a design collaboration set up to help the team move faster on web projects. My role was to set the direction and foundation, then hand it off to the team for implementation.",
       rightBlocks: [
         {
           type: "text",
           content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "Elite Digital is a full service digital agency in Zagreb that delivers across web, branding, marketing, and IT support. Over roughly ten months I worked with the team as a freelance design collaborator, focused on the web side of their work.",
         },
-        { type: "image", alt: "Elite Digital interface detail" },
+        {
+          type: "image",
+          src: "/images/projects/elite-digital/elite-digital-black-white-mode.png",
+          alt: "Design system foundations in Figma with light and dark mode variables",
+        },
+        {
+          type: "image",
+          src: "/images/projects/elite-digital/elite-digital-clean-work-flow.png",
+          alt: "Early stage design setup and handoff workflow",
+        },
         {
           type: "text",
           content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+            "Most of the work happened in Figma, where I built shared layout systems, typography scales, component patterns, and page templates the team could reuse. My focus was on the early stages of each project, then handing the design over to the developer who built the sites in Framer.",
         },
-        { type: "image", alt: "Elite Digital visual detail" },
+        {
+          type: "image",
+          src: "/images/projects/elite-digital/mockup-continental-dynamics.png",
+          alt: "Continental Dynamics website mockup, a European gas and energy trading group",
+        },
+        {
+          type: "image",
+          src: "/images/projects/elite-digital/mockup-azimut-01.png",
+          alt: "Azimut International website mockup, a Zagreb based ADR logistics company",
+        },
+        {
+          type: "image",
+          src: "/images/projects/elite-digital/union-rail_02.png",
+          alt: "Union Rail website mockup, a European rail freight transport company",
+        },
         {
           type: "text",
           content:
-            "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.",
+            "These projects were shipped by the wider team after the design foundation was in place, so the final live sites reflect both the design setup and decisions made during build. Setting up shared systems and design direction at the start of a project, knowing the build would carry on without me, is its own kind of design challenge.",
         },
-        { type: "image", alt: "Elite Digital process detail" },
+        {
+          type: "image",
+          src: "/images/projects/elite-digital/screen-elite-media-04.png",
+          alt: "Elite Media marketing site design, the agency's internal subbrand focused on marketing and performance",
+        },
+        {
+          type: "image",
+          src: "/images/projects/elite-digital/mockup-elite-media-01.png",
+          alt: "Elite Media website mockup, presenting the marketing subbrand identity and structure",
+        },
         {
           type: "text",
           content:
-            "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam.",
+            "Part of the work also included Elite Media, the agency's internal subbrand focused on marketing and social media. Designing for a brand that itself sells design and strategy comes with its own kind of pressure, since the site has to reflect the quality of work the team delivers to clients.",
         },
       ],
     },

@@ -334,9 +334,29 @@
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
-  background: var(--color-neutral-30);
+  background: transparent;
   border-radius: var(--radius-sm);
   overflow: hidden;
+}
+
+/* `next/image` with `fill` renders an `<img>` absolutely positioned to
+   fill `.project-detail-dark-image`. Tailwind v4's preflight ships
+   `img { max-width: 100%; height: auto }` which, under certain
+   `@layer` orderings in this codebase, outranks next/image's inline
+   `height: 100%`. When it wins, the image shrinks to its natural
+   aspect inside the absolute slot and anchors top-left — visible as
+   misaligned imagery with the wrapper's transparent background
+   showing through below. Compound selector specificity (0,1,1) beats
+   both the preflight element rule (0,0,1) AND the Tailwind
+   `object-cover` utility class (0,1,0) deterministically, so the
+   image fills the 4:3 slot regardless of layer order. Scoped to
+   `.project-detail-dark-image` so hero / other-work / homepage
+   images are untouched. */
+.project-detail-dark-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 /* ── Medium + Large static base (≥900) ────────────────────
