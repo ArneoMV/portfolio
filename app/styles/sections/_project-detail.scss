@@ -234,43 +234,37 @@
   margin-top: var(--space-2xl);
 }
 
-/* ── Section 2 — Dark band with scroll-pin behaviour ───────
-   Mobile-first cascade with a JS-gated pin overlay. The split
-   between "static layout at ≥900" and ".is-pinned overrides"
-   means the section degrades to a clean editorial composition
-   whenever the pin can't or shouldn't run — reduced-motion,
-   short content (maxY ≤ 0), Fast Refresh — instead of leaving
-   100dvh + overflow:hidden stranded on a non-pinned section.
+/* ── Section 2 — Dark band with sticky-left layout ─────────
+   Mobile-first cascade. No JS — the left column uses CSS
+   `position: sticky` at ≥900px to stay visible while the right
+   column scrolls past in normal document flow. Replaces the
+   previous GSAP ScrollTrigger pin that needed `maxY > 0` to
+   activate (and silently no-op'd whenever the right column
+   wasn't tall enough to overflow viewport height).
 
      • Mobile (<900): single column. Lead paragraph at 22px
        reads larger than the 18px body but stays compact
        enough that it doesn't feel like desktop spacing
        crammed into mobile. Aligned with the same 16px
-       content edge as the rest of the section. No pin, no
-       transform — section flows as normal block content.
+       content edge as the rest of the section. No sticky —
+       sticky inside a single-column stack would be invisible
+       (nothing on the side to scroll past it).
 
-     • Medium + Large (≥900) static base: two-column
-       editorial layout. Modest vertical padding (--space-2xl
-       on the columns), align-items: start so the left lead
-       can be shorter than the right body without empty
-       stretched space below it. This is the always-on
-       fallback — it renders correctly on its own, with no
-       JS required. 900px chosen over 768px because at 768
-       each column is ~310px which is too tight for the 4/3
-       image + paragraph pairing — 900px gives ~386px which
-       reads cleanly.
-
-     • .is-pinned overrides (added by JS once
-       ScrollTrigger.create has confirmed there's something
-       to scrub): section becomes 100dvh, columns stretch to
-       fill, right viewport gets overflow:hidden, columns get
-       generous pin-mode padding (3xl/5xl) to size the lead
-       inside the pinned viewport. The JS class lifecycle is
-       what gates this — see ProjectDarkSection.tsx.
+     • Medium + Large (≥900): two-column editorial layout
+       with the left column position: sticky at top:
+       calc(--header-height + 24px). The grid's
+       `align-items: start` is critical: without it, grid
+       items stretch to the tallest column's height and
+       sticky has no internal scroll range to do anything.
+       900px chosen over 768px because at 768 each column
+       is ~310px which is too tight for the 4/3 image +
+       paragraph pairing — 900px gives ~386px which reads
+       cleanly. Match this 900px in ProjectDarkSection.tsx
+       if the layout ever moves into JS-gated territory
+       again.
 
      • ≥1200 additive: widens the column gap and adds a 64px
-       left inset so wider screens feel intentional. Applies
-       in both static and pinned modes.
+       left inset so wider screens feel intentional.
 
      • ≥1440: drops the 48px inner inset so content goes
        rail-to-rail on the largest layouts.
@@ -311,7 +305,7 @@
    them on the unscoped rule was what made every mobile reset
    useless before. */
 .project-detail-dark-left,
-.project-detail-dark-right-track {
+.project-detail-dark-right {
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
@@ -382,7 +376,7 @@
      only make sense when the section IS 100dvh, so they don't
      belong on the static fallback. */
   .project-detail-dark-left,
-  .project-detail-dark-right-track {
+  .project-detail-dark-right {
     padding-top: var(--space-2xl);
     padding-bottom: var(--space-2xl);
   }
@@ -394,57 +388,20 @@
     line-height: 1.5;
   }
 
-  /* ── Pin overrides (JS-gated) ─────────────────────────
-     ProjectDarkSection.tsx adds `.is-pinned` to the section
-     element *only after* its ScrollTrigger.create has
-     succeeded (matchMedia matched ≥900, reduced-motion off,
-     measured maxY > 0). When any of those conditions fail
-     the class is never added and the static layout above
-     remains in place — no clipping, no stranded 100dvh.
-
-     The selector specificity (0,2,1) cleanly beats the
-     unscoped rules (0,1,0), so each override below replaces
-     the corresponding static value. */
-  .project-detail-dark.is-pinned {
-    /* Cascading dvh fallback for browsers without dvh support. */
-    height: 100vh;
-    height: 100dvh;
-    padding-top: 0;
-    padding-bottom: 0;
-
-    .project-detail-dark-inner {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      box-sizing: border-box;
-    }
-
-    .project-detail-dark-grid {
-      flex: 1;
-      align-items: stretch;
-      /* min-height: 0 lets the right viewport's `overflow: hidden`
-         actually clip — without it, grid auto-sizing would let
-         the cell grow to the track's full height. */
-      min-height: 0;
-    }
-
-    /* Generous top/bottom padding sizes the lead inside the
-       pinned viewport. */
-    .project-detail-dark-left,
-    .project-detail-dark-right-track {
-      padding-top: var(--space-3xl);
-      padding-bottom: var(--space-5xl);
-    }
-
-    .project-detail-dark-right-viewport {
-      position: relative;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .project-detail-dark-right-track {
-      will-change: transform;
-    }
+  /* Sticky left column — lead text stays visible while the right
+     column scrolls past in normal flow. `top` is the fixed-header
+     height (--header-height = 124px) plus a 24px visual breathing
+     gap so the sticky text doesn't kiss the header's bottom edge.
+     `align-self: start` is belt-and-braces in case a future change
+     overrides the grid's `align-items: start` and stretches the
+     left cell — sticky doesn't work inside a stretched grid item
+     because the item's height equals the grid track's height, so
+     it never has anywhere to scroll within. The grid's existing
+     `align-items: start` (above) is the primary guarantor. */
+  .project-detail-dark-left {
+    position: sticky;
+    top: calc(var(--header-height) + 24px);
+    align-self: start;
   }
 }
 
