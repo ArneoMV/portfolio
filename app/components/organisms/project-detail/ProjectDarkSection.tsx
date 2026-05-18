@@ -123,10 +123,80 @@ export default function ProjectDarkSection({ project }: ProjectDarkSectionProps)
                   </p>
                 );
               }
+
+              // Image rendering — three variants. `variant` falls back
+              // to "responsive" so legacy placeholder blocks on the
+              // other three projects (no variant field yet) still
+              // render without a runtime branch on `undefined`.
+              const variant = block.variant ?? "responsive";
+
+              if (variant === "illustration") {
+                // Transparent illustration — fixed height from data,
+                // width auto, centred. We don't use next/image `fill`
+                // because the slot has no aspect ratio; instead we
+                // give Image explicit width/height props that match
+                // the rendered height, then let CSS override width
+                // back to auto so the natural aspect is preserved.
+                const h = block.height ?? 240;
+                return (
+                  <div
+                    key={`image-${i}`}
+                    className="project-detail-dark-image project-detail-dark-image--illustration"
+                    style={{ height: `${h}px` }}
+                    role={block.alt ? "img" : undefined}
+                    aria-label={block.alt}
+                  >
+                    {block.src && (
+                      <Image
+                        src={block.src}
+                        alt={block.alt ?? ""}
+                        width={h * 2}
+                        height={h}
+                        className="project-detail-dark-image-content"
+                      />
+                    )}
+                  </div>
+                );
+              }
+
+              if (variant === "mockup-on-frame") {
+                // Clean mockup floating above a brand-coloured frame.
+                // The frame is a sibling absolutely-positioned div at
+                // 60% image height, centred vertically — image extends
+                // above and below the strip. Image is centred at a
+                // capped width (CSS handles breakpoint scaling).
+                return (
+                  <div
+                    key={`image-${i}`}
+                    className="project-detail-dark-image project-detail-dark-image--mockup-on-frame"
+                    role={block.alt ? "img" : undefined}
+                    aria-label={block.alt}
+                  >
+                    {block.backgroundColor && (
+                      <div
+                        className="project-detail-dark-image-frame"
+                        style={{ backgroundColor: block.backgroundColor }}
+                        aria-hidden="true"
+                      />
+                    )}
+                    {block.src && (
+                      <Image
+                        src={block.src}
+                        alt={block.alt ?? ""}
+                        width={400}
+                        height={300}
+                        className="project-detail-dark-image-content"
+                      />
+                    )}
+                  </div>
+                );
+              }
+
+              // "responsive" — full-width photo mockup, height auto.
               return (
                 <div
                   key={`image-${i}`}
-                  className="project-detail-dark-image"
+                  className="project-detail-dark-image project-detail-dark-image--responsive"
                   role={block.alt ? "img" : undefined}
                   aria-label={block.alt}
                 >
@@ -134,8 +204,9 @@ export default function ProjectDarkSection({ project }: ProjectDarkSectionProps)
                     <Image
                       src={block.src}
                       alt={block.alt ?? ""}
-                      fill
-                      className="object-cover"
+                      width={1200}
+                      height={800}
+                      className="project-detail-dark-image-content"
                       sizes="(max-width: 767px) 100vw, 50vw"
                     />
                   )}

@@ -56,20 +56,29 @@
   }
 }
 
+/* H2 heading — token --h2-size (60px). Clamped on mobile so it
+   scales down rather than overflowing the 16px-padded container.
+   Previous size was clamp(36, 5vw, 56) which capped at 56px and
+   never reached the spec'd H2 — replaced with a clamp that caps
+   at the actual H2 token. */
 .project-detail-title {
   margin: 0 0 var(--space-2xl);
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: clamp(36px, 5vw, 56px);
+  font-size: clamp(36px, 5vw, var(--h2-size));
   line-height: 1.05;
   letter-spacing: -0.01em;
   color: var(--color-neutral-100);
 }
 
-/* Two-column rows (label left, body right). Stacks on mobile. */
+/* Two-column rows (label left, body right). Stacks on mobile.
+   Columns split 5fr / 7fr so the label cell is wider than a pure
+   1/3-2/3 (which is what 1fr 2fr produced) — synced with the dark
+   section's grid below for visual consistency across both sections
+   of the page. */
 .project-detail-row {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 5fr 7fr;
   gap: var(--space-2xl);
   align-items: start;
 }
@@ -81,28 +90,37 @@
   }
 }
 
+/* Row label — base-large by default (matches the subtitle/desc
+   pair: "What I built" + body copy). The INTRODUCTION eyebrow
+   uses the `--strong` variant below which switches to base-small. */
 .project-detail-row-label {
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 500;
-  font-size: 18px;
+  font-size: var(--text-lg);
   line-height: 1.4;
   color: var(--color-neutral-100);
 }
 
 /* Strong label variant — used by the "INTRODUCTION" eyebrow.
-   Bold + slightly tighter line-height; sits at the same baseline
-   as the description label so the visual rhythm is consistent. */
+   Uppercase eyebrow at base-small (14px) — matches the meta grid
+   label styling so both labels read as the same hierarchy level.
+   Bold + slightly wider tracking. */
 .project-detail-row-label--strong {
+  font-size: var(--text-caption);
   font-weight: 700;
   letter-spacing: 0.04em;
 }
 
+/* Row body — base-large for project description, "What I built"
+   body, introduction paragraph. Sits beside the row label which
+   is also base-large; the strong-eyebrow variant for INTRODUCTION
+   is the only label that drops to base-small. */
 .project-detail-row-body {
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 500;
-  font-size: 18px;
+  font-size: var(--text-lg);
   line-height: 1.5;
   color: var(--color-neutral-90);
 }
@@ -118,6 +136,7 @@
 .project-detail-image {
   position: relative;
   width: calc(100% + 128px);
+  height: 320px;
   margin-left: -64px;
   margin-top: var(--space-2xl);
   aspect-ratio: 16 / 9;
@@ -206,21 +225,25 @@
   gap: var(--space-xs);
 }
 
+/* Meta grid labels — base-small (14px) uppercase eyebrow. */
 .project-detail-meta-label {
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 12px;
+  font-size: var(--text-caption);
   letter-spacing: var(--tracking-wider);
   text-transform: uppercase;
   color: var(--color-neutral-90);
 }
 
+/* Meta grid values — base-medium (21px). Sits one step below the
+   surrounding body text (base-large 26px) so the grid reads as
+   metadata rather than primary content. */
 .project-detail-meta-value {
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 500;
-  font-size: 18px;
+  font-size: var(--text-md);
   line-height: 1.3;
   color: var(--color-neutral-100);
 }
@@ -311,52 +334,128 @@
   gap: var(--space-xl);
 }
 
+/* Dark section body — base-large (26px) for right-column
+   paragraphs. The sticky left lead is bumped to base-xlarge
+   (30px) below, in the ≥900px block, to read as the lead. */
 .project-detail-dark-text {
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 600;
-  font-size: 18px;
+  font-size: var(--text-lg);
   line-height: 1.5;
   color: var(--color-neutral-10);
 }
 
 /* Mobile-first lead emphasis — paragraph in the LEFT cell
-   renders at 22px / 1.3 so it reads slightly larger than the
-   18px body without ballooning into a heading. Medium and
-   large reset back to 18px (the side-by-side two-column
-   layout makes the size contrast unnecessary at those widths). */
+   renders one step larger than the body. Medium and large
+   bump it further to base-xlarge (30px) below. Both stages
+   share the tighter 1.3 line-height so the lead reads as a
+   compact title-ish block rather than another body paragraph. */
 .project-detail-dark-left .project-detail-dark-text {
-  font-size: 22px;
+  font-size: var(--text-md);
   line-height: 1.3;
 }
 
+/* Three image-block variants — see `ProjectDetailDarkImageVariant`
+   in `project-detail.types.ts` for the data contract. The base
+   `.project-detail-dark-image` rule is shared by all three; each
+   variant adds its own modifier class.
+
+   Common base — flex-centres whatever child the variant renders.
+   No `aspect-ratio` here (each variant decides its own sizing).
+   No `overflow: hidden` here either — variant 3's coloured frame
+   stays within its slot via its own width: 100%, so clipping isn't
+   needed and would also clip Next's `<noscript>` fallback if it
+   ever rendered outside the wrapper. */
 .project-detail-dark-image {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
-  background: transparent;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* `next/image` with `fill` renders an `<img>` absolutely positioned to
-   fill `.project-detail-dark-image`. Tailwind v4's preflight ships
-   `img { max-width: 100%; height: auto }` which, under certain
-   `@layer` orderings in this codebase, outranks next/image's inline
-   `height: 100%`. When it wins, the image shrinks to its natural
-   aspect inside the absolute slot and anchors top-left — visible as
-   misaligned imagery with the wrapper's transparent background
-   showing through below. Compound selector specificity (0,1,1) beats
-   both the preflight element rule (0,0,1) AND the Tailwind
-   `object-cover` utility class (0,1,0) deterministically, so the
-   image fills the 4:3 slot regardless of layer order. Scoped to
-   `.project-detail-dark-image` so hero / other-work / homepage
-   images are untouched. */
-.project-detail-dark-image img {
-  width: 100%;
+/* VARIANT 1 — Illustration. Fixed height comes from inline style
+   on the wrapper (e.g. `height: 240px`). The Image element is
+   given explicit `width`/`height` props in the JSX so next/image
+   doesn't complain, but here CSS overrides width back to `auto`
+   so the natural aspect ratio is preserved at the requested
+   pixel height. `max-width: 100%` keeps it from overflowing the
+   slot on very narrow viewports.
+
+   Compound selector `.…-illustration img` (specificity 0,1,1)
+   beats Tailwind preflight's bare `img { height: auto }` (0,0,1)
+   so we don't need `!important`. */
+.project-detail-dark-image--illustration img.project-detail-dark-image-content {
+  width: auto;
   height: 100%;
-  object-fit: cover;
-  object-position: center;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* VARIANT 2 — Responsive. Full-width photo mockup with its own
+   natural background — image scales fluidly with the slot, height
+   follows aspect ratio. */
+.project-detail-dark-image--responsive {
+  height: auto;
+}
+
+.project-detail-dark-image--responsive img.project-detail-dark-image-content {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* VARIANT 3 — Mockup on coloured frame. The image is capped at
+   400px wide on desktop and centred horizontally; behind it sits
+   a coloured frame at 60% of the image's rendered height, also
+   centred vertically. The frame is full slot width so the strip
+   reads as a deliberate band rather than a backdrop hugging the
+   image edges.
+
+   Stacking: frame is `position: absolute` (z 0), image is
+   `position: relative` (z 1) — image always paints on top of
+   frame. No clipping of either — the image visually extends
+   ~20% above and ~20% below the strip, which is the float
+   effect we want. */
+.project-detail-dark-image--mockup-on-frame {
+  position: relative;
+}
+
+.project-detail-dark-image-frame {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  transform: translateY(-50%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.project-detail-dark-image--mockup-on-frame img.project-detail-dark-image-content {
+  position: relative;
+  z-index: 1;
+  width: 400px;
+  height: auto;
+  max-width: 100%;
+  display: block;
+}
+
+/* Tablet — image scales down but keeps cap. */
+@media (max-width: 1023px) {
+  .project-detail-dark-image--mockup-on-frame img.project-detail-dark-image-content {
+    width: 80%;
+    max-width: 400px;
+  }
+}
+
+/* Mobile — image fills container; frame still proportional. */
+@media (max-width: 767px) {
+  .project-detail-dark-image--mockup-on-frame img.project-detail-dark-image-content {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 /* ── Medium + Large static base (≥900) ────────────────────
@@ -381,13 +480,16 @@
   }
 
   .project-detail-dark-grid {
-    grid-template-columns: 1fr 1fr;
-    /* Tighter gap at Medium so 386px columns aren't squeezed
+    /* 5fr / 7fr split — narrower left (sticky lead) so the right
+       column has more horizontal room for image blocks. Synced with
+       `.project-detail-row` above so the introduction section and
+       the dark section share the same proportion. */
+    grid-template-columns: 5fr 7fr;
+    /* Tighter gap at Medium so the columns aren't squeezed
        further — the ≥1200 block widens this back out. */
     gap: var(--space-xl);
     /* `start` so the short left lead doesn't get stretched
-       to the full height of the (much taller) right column.
-       The .is-pinned override flips this to `stretch`. */
+       to the full height of the (much taller) right column. */
     align-items: start;
   }
 
@@ -401,11 +503,12 @@
     padding-bottom: var(--space-2xl);
   }
 
-  /* Reset mobile lead size — beside-the-body equal sizing reads
-     as a coherent two-column band at this width. */
+  /* ≥900 lead size — base-xlarge (30px) so the sticky lead reads
+     as a clear hierarchical step above the base-large (26px) body
+     in the right column. Tighter line-height keeps it compact. */
   .project-detail-dark-left .project-detail-dark-text {
-    font-size: 18px;
-    line-height: 1.5;
+    font-size: var(--text-xl);
+    line-height: 1.3;
   }
 
   /* Sticky left column — lead text stays visible while the right
@@ -460,7 +563,128 @@
   }
 }
 
-/* ── Section 3 — Other Work ────────────────────────────────── */
+/* ── Section 3 — Light editorial section ────────────────────
+   Per-block layout. Most blocks render inside a `.row` — a
+   5fr/7fr grid at ≥900px with the LEFT column intentionally
+   empty so the right column reads as a deliberate offset from
+   the rail. `variant: "full-width"` image blocks skip the grid
+   entirely and render directly inside `.inner`, spanning the
+   full 1100px container.
+
+   Mobile collapses each row to single column so all blocks flow
+   naturally regardless of their variant.
+
+   Image rendering reuses `.project-detail-dark-image*` modifier
+   classes (illustration / responsive / mockup-on-frame) — those
+   styles are background-neutral so they render identically on
+   both dark and light backgrounds. Only the section wrapper
+   colour and the missing leftText differ from the dark section.
+   ================================ */
+
+.project-detail-light {
+  background: var(--color-background);
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  color: var(--color-neutral-100);
+}
+
+/* Flex-column container — holds rows and full-width images in
+   declared order. The vertical gap acts as the rhythm between
+   blocks (replaces the previous flex-gap that lived inside the
+   right column). */
+.project-detail-light-inner {
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* Per-block row — mobile is a single column. At ≥900 below this
+   becomes a 5fr/7fr grid. */
+.project-detail-light-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  align-items: start;
+}
+
+.project-detail-light-left,
+.project-detail-light-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* Full-width image wrapper — escapes the row grid and fills the
+   container's 1100px width. Image inside scales to 100% via the
+   responsive image content class shared with the dark section. */
+.project-detail-light-fullwidth {
+  width: 100%;
+}
+
+.project-detail-light-fullwidth img.project-detail-dark-image-content {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Light section paragraph — base-large (26px). Sits at the same
+   size as the dark section's right-column body so the editorial
+   rhythm is consistent across the page when the user crosses the
+   dark/light boundary. */
+.project-detail-light-text {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  color: var(--color-neutral-90);
+}
+
+/* ── Medium + Large (≥900) — two-column 5fr / 7fr per row ──
+   Each row becomes the 5fr/7fr grid (left empty, right content).
+   Full-width image wrappers stay full-width — they're siblings
+   of the rows, not inside them. */
+@media (min-width: 900px) {
+  .project-detail-light {
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-3xl);
+  }
+
+  .project-detail-light-inner {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  .project-detail-light-row {
+    grid-template-columns: 5fr 7fr;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+}
+
+/* ── ≥1200 additive — wider gap inside rows, matching dark
+   section. */
+@media (min-width: 1200px) {
+  .project-detail-light-row {
+    gap: var(--space-3xl);
+  }
+}
+
+/* ── ≥1440 — drop inner inset so content goes rail-to-rail. ─ */
+@media (min-width: 1440px) {
+  .project-detail-light-inner {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* ── Section 4 — Other Work ────────────────────────────────── */
 
 .project-detail-other {
   background: var(--color-background);
@@ -499,11 +723,13 @@
   margin-bottom: var(--space-2xl);
 }
 
+/* Other Work section heading — H3 token (44px), clamped down on
+   mobile. Sits below the H2 project title in the hero. */
 .project-detail-other-title {
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: clamp(24px, 3vw, 32px);
+  font-size: clamp(28px, 4vw, var(--h3-size));
   line-height: 1.1;
   color: var(--color-neutral-100);
 }
@@ -569,20 +795,26 @@
   background-color: var(--color-neutral-40);
 }
 
+/* Other Work card title — base-medium (21px) bold so card titles
+   read as labels for the imagery above, not as headings competing
+   with the section title. */
 .project-detail-other-card-title {
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 700;
-  font-size: 18px;
+  font-size: var(--text-md);
   line-height: 1.2;
   color: var(--color-neutral-100);
 }
 
+/* Card description — base-large (26px) so the prose under each
+   card reads at the same body level as paragraphs across the
+   detail page. */
 .project-detail-other-card-desc {
   margin: 0;
   font-family: var(--font-sans);
   font-weight: 500;
-  font-size: 14px;
+  font-size: var(--text-lg);
   line-height: 1.4;
   color: var(--color-neutral-90);
 }

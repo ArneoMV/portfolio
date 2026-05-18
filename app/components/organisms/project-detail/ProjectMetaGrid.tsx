@@ -6,17 +6,19 @@ interface ProjectMetaGridProps {
 
 /**
  * Four-up meta grid (Responsibility / Project Type / Industry /
- * Timeline) shown between the hero image and the introduction row.
- * Labels are uppercase and small; values are normal-weight body
- * text. Stacks to 2 columns on medium and 2 columns on small per
- * the reference.
+ * Year) shown between the hero image and the introduction row.
+ * The fourth column was previously "Timeline" / a duration string
+ * — replaced with calendar year so single years and ranges read
+ * the same way. Labels are uppercase and small; values are
+ * normal-weight body text. Stacks to 2 columns on medium and 2
+ * columns on small per the reference.
  */
 export default function ProjectMetaGrid({ meta }: ProjectMetaGridProps) {
   const items: { label: string; value: string }[] = [
     { label: "RESPONSIBILITY", value: meta.responsibility },
     { label: "PROJECT TYPE", value: meta.projectType },
     { label: "INDUSTRY", value: meta.industry },
-    { label: "TIMELINE", value: meta.timeline },
+    { label: "YEAR", value: meta.year },
   ];
 
   return (

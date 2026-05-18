@@ -44,7 +44,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       responsibility: "UI/UX Design",
       projectType: "Product / SaaS",
       industry: "Government / HR Tech",
-      timeline: "3 weeks",
+      year: "2022 – 2024",
     },
     introduction:
       "NEOGOV is the HR platform behind counties, school districts, and city halls across the United States. I started on product flows for eForms, Onboard, and Analytics, then joined the design system team to work on the patterns and components those products share. A lot of the work came down to one question: how do you change something in one place without breaking it in five others. Toward the end I helped coordinate AI feature integration across the platform, which mostly meant translating product decisions into design system patterns that could actually scale.",
@@ -85,20 +85,20 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     typeOfWorkLabel: "What I built",
     description:
       "Digital agency delivering web products across multiple industries. Built the design system and component library that lets them ship fast without losing consistency.",
-    heroImage: "/images/projects/elite-digital/hero-thumbnail.png",
+    heroImage: "/images/projects/elite-digital/elite-digital-hero-image.png",
     heroImageAlt:
-      "Elite Digital project hero image showcasing the agency's design direction",
+      "Elite Digital project hero showing the design for fast delivery case study",
     meta: {
-      responsibility: "Web Design",
+      responsibility: "UI/UX Design",
       projectType: "Web / Marketing",
       industry: "Digital Agency",
-      timeline: "4 weeks",
+      year: "2025",
     },
     introduction:
       "Elite Digital is an agency that designs and builds websites at agency pace, which usually means fast. I worked on structure and layout systems, shared components, and the documentation around them, so the team could keep extending things after handoff without a designer in the loop for every change. The brief was as much about flexibility as polish.",
     darkSection: {
       leftText:
-        "Working with Elite Digital was a design collaboration set up to help the team move faster on web projects. My role was to set the direction and foundation, then hand it off to the team for implementation.",
+        "A design collaboration set up to help the team move faster, where I set the direction and foundation, then handed it off for implementation.",
       rightBlocks: [
         {
           type: "text",
@@ -107,13 +107,10 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         },
         {
           type: "image",
-          src: "/images/projects/elite-digital/elite-digital-black-white-mode.png",
-          alt: "Design system foundations in Figma with light and dark mode variables",
-        },
-        {
-          type: "image",
+          variant: "illustration",
+          height: 240,
           src: "/images/projects/elite-digital/elite-digital-clean-work-flow.png",
-          alt: "Early stage design setup and handoff workflow",
+          alt: "Early stage design setup and handoff workflow with sticky notes",
         },
         {
           type: "text",
@@ -122,18 +119,20 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
         },
         {
           type: "image",
-          src: "/images/projects/elite-digital/mockup-continental-dynamics.png",
+          variant: "illustration",
+          height: 300,
+          src: "/images/projects/elite-digital/elite-digital-black-white-mode.png",
+          alt: "Design system foundations in Figma with light and dark mode variables",
+        },
+      ],
+    },
+    lightSection: {
+      rightBlocks: [
+        {
+          type: "image",
+          variant: "responsive",
+          src: "/images/projects/elite-digital/mockup-continental-dynamics-01.png",
           alt: "Continental Dynamics website mockup, a European gas and energy trading group",
-        },
-        {
-          type: "image",
-          src: "/images/projects/elite-digital/mockup-azimut-01.png",
-          alt: "Azimut International website mockup, a Zagreb based ADR logistics company",
-        },
-        {
-          type: "image",
-          src: "/images/projects/elite-digital/union-rail_02.png",
-          alt: "Union Rail website mockup, a European rail freight transport company",
         },
         {
           type: "text",
@@ -141,19 +140,15 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
             "These projects were shipped by the wider team after the design foundation was in place, so the final live sites reflect both the design setup and decisions made during build. Setting up shared systems and design direction at the start of a project, knowing the build would carry on without me, is its own kind of design challenge.",
         },
         {
-          type: "image",
-          src: "/images/projects/elite-digital/screen-elite-media-04.png",
-          alt: "Elite Media marketing site design, the agency's internal subbrand focused on marketing and performance",
-        },
-        {
-          type: "image",
-          src: "/images/projects/elite-digital/mockup-elite-media-01.png",
-          alt: "Elite Media website mockup, presenting the marketing subbrand identity and structure",
-        },
-        {
           type: "text",
           content:
             "Part of the work also included Elite Media, the agency's internal subbrand focused on marketing and social media. Designing for a brand that itself sells design and strategy comes with its own kind of pressure, since the site has to reflect the quality of work the team delivers to clients.",
+        },
+        {
+          type: "image",
+          variant: "full-width",
+          src: "/images/projects/elite-digital/mockups-all.png",
+          alt: "Client website mockups for Azimut International, Union Rail, and Elite Digital agency",
         },
       ],
     },
@@ -171,7 +166,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       responsibility: "End-to-End Design",
       projectType: "Product Design",
       industry: "B2B SaaS / Marketplace",
-      timeline: "8 weeks",
+      year: "2020 – 2022",
     },
     introduction:
       "Spona is a B2B platform built to connect companies with the agencies that can actually deliver for them. I came in early and worked across information architecture, user flows, and the dashboards both sides of the marketplace eventually live in. The constant tension was between a tidy enterprise SaaS experience and the speed agencies actually move at, and most of the design choices live somewhere along that line.",
@@ -218,7 +213,7 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       responsibility: "UI Design",
       projectType: "Motion / Graphics",
       industry: "Broadcast / TV",
-      timeline: "2 weeks",
+      year: "2018 – 2020",
     },
     introduction:
       "Croatel produces broadcast graphics for HRT1, Croatia's national television. The work covered news, weather, culture, and sports — bumpers, lower-thirds, and motion visuals that had to read at distance on living-room TVs and still feel current. Some pieces ran for a single segment, others ended up in rotation for years.",

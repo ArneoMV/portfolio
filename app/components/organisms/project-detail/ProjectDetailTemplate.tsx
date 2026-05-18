@@ -1,6 +1,7 @@
 import SiteFooter from "@/app/components/organisms/site-footer/SiteFooter";
 import ProjectHeroSection from "./ProjectHeroSection";
 import ProjectDarkSection from "./ProjectDarkSection";
+import ProjectLightSection from "./ProjectLightSection";
 import OtherWorkSection from "./OtherWorkSection";
 import type { ProjectDetail } from "./project-detail.types";
 
@@ -71,6 +72,9 @@ export default function ProjectDetailTemplate({
       <div className="page-rail-group">
         <ProjectHeroSection project={project} />
         <ProjectDarkSection project={project} />
+        {project.lightSection && (
+          <ProjectLightSection lightSection={project.lightSection} />
+        )}
         <OtherWorkSection projects={otherProjects} />
         <SiteFooter
           linkGroups={PROJECT_FOOTER_LINKS}
