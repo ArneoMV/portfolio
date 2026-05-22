@@ -1,0 +1,582 @@
+/* =====================================================================
+   NEOGOV PROJECT PAGE  —  /work/neogov  (bespoke, not the shared
+   ProjectDetailTemplate). All rules scoped under `.neogov-*` so there
+   are no specificity conflicts with the shared project-detail styles.
+
+   Layout model: every section's content sits in `.neogov-rail-container`
+   (max-width 1100px, centred, NO horizontal padding) so section panels
+   and backgrounds span rail-to-rail (flush with the dotted side rails).
+   Horizontal insets are applied per-element with an ASYMMETRIC rule:
+     • leftmost element in a row → padding-left: 24px (right 0)
+     • rightmost element in a row → padding-right: 24px (left 0)
+     • middle elements (3+ cols) → no horizontal padding
+     • standalone text → treated as leftmost (padding-left: 24px)
+     • images / image grids → no padding, touch the rail/panel edges
+   Inter-column gap is a flat 24px. On mobile every row stacks to a
+   single column and the asymmetric paddings collapse to a symmetric
+   24px on both sides.
+===================================================================== */
+
+/* Page wrapper — carries the desktop footer/toolbar bottom clearance
+   the shared `.project-detail` article used to provide (global
+   `.site-main` only reserves toolbar space on mobile). */
+.neogov-project-page {
+  padding-bottom: var(--space-5xl);
+}
+
+/* Rail-edge container — caps content at the 1100px rail box and adds
+   NO padding, so panels/backgrounds reach the rails. Replaces the
+   per-section `.container` cap rule used previously. */
+.neogov-rail-container {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* ── Section 1 — Hero / Introduction ───────────────────────── */
+
+/* `padding-top: var(--header-height)` clears the fixed site header
+   (the spec's `padding: 3xl 0` would let content slide under it). */
+.neogov-hero {
+  background: var(--color-background);
+  padding-top: var(--header-height);
+  padding-bottom: var(--space-3xl);
+}
+
+/* Hero top — light-blue panel spanning rail-to-rail, text left +
+   composition image right. Vertical padding only; the text gets a
+   left inset and the image touches the right rail. */
+.neogov-hero-top {
+  background: linear-gradient(to bottom, #f6f9fc 0%, #c2d7ee 100%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: center;
+  min-height: 320px;
+  padding: 0;
+  margin-bottom: var(--space-3xl);
+  position: relative; /* positioning context for the absolute image */
+  overflow: visible; /* let the 592px image overflow the panel */
+}
+
+.neogov-hero-top-text {
+  padding-left: 24px;
+  padding-right: 0;
+  position: relative;
+  z-index: 3; /* above the overflowing image (z-index 2) */
+}
+
+/* Composition image — absolutely positioned so its 592px height can
+   overflow the 320px panel. The grid cell stays in flow (reserving
+   the right column) but must be `position: static` so the image
+   resolves against the PANEL (`.neogov-hero-top`, position: relative),
+   not the cell — that's what lets it centre against the panel's full
+   height. The image anchors to the panel's right edge and vertical
+   centre, spilling equally above and below. z-index 2 lifts it above
+   the dotted side rails (z-index 1); hero content sits at z-index 3
+   so the image never covers it. */
+.neogov-hero-top-image {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.neogov-hero-top-image img {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  height: 592px;
+  width: auto;
+  max-width: none;
+  object-fit: contain;
+  display: block;
+  z-index: 2;
+}
+
+.neogov-hero-display {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 48px;
+  line-height: 1.05;
+  font-weight: 400;
+  color: var(--color-text-primary);
+}
+
+/* Standalone title "Neogov" — treated as leftmost. */
+.neogov-hero-title {
+  margin: var(--space-2xl) 0 var(--space-lg) 0;
+  padding-left: 24px;
+  padding-right: 0;
+  font-family: var(--font-display);
+  font-size: var(--h2-size);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--color-text-primary);
+}
+
+/* Label/value row — dt left (5fr), dd right (7fr). */
+.neogov-hero-row {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 24px;
+  padding: var(--space-lg) 0;
+  margin: 0;
+}
+
+.neogov-hero-row dt {
+  margin: 0;
+  padding-left: 24px;
+  padding-right: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-primary);
+}
+
+.neogov-hero-row dd {
+  margin: 0;
+  padding-left: 0;
+  padding-right: 24px;
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  color: var(--color-neutral-90);
+}
+
+/* Meta-grid wrapper — full-width row with 24px both sides + dotted
+   horizontal rules above + below the shared ProjectMetaGrid. Two
+   layered horizontal gradients (top left + bottom left) mirror the
+   side rails' 4px-dash / 8px-gap neutral-80 rhythm. The shared
+   `.project-detail-meta` carries its own top margin, bottom padding,
+   and a `::after` dotted bottom line (built for the Elite Digital
+   hero) — all neutralised here within the Neogov scope so the
+   wrapper's rules are the only dividers. ProjectMetaGrid.tsx itself
+   is untouched. */
+.neogov-hero-meta {
+  padding: var(--space-lg) 24px;
+  background-image:
+    linear-gradient(to right, var(--color-neutral-80) 4px, transparent 4px),
+    linear-gradient(to right, var(--color-neutral-80) 4px, transparent 4px);
+  background-size:
+    12px 1px,
+    12px 1px;
+  background-position:
+    top left,
+    bottom left;
+  background-repeat: repeat-x, repeat-x;
+}
+
+.neogov-hero-meta .project-detail-meta {
+  margin-top: 0;
+  padding-bottom: 0;
+}
+
+.neogov-hero-meta .project-detail-meta::after {
+  display: none;
+}
+
+/* The INTRODUCTION row directly follows the meta wrapper; drop its
+   solid top border so it doesn't double up with the wrapper's dotted
+   bottom line. The "What I built" row (above the meta) keeps its
+   top border. */
+.neogov-hero-meta + .neogov-hero-row {
+  border-top: none;
+}
+
+/* User-profile screenshot — touches both rails (no padding). */
+.neogov-hero-user-profile {
+  margin: var(--space-2xl) 0 0 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.neogov-hero-user-profile img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Hero content below the blue panel — lifted above the overflowing
+   composition image (z-index 2) so it's never covered. Defensive:
+   with the image bottom-anchored it only overflows upward today, but
+   this keeps the layout robust if the anchor changes to centre/top. */
+.neogov-hero-title,
+.neogov-hero-row,
+.neogov-hero-meta,
+.neogov-hero-user-profile {
+  position: relative;
+  z-index: 3;
+}
+
+/* Tablet (768–1023) — keep the 2-col top row, shrink the display. */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .neogov-hero-display {
+    font-size: 44px;
+  }
+}
+
+/* Mobile (<768) — stack the top row + label rows; all asymmetric
+   paddings collapse to a symmetric 24px both sides. */
+@media (max-width: 767px) {
+  .neogov-hero-top {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+    min-height: auto;
+  }
+
+  .neogov-hero-top-text {
+    padding: 0 24px;
+  }
+
+  .neogov-hero-top-image {
+    padding: 0 24px;
+    position: static; /* revert the desktop absolute context */
+  }
+
+  /* Revert to static stacked flow on mobile — the absolute 592px
+     overflow only makes sense in the 2-col desktop panel. */
+  .neogov-hero-top-image img {
+    position: static;
+    top: auto;
+    bottom: auto;
+    right: auto;
+    transform: none;
+    z-index: auto;
+    height: auto;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .neogov-hero-display {
+    font-size: 32px;
+  }
+
+  .neogov-hero-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+
+  .neogov-hero-row dt,
+  .neogov-hero-row dd {
+    padding: 0 24px;
+  }
+}
+
+/* ── Section 2 — Dark "Context" band ──────────────────────── */
+
+.neogov-context {
+  padding: var(--space-3xl) 0;
+}
+
+/* Navy panel — spans rail-to-rail inside the rail container. Vertical
+   padding only; inner elements carry their own asymmetric insets. */
+.neogov-context-panel {
+  background: var(--color-primary-100);
+  color: var(--color-neutral-10);
+  padding: var(--space-3xl) 0;
+}
+
+/* Lead quote — standalone leftmost. */
+.neogov-context-lead {
+  max-width: 720px;
+  margin: 0 0 var(--space-3xl) 0;
+  padding-left: 24px;
+  padding-right: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  line-height: 1.3;
+}
+
+/* 3-up stats — first padding-left, last padding-right, middle none. */
+.neogov-context-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: var(--space-2xl);
+}
+
+.neogov-context-stat:first-child {
+  padding-left: 24px;
+  padding-right: 0;
+}
+
+.neogov-context-stat:last-child {
+  padding-left: 0;
+  padding-right: 24px;
+}
+
+.neogov-context-stat:not(:first-child):not(:last-child) {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.neogov-context-stat--stat .neogov-context-stat-top {
+  font-family: var(--font-sans);
+  font-size: var(--text-xxl);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.neogov-context-stat--stat .neogov-context-stat-bottom {
+  margin-top: var(--space-xs);
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+.neogov-context-stat--meta .neogov-context-stat-top {
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+.neogov-context-stat--meta .neogov-context-stat-bottom {
+  margin-top: var(--space-xs);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: 1.3;
+}
+
+/* 2-col text rows (Context label, Product work, System impact) —
+   dt left (5fr) + dd right (7fr). `.neogov-context-row-text` is just
+   an extra class on the Context-label dl; the base rule covers it. */
+.neogov-context-row {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 24px;
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  margin: 0;
+}
+
+.neogov-context-row dt {
+  margin: 0;
+  padding-left: 24px;
+  padding-right: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.neogov-context-row dd {
+  margin: 0;
+  padding-left: 0;
+  padding-right: 24px;
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: 1.4;
+}
+
+/* Image pair below the Context label — inset 24px from the panel
+   edges to match the rest of the panel's content rhythm. */
+.neogov-context-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.neogov-context-images img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-xs);
+}
+
+/* Brand callout — right column, inset 24px from the right rail. */
+.neogov-context-callout-wrap {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 24px;
+  margin-top: var(--space-xl);
+}
+
+.neogov-context-callout-wrap .neogov-context-callout {
+  grid-column: 2;
+  margin-right: 24px;
+  padding: var(--space-xl);
+  background: var(--color-brand);
+  color: var(--color-neutral-10);
+  border-radius: var(--radius-xs);
+}
+
+.neogov-context-callout p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Vertical rhythm for the elements that now sit OUTSIDE the navy
+   panel (System impact row, then the callout). */
+.neogov-context-panel + .neogov-context-row {
+  margin-top: var(--space-2xl);
+}
+
+.neogov-context-row + .neogov-context-callout-wrap {
+  margin-top: var(--space-xl);
+}
+
+/* Mobile (<768) — single column; asymmetric paddings → 24px both
+   sides (images stay flush). */
+@media (max-width: 767px) {
+  .neogov-context-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .neogov-context-stat:first-child,
+  .neogov-context-stat:last-child,
+  .neogov-context-stat:not(:first-child):not(:last-child) {
+    padding: 0 24px;
+  }
+
+  .neogov-context-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .neogov-context-row dt,
+  .neogov-context-row dd {
+    padding: 0 24px;
+  }
+
+  .neogov-context-images {
+    grid-template-columns: 1fr;
+  }
+
+  .neogov-context-callout-wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .neogov-context-callout-wrap .neogov-context-callout {
+    grid-column: 1;
+    margin: 0 24px;
+  }
+}
+
+/* ── Section 3 — NOVI design-system band ──────────────────────
+   Inside the rail container — the composite image spans rail-to-rail
+   (1100px max). The light-blue backdrop is baked into the image, so
+   the section has no background and no breakout. */
+.neogov-design-system {
+  padding: var(--space-3xl) 0;
+}
+
+.neogov-design-system-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.neogov-design-system-image--small {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .neogov-design-system-image--large {
+    display: none;
+  }
+
+  .neogov-design-system-image--small {
+    display: block;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
+
+/* ── Sections 4 & 5 — Image-pair sections (AI / Reflection) ── */
+
+.neogov-image-pair {
+  background: var(--color-background);
+  padding: var(--space-3xl) 0;
+}
+
+/* Label/text row — dt left (5fr) + dd right (7fr), asymmetric. */
+.neogov-image-pair-row {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 24px;
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  margin: 0 0 var(--space-2xl) 0;
+  border-top: 1px solid var(--color-neutral-30);
+}
+
+.neogov-image-pair-row dt {
+  margin: 0;
+  padding-left: 24px;
+  padding-right: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-primary);
+}
+
+.neogov-image-pair-row dd {
+  margin: 0;
+  padding-left: 0;
+  padding-right: 24px;
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  color: var(--color-neutral-90);
+}
+
+/* Image pair grid — no padding, touches the rails. */
+.neogov-image-pair-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.neogov-image-pair-item {
+  margin: 0;
+}
+
+.neogov-image-pair-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.neogov-image-pair-item figcaption {
+  margin-top: var(--space-sm);
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  color: var(--color-neutral-70);
+}
+
+@media (max-width: 767px) {
+  .neogov-image-pair-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+
+  .neogov-image-pair-row dt,
+  .neogov-image-pair-row dd {
+    padding: 0 24px;
+  }
+
+  .neogov-image-pair-grid {
+    grid-template-columns: 1fr;
+  }
+}

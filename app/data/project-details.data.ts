@@ -32,6 +32,20 @@ import type { ProjectDetail } from "@/app/components/organisms/project-detail/pr
  *     be reviewed in a follow-up.
  */
 export const PROJECT_DETAILS: ProjectDetail[] = [
+  // NOTE: Neogov's /work/neogov DETAIL PAGE no longer renders from
+  // this entry — it has a dedicated page (`NeogovProjectPage`) backed
+  // by `NEOGOV_PROJECT` in `app/data/neogov-project.data.ts`. This
+  // entry is intentionally retained because:
+  //   • `getOtherProjects()` walks this array to show Neogov as an
+  //     "Other Work" card on the other projects' pages.
+  //   • `generateStaticParams()` maps this array to emit the neogov
+  //     static path.
+  // Keep the listing-relevant fields (slug, title, heroImage,
+  // heroImageAlt, description, tags) in sync with NEOGOV_PROJECT. The
+  // darkSection lorem below is now dead for rendering purposes (the
+  // detail page ignores it) — left intact only so the entry satisfies
+  // the required `ProjectDetail` shape without weakening the shared
+  // type. Edit real Neogov case-study content in NEOGOV_PROJECT.
   {
     slug: "neogov",
     title: "Neogov",
