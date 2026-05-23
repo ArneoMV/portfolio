@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import NeogovProjectPage from "@/app/components/organisms/project-detail/NeogovProjectPage";
+import SponaProjectPage from "@/app/components/organisms/project-detail/SponaProjectPage";
 import ProjectDetailTemplate from "@/app/components/organisms/project-detail/ProjectDetailTemplate";
 import {
   getOtherProjects,
@@ -9,6 +10,7 @@ import {
 } from "@/app/components/organisms/project-detail/project-detail.helpers";
 import { PROJECT_DETAILS } from "@/app/data/project-details.data";
 import { NEOGOV_PROJECT } from "@/app/data/neogov-project.data";
+import { SPONA_PROJECT } from "@/app/data/spona-project.data";
 
 export function generateStaticParams() {
   // PROJECT_DETAILS still retains the Neogov entry (used for the
@@ -107,6 +109,8 @@ export async function generateMetadata({
  *   • "neogov" → the dedicated <NeogovProjectPage> (its own data +
  *     custom design freedom). It resolves its own "Other Work"
  *     cards internally, so this route doesn't pass props.
+ *   • "spona" → the dedicated <SponaProjectPage> (same bespoke
+ *     pattern as Neogov: own data, resolves its own "Other Work").
  *   • everything else → the shared <ProjectDetailTemplate> (hero +
  *     introduction → dark band → optional light section → other
  *     work → footer). This route resolves the project by slug,
@@ -122,6 +126,10 @@ export default async function ProjectPage({
 
   if (slug === NEOGOV_PROJECT.slug) {
     return <NeogovProjectPage />;
+  }
+
+  if (slug === SPONA_PROJECT.slug) {
+    return <SponaProjectPage />;
   }
 
   const project = getProjectDetail(slug);

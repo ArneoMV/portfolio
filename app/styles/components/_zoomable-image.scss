@@ -1,0 +1,110 @@
+/* =====================================================================
+   ZOOMABLE IMAGE  —  click-to-zoom lightbox (molecule)
+   Used across project pages. The trigger is a reset <button> wrapping
+   the inline image; the modal is portalled to <body> and sits at
+   z-index 9999 (far above Header=10, rails=1).
+===================================================================== */
+
+/* Trigger — reset button chrome, then `display: contents` so the
+   button generates NO box: the wrapped image is laid out by its
+   surrounding CSS exactly as if it weren't wrapped. This keeps every
+   image variant (illustration fixed-height, mockup-on-frame centring,
+   responsive/grid cells, fill) rendering unchanged after the swap.
+   The reset properties below are inert under `display: contents` but
+   apply where a consumer overrides the trigger to a real box (e.g. the
+   `fill` hero in `_project-detail.scss`). */
+.zoomable-image-trigger {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: contents;
+}
+
+.zoomable-image-trigger img {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: zoom-in;
+}
+
+/* The button has no box under `display: contents`, so the focus ring
+   renders on the image instead. */
+.zoomable-image-trigger:focus-visible img {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 4px;
+}
+
+/* Full-screen modal backdrop. */
+.zoomable-image-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: zoom-out;
+  animation: zoomable-image-fade-in 200ms ease-out;
+}
+
+@keyframes zoomable-image-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.zoomable-image-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-neutral-10);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-neutral-10);
+    outline-offset: 2px;
+  }
+}
+
+/* Image wrapper — the only non-backdrop region of the modal. It is
+   the positioned parent next/image `fill` requires, and it hugs the
+   image: `--zoomable-ar` (set inline from the image's aspect ratio)
+   drives both the box's aspect-ratio AND its width, so the box scales
+   up until one edge hits the 95vw/95vh cap with NO letterbox bars
+   inside it. Every dark pixel around the image is therefore the modal
+   backdrop, which is what closes on click. The `1.5` fallback covers
+   the first paint before the ratio is known (hero only).
+   `cursor: default` signals the image area won't close on click. */
+.zoomable-image-image-wrap {
+  position: relative;
+  width: min(95vw, calc(95vh * var(--zoomable-ar, 1.5)));
+  max-width: 95vw;
+  max-height: 95vh;
+  aspect-ratio: var(--zoomable-ar, 1.5);
+  cursor: default;
+}
+
+.zoomable-image-full {
+  object-fit: contain;
+  user-select: none;
+}

@@ -1,9 +1,9 @@
 import SiteFooter from "@/app/components/organisms/site-footer/SiteFooter";
 import { NEOGOV_PROJECT } from "@/app/data/neogov-project.data";
 import NeogovHeroSection from "./neogov/NeogovHeroSection";
-import NeogovContextSection from "./neogov/NeogovContextSection";
-import NeogovDesignSystemSection from "./neogov/NeogovDesignSystemSection";
-import NeogovImagePairSection from "./neogov/NeogovImagePairSection";
+import CaseStudyContextSection from "./case-study/CaseStudyContextSection";
+import CaseStudyShowcaseSection from "./case-study/CaseStudyShowcaseSection";
+import CaseStudyImagePairSection from "./case-study/CaseStudyImagePairSection";
 import OtherWorkSection from "./OtherWorkSection";
 import { getOtherProjects } from "./project-detail.helpers";
 
@@ -72,13 +72,34 @@ export default function NeogovProjectPage() {
   return (
     <div className="neogov-project-page page-rail-group">
       <NeogovHeroSection project={NEOGOV_PROJECT} />
-      <NeogovContextSection project={NEOGOV_PROJECT} />
-      <NeogovDesignSystemSection project={NEOGOV_PROJECT} />
+      {/* Map Neogov's existing data shape into the shared case-study
+          props. Order reproduces the original Context DOM exactly:
+          lead → stats → context row + images → Product work (inside the
+          panel) → System impact (outside) → callout. */}
+      <CaseStudyContextSection
+        leadQuote={NEOGOV_PROJECT.leadQuote}
+        stats={NEOGOV_PROJECT.stats}
+        contextRow={NEOGOV_PROJECT.contextRow}
+        insideRows={
+          NEOGOV_PROJECT.productWorkRow
+            ? [NEOGOV_PROJECT.productWorkRow]
+            : undefined
+        }
+        outsideRows={
+          NEOGOV_PROJECT.systemImpactRow
+            ? [NEOGOV_PROJECT.systemImpactRow]
+            : undefined
+        }
+        callout={NEOGOV_PROJECT.callout}
+      />
+      {NEOGOV_PROJECT.designSystemImage && (
+        <CaseStudyShowcaseSection image={NEOGOV_PROJECT.designSystemImage} />
+      )}
       {NEOGOV_PROJECT.aiIntegration && (
-        <NeogovImagePairSection {...NEOGOV_PROJECT.aiIntegration} />
+        <CaseStudyImagePairSection {...NEOGOV_PROJECT.aiIntegration} />
       )}
       {NEOGOV_PROJECT.reflection && (
-        <NeogovImagePairSection {...NEOGOV_PROJECT.reflection} />
+        <CaseStudyImagePairSection {...NEOGOV_PROJECT.reflection} />
       )}
       <OtherWorkSection projects={otherProjects} />
       <SiteFooter

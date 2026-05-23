@@ -144,6 +144,19 @@
   overflow: hidden;
 }
 
+/* The hero image is a next/image `fill`, now wrapped by
+   ZoomableImage's trigger button. The global trigger is
+   `display: contents` (no box), but `fill` needs a positioned parent
+   with dimensions — so here the trigger becomes an absolute box that
+   fills `.project-detail-image`. The reset chrome (appearance/border/
+   background/padding) comes from the base `.zoomable-image-trigger`
+   rule so the button paints nothing over the image. */
+.project-detail-image .zoomable-image-trigger {
+  display: block;
+  position: absolute;
+  inset: 0;
+}
+
 @media (max-width: 1439px) and (min-width: 768px) {
   .project-detail-image {
     width: calc(100% + 96px);

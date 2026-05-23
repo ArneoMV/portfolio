@@ -1,4 +1,4 @@
-import Image from "next/image";
+import ZoomableImage from "@/app/components/molecules/zoomable-image/ZoomableImage";
 import ProjectMetaGrid from "../ProjectMetaGrid";
 import type { NeogovProjectData } from "@/app/data/neogov-project.data";
 
@@ -25,7 +25,7 @@ export default function NeogovHeroSection({ project }: NeogovHeroSectionProps) {
 
   return (
     <section className="neogov-hero">
-      <div className="neogov-rail-container">
+      <div className="case-study-rail-container">
         <div className="neogov-hero-top">
           <div className="neogov-hero-top-text">
             {project.displayHeading && (
@@ -35,7 +35,7 @@ export default function NeogovHeroSection({ project }: NeogovHeroSectionProps) {
 
           {hero && (
             <div className="neogov-hero-top-image">
-              <Image
+              <ZoomableImage
                 src={hero.src}
                 alt={hero.alt}
                 width={582}
@@ -53,7 +53,7 @@ export default function NeogovHeroSection({ project }: NeogovHeroSectionProps) {
             the shared template's `typeOfWorkLabel` ("Challenge"),
             which stays in the data only for shared-component
             compatibility. */}
-        <dl className="neogov-hero-row">
+        <dl className="case-study-hero-row">
           <dt>What I built</dt>
           <dd>{project.description}</dd>
         </dl>
@@ -61,18 +61,18 @@ export default function NeogovHeroSection({ project }: NeogovHeroSectionProps) {
         {/* Neogov-scoped wrapper paints dotted top + bottom rules
             (matching the side rails' colour + rhythm) around the
             shared meta grid without touching ProjectMetaGrid. */}
-        <div className="neogov-hero-meta">
+        <div className="case-study-hero-meta">
           <ProjectMetaGrid meta={project.meta} />
         </div>
 
-        <dl className="neogov-hero-row">
+        <dl className="case-study-hero-row">
           <dt>INTRODUCTION</dt>
           <dd>{project.introduction}</dd>
         </dl>
 
         {userProfile && (
           <figure className="neogov-hero-user-profile">
-            <Image
+            <ZoomableImage
               src={userProfile.src}
               alt={userProfile.alt}
               width={1600}

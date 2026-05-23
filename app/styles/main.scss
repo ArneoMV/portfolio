@@ -34,7 +34,9 @@
 @use "sections/footer";
 @use "sections/contact";
 @use "sections/project-detail";
+@use "sections/case-study";
 @use "sections/neogov-project";
+@use "sections/spona-project";
 
 // pages — standalone routes
 @use "pages/work-page";
@@ -44,6 +46,7 @@
 @use "components/buttons";
 @use "components/modals";
 @use "components/section-header";
+@use "components/zoomable-image";
 
 // utils — visibility, spacing, state
 @use "utils/spacing";

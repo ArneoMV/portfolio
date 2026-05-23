@@ -1,0 +1,150 @@
+/* =====================================================================
+   SPONA PROJECT PAGE  —  /work/spona  (bespoke, not the shared
+   ProjectDetailTemplate). This partial holds ONLY Spona's hero and the
+   page wrapper; the Context, Showcase, and Image-pair sections are the
+   shared `.case-study-*` components styled in `_case-study.scss`.
+
+   The hero shares the case-study primitives — `.case-study-rail-container`
+   (1100px rail box) and `.case-study-hero-row` / `.case-study-hero-meta`
+   (label rows + dotted meta wrapper) — and adds a gradient tagline
+   panel on top. Unlike Neogov, the composition image sits in normal
+   flow inside its grid column (no absolute positioning / overflow).
+===================================================================== */
+
+/* Page wrapper — desktop footer/toolbar bottom clearance (the global
+   `.site-main` only reserves toolbar space on mobile). */
+.spona-project-page {
+  padding-bottom: var(--space-5xl);
+}
+
+/* ── Hero / Introduction ───────────────────────────────────────
+   `padding-top: var(--header-height)` clears the fixed site header. */
+.spona-hero {
+  background: var(--color-background);
+  padding-top: var(--header-height);
+  padding-bottom: var(--space-3xl);
+}
+
+/* Gradient panel spanning rail-to-rail — tagline text left (white),
+   composition image right. Vertical rhythm via `min-height` + grid
+   centring; the text gets a left inset and the image fills its column.
+   NOTE: medium-purple gradient + white text matches the design
+   screenshot (the pale #f0eafa/#c5b5e5 starting suggestion can't carry
+   white text); easy to retune here. */
+.spona-hero-top {
+  background: linear-gradient(to bottom, #9b8af2 0%, #6d50f6 100%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: center;
+  min-height: 320px;
+  padding: 0;
+  overflow: visible; /* let the composition image protrude below */
+  /* extra room below the panel for the overflowing image's bottom, so
+     the visual gap to the title still reads as --space-3xl */
+}
+
+/* Text column — left inset, white text. */
+.spona-hero-top-text {
+  padding-left: 24px;
+  padding-right: 0;
+  color: var(--color-neutral-10);
+}
+
+/* Serif tagline — shorter/punchier than Neogov's display heading. */
+.spona-hero-tagline {
+  margin: 0 0 var(--space-md) 0;
+  font-family: var(--font-display);
+  font-size: 36px;
+  line-height: 1.1;
+  font-weight: 400;
+  color: var(--color-neutral-10);
+}
+
+/* Secondary description — sits beneath the tagline at reduced opacity. */
+.spona-hero-tagline-desc {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: 1.4;
+  color: var(--color-neutral-10);
+  opacity: 0.8;
+}
+
+/* Composition image — fills its grid column (touches the right rail)
+   and overflows the panel's bottom edge via a negative margin (below),
+   staying in normal flow. `align-self: end` anchors the image's
+   margin-box bottom to the panel bottom so the negative margin pushes
+   the real pixels below it. `z-index: 2` lifts the protruding image
+   above the side rails (z-index 1). */
+.spona-hero-top-image {
+  padding-left: 0;
+  padding-right: 0;
+  align-self: end;
+  position: relative;
+  z-index: 2;
+}
+
+/* Negative margin = the protrusion depth (40px). Specificity beats the
+   global `.zoomable-image-trigger img` rule so the margin sticks. Tune
+   the -40px to change how far the image hangs below the panel. */
+.spona-hero-top-image .zoomable-image-trigger img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: -40px;
+}
+
+/* Title below the panel — treated as leftmost (24px left inset). Base
+   styles cover the H2 text fallback; the logo variant resets the line
+   box around the image. */
+.spona-hero-title {
+  margin: var(--space-2xl) 0 var(--space-lg) 0;
+  padding-left: 24px;
+  padding-right: 0;
+  font-family: var(--font-display);
+  font-size: var(--h2-size);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--color-text-primary);
+}
+
+.spona-hero-title--logo {
+  line-height: 1;
+}
+
+.spona-hero-logo {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+
+/* Mobile (<768) — stack the panel; add vertical padding (the desktop
+   layout relies on grid centring); collapse insets to 24px both sides.
+   The shared `.case-study-hero-row` handles its own mobile stacking. */
+@media (max-width: 767px) {
+  .spona-hero-top {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    min-height: auto;
+    padding: var(--space-xl) 0;
+    margin-bottom: var(--space-3xl); /* no overflow when stacked */
+  }
+
+  .spona-hero-top-text {
+    padding: 0 24px;
+  }
+
+  .spona-hero-top-image {
+    padding: 0 24px;
+  }
+
+  /* Image sits in normal flow below the text — no protrusion. */
+  .spona-hero-top-image .zoomable-image-trigger img {
+    margin-bottom: 0;
+  }
+
+  .spona-hero-tagline {
+    font-size: 28px;
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import ZoomableImage from "@/app/components/molecules/zoomable-image/ZoomableImage";
 import { useEffect, useRef, useState } from "react";
 import type { ProjectDetail } from "./project-detail.types";
 
@@ -147,7 +147,7 @@ export default function ProjectDarkSection({ project }: ProjectDarkSectionProps)
                     aria-label={block.alt}
                   >
                     {block.src && (
-                      <Image
+                      <ZoomableImage
                         src={block.src}
                         alt={block.alt ?? ""}
                         width={h * 2}
@@ -180,7 +180,7 @@ export default function ProjectDarkSection({ project }: ProjectDarkSectionProps)
                       />
                     )}
                     {block.src && (
-                      <Image
+                      <ZoomableImage
                         src={block.src}
                         alt={block.alt ?? ""}
                         width={400}
@@ -201,7 +201,7 @@ export default function ProjectDarkSection({ project }: ProjectDarkSectionProps)
                   aria-label={block.alt}
                 >
                   {block.src && (
-                    <Image
+                    <ZoomableImage
                       src={block.src}
                       alt={block.alt ?? ""}
                       width={1200}

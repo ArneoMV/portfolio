@@ -1,0 +1,469 @@
+/* =====================================================================
+   CASE STUDY  —  reusable project-detail sections shared across bespoke
+   project pages (Neogov today; Spona, Croatel, and future projects
+   next). Project-specific heroes compose these sections; the heroes
+   themselves are NOT styled here.
+
+   Layout model (inherited from the original Neogov page): every
+   section's content sits in `.case-study-rail-container` (max-width
+   1100px, centred, NO horizontal padding) so panels/backgrounds span
+   rail-to-rail (flush with the dotted side rails). Horizontal insets
+   are applied per-element with an ASYMMETRIC rule:
+     • leftmost element in a row → padding-left: 24px (right 0)
+     • rightmost element in a row → padding-right: 24px (left 0)
+     • middle elements (3+ cols) → no horizontal padding
+     • standalone text → treated as leftmost (padding-left: 24px)
+     • images / image grids → no padding, touch the rail/panel edges
+   Inter-column gap is a flat 24px. On mobile every row stacks to a
+   single column and the asymmetric paddings collapse to a symmetric
+   24px on both sides.
+
+   Registered in main.scss BEFORE `_neogov-project.scss`, so the Neogov
+   hero can override shared rules where its signature layout needs to
+   (e.g. lifting hero content above the overflowing composition image).
+===================================================================== */
+
+/* Rail-edge container — caps content at the 1100px rail box and adds
+   NO padding, so panels/backgrounds reach the rails. */
+.case-study-rail-container {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* ── Shared hero rows (reused across project-specific hero variants) ─
+   The hero shells are project-specific, but the label/value row and
+   the meta-grid wrapper are shared so every hero gets the same rhythm
+   and dotted meta rules. */
+
+/* Label/value row — dt left (5fr), dd right (7fr). */
+.case-study-hero-row {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 24px;
+  padding: var(--space-lg) 0;
+  margin: 0;
+}
+
+.case-study-hero-row dt {
+  margin: 0;
+  padding-left: 24px;
+  padding-right: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-primary);
+}
+
+.case-study-hero-row dd {
+  margin: 0;
+  padding-left: 0;
+  padding-right: 24px;
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  color: var(--color-neutral-90);
+}
+
+/* Meta-grid wrapper — full-width row with 24px both sides + dotted
+   horizontal rules above + below the shared ProjectMetaGrid. Two
+   layered horizontal gradients (top left + bottom left) mirror the
+   side rails' 4px-dash / 8px-gap neutral-80 rhythm. The shared
+   `.project-detail-meta` carries its own top margin, bottom padding,
+   and a `::after` dotted bottom line (built for the Elite Digital
+   hero) — all neutralised here so the wrapper's rules are the only
+   dividers. ProjectMetaGrid.tsx itself is untouched. */
+.case-study-hero-meta {
+  padding: var(--space-lg) 24px;
+  background-image:
+    linear-gradient(to right, var(--color-neutral-80) 4px, transparent 4px),
+    linear-gradient(to right, var(--color-neutral-80) 4px, transparent 4px);
+  background-size:
+    12px 1px,
+    12px 1px;
+  background-position:
+    top left,
+    bottom left;
+  background-repeat: repeat-x, repeat-x;
+}
+
+.case-study-hero-meta .project-detail-meta {
+  margin-top: 0;
+  padding-bottom: 0;
+}
+
+.case-study-hero-meta .project-detail-meta::after {
+  display: none;
+}
+
+/* The row directly following the meta wrapper drops its (defensive)
+   top border so it never doubles up with the wrapper's dotted bottom
+   line. */
+.case-study-hero-meta + .case-study-hero-row {
+  border-top: none;
+}
+
+@media (max-width: 767px) {
+  .case-study-hero-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+
+  .case-study-hero-row dt,
+  .case-study-hero-row dd {
+    padding: 0 24px;
+  }
+}
+
+/* ── Context band (navy panel + outside rows + brand callout) ─── */
+
+.case-study-context {
+  padding: var(--space-3xl) 0;
+}
+
+/* Navy panel — spans rail-to-rail inside the rail container. Vertical
+   padding only; inner elements carry their own asymmetric insets. */
+.case-study-context-panel {
+  background: var(--color-primary-100);
+  color: var(--color-neutral-10);
+  padding: var(--space-3xl) 0;
+}
+
+/* Lead quote — standalone leftmost. */
+.case-study-context-lead {
+  max-width: 720px;
+  margin: 0 0 var(--space-3xl) 0;
+  padding-left: 24px;
+  padding-right: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  line-height: 1.3;
+}
+
+/* 3-up stats — first padding-left, last padding-right, middle none. */
+.case-study-context-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: var(--space-2xl);
+}
+
+.case-study-context-stat:first-child {
+  padding-left: 24px;
+  padding-right: 0;
+}
+
+.case-study-context-stat:last-child {
+  padding-left: 0;
+  padding-right: 24px;
+}
+
+.case-study-context-stat:not(:first-child):not(:last-child) {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.case-study-context-stat--stat .case-study-context-stat-top {
+  font-family: var(--font-sans);
+  font-size: var(--text-xxl);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.case-study-context-stat--stat .case-study-context-stat-bottom {
+  margin-top: var(--space-xs);
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+.case-study-context-stat--meta .case-study-context-stat-top {
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+.case-study-context-stat--meta .case-study-context-stat-bottom {
+  margin-top: var(--space-xs);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: 1.3;
+}
+
+/* 2-col text rows (Context label, Product work, System impact) —
+   dt left (5fr) + dd right (7fr). */
+.case-study-context-row {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 24px;
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  margin: 0;
+}
+
+.case-study-context-row dt {
+  margin: 0;
+  padding-left: 24px;
+  padding-right: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.case-study-context-row dd {
+  margin: 0;
+  padding-left: 0;
+  padding-right: 24px;
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: 1.4;
+}
+
+/* Image row below the Context label — inset 24px from the panel edges
+   to match the rest of the panel's content rhythm. The `--{count}`
+   modifier picks the grid: 1 image spans a single column, 2 sit side
+   by side, 3 in a triplet. */
+.case-study-context-images {
+  display: grid;
+  gap: 24px;
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.case-study-context-images--1 {
+  grid-template-columns: 1fr;
+}
+
+.case-study-context-images--2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.case-study-context-images--3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.case-study-context-images img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-xs);
+}
+
+/* Brand callout — right column, inset 24px from the right rail. */
+.case-study-context-callout-wrap {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 24px;
+  margin-top: var(--space-xl);
+}
+
+.case-study-context-callout-wrap .case-study-context-callout {
+  grid-column: 2;
+  margin-right: 24px;
+  padding: var(--space-xl);
+  background: var(--color-brand);
+  color: var(--color-neutral-10);
+  border-radius: var(--radius-xs);
+}
+
+.case-study-context-callout p {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Vertical rhythm for the elements that sit OUTSIDE the navy panel
+   (first outside row, then the callout). */
+.case-study-context-panel + .case-study-context-row {
+  margin-top: var(--space-2xl);
+}
+
+.case-study-context-row + .case-study-context-callout-wrap {
+  margin-top: var(--space-xl);
+}
+
+/* Mobile (<768) — single column; asymmetric paddings → 24px both
+   sides (images stay flush). Modifier classes are reset explicitly so
+   the column count is order-independent. */
+@media (max-width: 767px) {
+  .case-study-context-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .case-study-context-stat:first-child,
+  .case-study-context-stat:last-child,
+  .case-study-context-stat:not(:first-child):not(:last-child) {
+    padding: 0 24px;
+  }
+
+  .case-study-context-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .case-study-context-row dt,
+  .case-study-context-row dd {
+    padding: 0 24px;
+  }
+
+  .case-study-context-images,
+  .case-study-context-images--1,
+  .case-study-context-images--2,
+  .case-study-context-images--3 {
+    grid-template-columns: 1fr;
+  }
+
+  .case-study-context-callout-wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .case-study-context-callout-wrap .case-study-context-callout {
+    grid-column: 1;
+    margin: 0 24px;
+  }
+}
+
+/* ── Showcase band (full-bleed composite image) ────────────────
+   Inside the rail container — the image spans rail-to-rail (1100px
+   max). The picture-switch swaps a wide-large source for a tall-small
+   source at the mobile breakpoint. */
+.case-study-showcase {
+  padding: var(--space-3xl) 0;
+}
+
+.case-study-showcase-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.case-study-showcase-image--small {
+  display: none;
+}
+
+/* Each image is wrapped by ZoomableImage's <button>, so hiding only
+   the img leaves an empty 0-height focusable button in the tab order.
+   `:has()` hides the inactive variant's whole trigger (the img-level
+   `display: none` rules remain as the no-`:has()` fallback). */
+.case-study-showcase
+  .zoomable-image-trigger:has(.case-study-showcase-image--small) {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .case-study-showcase-image--large {
+    display: none;
+  }
+
+  .case-study-showcase-image--small {
+    display: block;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .case-study-showcase
+    .zoomable-image-trigger:has(.case-study-showcase-image--large) {
+    display: none;
+  }
+
+  .case-study-showcase
+    .zoomable-image-trigger:has(.case-study-showcase-image--small) {
+    display: block;
+  }
+}
+
+/* ── Image-pair sections (label/text row + 2-up captioned grid) ─ */
+
+.case-study-image-pair {
+  background: var(--color-background);
+  padding: var(--space-3xl) 0;
+}
+
+/* Label/text row — dt left (5fr) + dd right (7fr), asymmetric. */
+.case-study-image-pair-row {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 24px;
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+  margin: 0 0 var(--space-2xl) 0;
+  border-top: 1px solid var(--color-neutral-30);
+}
+
+.case-study-image-pair-row dt {
+  margin: 0;
+  padding-left: 24px;
+  padding-right: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-primary);
+}
+
+.case-study-image-pair-row dd {
+  margin: 0;
+  padding-left: 0;
+  padding-right: 24px;
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  color: var(--color-neutral-90);
+}
+
+/* Image pair grid — no padding, touches the rails. */
+.case-study-image-pair-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.case-study-image-pair-item {
+  margin: 0;
+}
+
+.case-study-image-pair-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.case-study-image-pair-item figcaption {
+  margin-top: var(--space-sm);
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  color: var(--color-neutral-70);
+}
+
+@media (max-width: 767px) {
+  .case-study-image-pair-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+  }
+
+  .case-study-image-pair-row dt,
+  .case-study-image-pair-row dd {
+    padding: 0 24px;
+  }
+
+  .case-study-image-pair-grid {
+    grid-template-columns: 1fr;
+  }
+}

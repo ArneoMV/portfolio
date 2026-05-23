@@ -1,4 +1,4 @@
-import Image from "next/image";
+import ZoomableImage from "@/app/components/molecules/zoomable-image/ZoomableImage";
 import ProjectMetaGrid from "./ProjectMetaGrid";
 import type { ProjectDetail } from "./project-detail.types";
 
@@ -41,7 +41,7 @@ export default function ProjectHeroSection({ project }: ProjectHeroSectionProps)
 
         <div className="project-detail-image">
           {project.heroImage && (
-            <Image
+            <ZoomableImage
               src={project.heroImage}
               alt={project.heroImageAlt ?? project.title}
               fill

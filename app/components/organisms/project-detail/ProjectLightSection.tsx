@@ -1,4 +1,4 @@
-import Image from "next/image";
+import ZoomableImage from "@/app/components/molecules/zoomable-image/ZoomableImage";
 import type { ProjectDetail, ProjectDetailDarkBlock } from "./project-detail.types";
 
 interface ProjectLightSectionProps {
@@ -50,7 +50,7 @@ function renderImageBlock(
         aria-label={block.alt}
       >
         {block.src && (
-          <Image
+          <ZoomableImage
             src={block.src}
             alt={block.alt ?? ""}
             width={h * 2}
@@ -77,7 +77,7 @@ function renderImageBlock(
           />
         )}
         {block.src && (
-          <Image
+          <ZoomableImage
             src={block.src}
             alt={block.alt ?? ""}
             width={400}
@@ -100,7 +100,7 @@ function renderImageBlock(
       aria-label={block.alt}
     >
       {block.src && (
-        <Image
+        <ZoomableImage
           src={block.src}
           alt={block.alt ?? ""}
           width={1200}
@@ -140,7 +140,7 @@ export default function ProjectLightSection({
                   // serves a larger srcset variant on desktop than
                   // the right-column-scoped "50vw" used by the
                   // in-column responsive variant.
-                  <Image
+                  <ZoomableImage
                     src={block.src}
                     alt={block.alt ?? ""}
                     width={1200}
