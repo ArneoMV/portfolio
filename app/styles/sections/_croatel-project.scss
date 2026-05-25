@@ -1,0 +1,154 @@
+/* =====================================================================
+   CROATEL PROJECT PAGE  —  /work/croatel  (bespoke, not the shared
+   ProjectDetailTemplate). This partial holds ONLY Croatel's banner-only
+   hero, its bespoke alternating light section, and the page wrapper.
+   The dark Context section reuses the shared `.case-study-*` styles in
+   `_case-study.scss`.
+===================================================================== */
+
+/* Page wrapper — desktop footer/toolbar bottom clearance. */
+.croatel-project-page {
+  padding-bottom: var(--space-5xl);
+}
+
+/* ── Hero (banner-only, no gradient panel) ─────────────────────
+   `padding-top: var(--header-height)` clears the fixed site header. */
+.croatel-hero {
+  background: var(--color-background);
+  padding-top: var(--header-height);
+  padding-bottom: var(--space-3xl);
+}
+
+/* Wide composition banner spanning the rail container. */
+.croatel-hero-banner {
+  margin-bottom: var(--space-2xl);
+}
+
+.croatel-hero-banner img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-xs);
+}
+
+/* Project identity — Croatel wordmark + HRT client logo, side by side,
+   left-inset to match the asymmetric row rhythm. */
+.croatel-hero-logos {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding-left: 24px;
+  padding-right: 0;
+  margin-bottom: var(--space-2xl);
+}
+
+.croatel-hero-logo-main {
+  height: 40px;
+  width: auto;
+}
+
+.croatel-hero-logo-secondary {
+  height: 32px;
+  width: auto;
+}
+
+/* ── Light section (bespoke alternating layout) ──────────────── */
+.croatel-light {
+  padding-top: var(--space-3xl);
+  padding-bottom: var(--space-3xl);
+}
+
+/* Single full-width image after a text row. */
+.croatel-light-image {
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.croatel-light-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-xs);
+}
+
+/* Vertical stack of banner images, 24px gap. */
+.croatel-light-stack {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.croatel-light-stack img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-xs);
+}
+
+/* 2-up side-by-side image pair with captions. */
+.croatel-light-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.croatel-light-pair-item {
+  margin: 0;
+}
+
+.croatel-light-pair-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-xs);
+}
+
+.croatel-light-pair-item figcaption {
+  margin-top: var(--space-sm);
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  color: var(--color-neutral-70);
+  padding-left: 24px;
+}
+
+/* Final paragraph closing the reflection. */
+.croatel-light-final-paragraph {
+  margin-top: var(--space-2xl);
+  padding-left: 24px;
+  padding-right: 24px;
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  color: var(--color-text-primary);
+}
+
+/* Mobile (<768) — single-column pair; insets collapse to 16px. */
+@media (max-width: 767px) {
+  .croatel-hero-logos {
+    padding-left: 16px;
+    flex-wrap: wrap;
+  }
+
+  .croatel-light-pair {
+    grid-template-columns: 1fr;
+  }
+
+  .croatel-light-pair-item figcaption {
+    padding-left: 16px;
+  }
+
+  .croatel-light-final-paragraph {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

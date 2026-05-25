@@ -215,14 +215,21 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
     },
     tags: ["Platform"],
   },
+  // Croatel detail page now renders from croatel-project.data.ts
+  // (CROATEL_PROJECT). This entry remains for generateStaticParams and
+  // the OtherWorkSection listing. Listing-relevant fields (slug, title,
+  // heroImage, heroImageAlt, description, tags) are kept in sync with
+  // CROATEL_PROJECT; darkSection/meta/introduction below are dead for
+  // rendering (the bespoke page ignores them, like Neogov/Spona).
   {
     slug: "croatel",
     title: "Croatel",
     typeOfWorkLabel: "Brief",
     description:
-      "Broadcast graphics studio producing motion design for HRT1, Croatia's national television. Designed visuals supporting news, weather, culture, and sports.",
-    heroImage: "/images/home/work-project-04.png",
-    heroImageAlt: "Croatel project preview",
+      "Designed broadcast graphics for HRT1's news programming, working in a live TV environment where decisions had to be fast, clear, and on brand every day.",
+    heroImage: "/images/projects/croatel/hrt_hero_image.png",
+    heroImageAlt:
+      "Croatel broadcast graphics composition with Zagreb, celebrations, politicians, sport, and culture imagery",
     meta: {
       responsibility: "UI Design",
       projectType: "Motion / Graphics",

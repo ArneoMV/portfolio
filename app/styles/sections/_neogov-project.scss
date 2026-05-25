@@ -143,49 +143,78 @@
   z-index: 3;
 }
 
-/* Tablet (768–1023) — keep the 2-col top row, shrink the display. */
+/* Tablet (768–1023) — keep the 2-col top row, shrink the display, and
+   shrink the composition image so it fits the narrower right column
+   without crowding the text (was 592px at desktop). */
 @media (max-width: 1023px) and (min-width: 768px) {
   .neogov-hero-display {
-    font-size: 44px;
+    font-size: 40px;
+  }
+
+  .neogov-hero-top-image .zoomable-image-trigger img {
+    height: 440px;
   }
 }
 
-/* Mobile (<768) — stack the top row; all asymmetric paddings collapse
-   to a symmetric 24px both sides. (The shared `.case-study-hero-row`
-   handles its own mobile stacking in `_case-study.scss`.) */
+/* Mobile (<768) — image-only gradient panel, display heading below it.
+   Column-reverse so the image (2nd in DOM) renders on top and the
+   heading (1st in DOM) drops below onto the normal page background; the
+   light-blue gradient moves to the image cell. Neogov has no eyebrow
+   element and its display text was already dark on the light panel, so
+   only the layout + size change here (heading at 32px with full page
+   width). */
 @media (max-width: 767px) {
   .neogov-hero-top {
-    grid-template-columns: 1fr;
-    gap: var(--space-xl);
+    background: none;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0;
+    padding: 0;
+    margin-bottom: 0;
     min-height: auto;
-  }
-
-  .neogov-hero-top-text {
-    padding: 0 24px;
+    overflow: visible;
   }
 
   .neogov-hero-top-image {
-    padding: 0 24px;
-    position: static; /* revert the desktop absolute context */
+    background: linear-gradient(to bottom, #f6f9fc 0%, #c2d7ee 100%);
+    padding: var(--space-2xl) 16px;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: static;
+    height: auto;
   }
 
-  /* Revert to static stacked flow on mobile — the absolute 592px
-     overflow only makes sense in the 2-col desktop panel. Selector
-     mirrors the desktop rule's specificity (includes the trigger). */
+  .neogov-hero-top-image .zoomable-image-trigger {
+    position: static;
+    display: block;
+    width: 100%;
+    max-width: 360px;
+  }
+
   .neogov-hero-top-image .zoomable-image-trigger img {
     position: static;
     top: auto;
-    bottom: auto;
     right: auto;
     transform: none;
     z-index: auto;
     height: auto;
     width: 100%;
-    max-width: 360px;
-    margin: 0 auto;
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    margin: 0;
+  }
+
+  .neogov-hero-top-text {
+    background: none;
+    padding: var(--space-2xl) 16px var(--space-md) 16px;
   }
 
   .neogov-hero-display {
     font-size: 32px;
+    line-height: 1.1;
+    color: var(--color-text-primary);
   }
 }

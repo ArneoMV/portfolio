@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import NeogovProjectPage from "@/app/components/organisms/project-detail/NeogovProjectPage";
 import SponaProjectPage from "@/app/components/organisms/project-detail/SponaProjectPage";
+import CroatelProjectPage from "@/app/components/organisms/project-detail/CroatelProjectPage";
 import ProjectDetailTemplate from "@/app/components/organisms/project-detail/ProjectDetailTemplate";
 import {
   getOtherProjects,
@@ -11,6 +12,7 @@ import {
 import { PROJECT_DETAILS } from "@/app/data/project-details.data";
 import { NEOGOV_PROJECT } from "@/app/data/neogov-project.data";
 import { SPONA_PROJECT } from "@/app/data/spona-project.data";
+import { CROATEL_PROJECT } from "@/app/data/croatel-project.data";
 
 export function generateStaticParams() {
   // PROJECT_DETAILS still retains the Neogov entry (used for the
@@ -111,6 +113,8 @@ export async function generateMetadata({
  *     cards internally, so this route doesn't pass props.
  *   • "spona" → the dedicated <SponaProjectPage> (same bespoke
  *     pattern as Neogov: own data, resolves its own "Other Work").
+ *   • "croatel" → the dedicated <CroatelProjectPage> (same bespoke
+ *     pattern: own data, banner-only hero + bespoke light section).
  *   • everything else → the shared <ProjectDetailTemplate> (hero +
  *     introduction → dark band → optional light section → other
  *     work → footer). This route resolves the project by slug,
@@ -130,6 +134,10 @@ export default async function ProjectPage({
 
   if (slug === SPONA_PROJECT.slug) {
     return <SponaProjectPage />;
+  }
+
+  if (slug === CROATEL_PROJECT.slug) {
+    return <CroatelProjectPage />;
   }
 
   const project = getProjectDetail(slug);

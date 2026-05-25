@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import ZoomableImage from "@/app/components/molecules/zoomable-image/ZoomableImage";
 import type { CaseStudyContextProps } from "./case-study.types";
 
@@ -96,10 +97,26 @@ export default function CaseStudyContextSection({
           )}
 
           {insideRows?.map((row, i) => (
-            <dl key={i} className="case-study-context-row">
-              <dt>{row.label}</dt>
-              <dd>{row.text}</dd>
-            </dl>
+            <Fragment key={i}>
+              <dl className="case-study-context-row">
+                <dt>{row.label}</dt>
+                <dd>{row.text}</dd>
+              </dl>
+              {row.images && row.images.length > 0 && (
+                <div className="case-study-context-row-images">
+                  {row.images.map((img, j) => (
+                    <ZoomableImage
+                      key={j}
+                      src={img.src}
+                      alt={img.alt}
+                      width={1600}
+                      height={900}
+                      sizes="(max-width: 1099px) 100vw, 1100px"
+                    />
+                  ))}
+                </div>
+              )}
+            </Fragment>
           ))}
         </div>
 

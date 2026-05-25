@@ -16,7 +16,7 @@
      • images / image grids → no padding, touch the rail/panel edges
    Inter-column gap is a flat 24px. On mobile every row stacks to a
    single column and the asymmetric paddings collapse to a symmetric
-   24px on both sides.
+   16px on both sides (reduced from the 24px desktop inset).
 
    Registered in main.scss BEFORE `_neogov-project.scss`, so the Neogov
    hero can override shared rules where its signature layout needs to
@@ -115,7 +115,28 @@
 
   .case-study-hero-row dt,
   .case-study-hero-row dd {
-    padding: 0 24px;
+    padding: 0 16px;
+  }
+
+  /* Meta wrapper insets shrink to 16px; the shared ProjectMetaGrid
+     renders 2×2 on mobile, so force the 4-up grid into a single
+     vertical column (label above value, full width each) within the
+     case-study hero scope only. ProjectMetaGrid.tsx is untouched. */
+  .case-study-hero-meta {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .case-study-hero-meta .project-detail-meta {
+    grid-template-columns: 1fr;
+  }
+
+  /* Centre each stacked meta row's label + value. dt/dd are nested in
+     `.project-detail-meta-item` flex columns; the var(--space-lg) grid
+     gap already spaces the rows, so no extra row margins are needed. */
+  .case-study-hero-meta .project-detail-meta dt,
+  .case-study-hero-meta .project-detail-meta dd {
+    text-align: center;
   }
 }
 
@@ -261,6 +282,27 @@
   border-radius: var(--radius-xs);
 }
 
+/* Image(s) interleaved after an `insideRows` row (e.g. Croatel's
+   "System inside the chaos" row → stacked images). Inset 24px from the
+   panel edges to match the row rhythm; multiple images stack vertically
+   with a 24px gap. */
+.case-study-context-row-images {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.case-study-context-row-images img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-xs);
+}
+
 /* Brand callout — right column, inset 24px from the right rail. */
 .case-study-context-callout-wrap {
   display: grid;
@@ -296,10 +338,17 @@
   margin-top: var(--space-xl);
 }
 
-/* Mobile (<768) — single column; asymmetric paddings → 24px both
+/* Mobile (<768) — single column; asymmetric paddings → 16px both
    sides (images stay flush). Modifier classes are reset explicitly so
    the column count is order-independent. */
 @media (max-width: 767px) {
+  /* Lead quote gains a right inset too (its desktop max-width no longer
+     constrains it below the rail width) and drops to 16px. */
+  .case-study-context-lead {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
   .case-study-context-stats {
     grid-template-columns: 1fr;
   }
@@ -307,7 +356,7 @@
   .case-study-context-stat:first-child,
   .case-study-context-stat:last-child,
   .case-study-context-stat:not(:first-child):not(:last-child) {
-    padding: 0 24px;
+    padding: 0 16px;
   }
 
   .case-study-context-row {
@@ -317,7 +366,7 @@
 
   .case-study-context-row dt,
   .case-study-context-row dd {
-    padding: 0 24px;
+    padding: 0 16px;
   }
 
   .case-study-context-images,
@@ -327,13 +376,24 @@
     grid-template-columns: 1fr;
   }
 
+  .case-study-context-images {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .case-study-context-row-images {
+    padding-left: 16px;
+    padding-right: 16px;
+    gap: 16px;
+  }
+
   .case-study-context-callout-wrap {
     grid-template-columns: 1fr;
   }
 
   .case-study-context-callout-wrap .case-study-context-callout {
     grid-column: 1;
-    margin: 0 24px;
+    margin: 0 16px;
   }
 }
 
@@ -460,7 +520,7 @@
 
   .case-study-image-pair-row dt,
   .case-study-image-pair-row dd {
-    padding: 0 24px;
+    padding: 0 16px;
   }
 
   .case-study-image-pair-grid {

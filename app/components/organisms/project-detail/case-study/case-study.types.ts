@@ -15,18 +15,23 @@ export interface CaseStudyStat {
   variant?: "stat" | "meta";
 }
 
-/** A label (dt, 5fr) + paragraph (dd, 7fr) row. */
-export interface CaseStudyTextRow {
-  label: string;
-  text: string;
-}
-
 /** An image used in a section grid. `caption` is honoured only by the
  *  image-pair grid; the Context image row ignores it. */
 export interface CaseStudyImage {
   src: string;
   alt: string;
   caption?: string;
+}
+
+/** A label (dt, 5fr) + paragraph (dd, 7fr) row. */
+export interface CaseStudyTextRow {
+  label: string;
+  text: string;
+  /** Optional images rendered immediately after the row, stacked
+   *  vertically — lets the Context section's `insideRows` interleave
+   *  label/text rows with one or more images (Croatel uses this;
+   *  Neogov/Spona omit it, unchanged). */
+  images?: CaseStudyImage[];
 }
 
 /**
