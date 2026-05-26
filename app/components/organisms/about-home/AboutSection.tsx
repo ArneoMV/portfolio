@@ -6,10 +6,12 @@ import InstagramStory from "@/app/components/molecules/instagram-story/Instagram
 import AboutText from "./AboutText";
 
 const STORY_IMAGES = [
-  "/images/home/insta-me-1.jpeg",
-  "/images/home/insta-me-2.jpeg",
-  "/images/home/insta-me-3.jpeg",
-  "/images/home/insta-me-4.jpeg",
+  "/images/home/about/about-01.png",
+  "/images/home/about/about-02.png",
+  "/images/home/about/about-03.png",
+  "/images/home/about/about-04.png",
+  "/images/home/about/about-05.png",
+  "/images/home/about/about-06.png",
 ];
 
 /**
