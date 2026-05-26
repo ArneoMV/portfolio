@@ -1,7 +1,7 @@
 import "./globals.css";
 import "./styles/main.scss";
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Source_Sans_3,
   Young_Serif,
@@ -49,6 +49,42 @@ export const metadata: Metadata = {
     title: SITE_DEFAULT_TITLE,
     description: SITE_DEFAULT_DESCRIPTION,
   },
+  // Favicon set lives in /public/favicon/ (favicon-generator.org
+  // output). Paths are absolute from the public root. No
+  // safari-pinned-tab.svg or browserconfig.xml were generated, so the
+  // mask-icon link and msapplication-config are omitted; the Windows
+  // tile is wired via the `other` meta tags below instead.
+  icons: {
+    icon: [
+      { url: "/favicon/favicon.ico", sizes: "any" },
+      { url: "/favicon/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+      { url: "/favicon/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon/favicon-96x96.png", type: "image/png", sizes: "96x96" },
+    ],
+    apple: [
+      { url: "/favicon/apple-icon-57x57.png", sizes: "57x57" },
+      { url: "/favicon/apple-icon-60x60.png", sizes: "60x60" },
+      { url: "/favicon/apple-icon-72x72.png", sizes: "72x72" },
+      { url: "/favicon/apple-icon-76x76.png", sizes: "76x76" },
+      { url: "/favicon/apple-icon-114x114.png", sizes: "114x114" },
+      { url: "/favicon/apple-icon-120x120.png", sizes: "120x120" },
+      { url: "/favicon/apple-icon-144x144.png", sizes: "144x144" },
+      { url: "/favicon/apple-icon-152x152.png", sizes: "152x152" },
+      { url: "/favicon/apple-icon-180x180.png", sizes: "180x180" },
+    ],
+  },
+  manifest: "/favicon/manifest.json",
+  other: {
+    "msapplication-TileColor": "#3f77c7",
+    "msapplication-TileImage": "/favicon/ms-icon-144x144.png",
+  },
+};
+
+// themeColor lives on the `viewport` export in Next 16 (it's no longer
+// supported in `metadata`). Brand blue matches --color-primary-70 and
+// the manifest's theme_color, tinting mobile browser chrome.
+export const viewport: Viewport = {
+  themeColor: "#3f77c7",
 };
 
 // Loaded as a variable font (no explicit weight array) so POWERED in
