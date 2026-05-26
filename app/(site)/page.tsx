@@ -4,6 +4,7 @@ import AboutSection from "@/app/components/organisms/about-home/AboutSection";
 import WorkSection from "@/app/components/organisms/work-home/WorkSection";
 import ServicesSection from "@/app/components/organisms/services-home/ServicesSection";
 import FAQSection from "@/app/components/organisms/faq-home/FAQSection";
+import RecommendationsSection from "@/app/components/organisms/recommendations-home/RecommendationsSection";
 import FooterSection from "@/app/components/organisms/footer-home/FooterSection";
 import ContactSection from "@/app/components/organisms/contact-home/ContactSection";
 
@@ -44,6 +45,7 @@ export default function HomePage() {
         <div className="lower-content-layer">
           <div className="page-rail-group">
             <ServicesSection />
+            <RecommendationsSection />
             <FAQSection />
             <AboutSection />
             <FooterSection />

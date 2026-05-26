@@ -92,6 +92,16 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       ],
     },
     tags: ["UI Design"],
+    otherWorkCard: {
+      image: {
+        src: "/images/projects/other_work/other_neogov.png",
+        alt: "Neogov product UI composition",
+      },
+      label: "Enterprise design system for HR SaaS",
+      description:
+        "Worked on NOVI, the design system powering NEOGOV's product platform serving 13,000+ US public sector agencies.",
+      tag: "Design System",
+    },
   },
   {
     slug: "elite-digital",
@@ -167,6 +177,16 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       ],
     },
     tags: ["Web Design"],
+    otherWorkCard: {
+      image: {
+        src: "/images/projects/other_work/other_elite_digital.png",
+        alt: "Elite Digital agency platform composition",
+      },
+      label: "Digital agency design system and component library",
+      description:
+        "Built the design system and component library that lets the team ship fast without losing visual consistency.",
+      tag: "UI Design",
+    },
   },
   {
     slug: "spona",
@@ -214,6 +234,16 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       ],
     },
     tags: ["Platform"],
+    otherWorkCard: {
+      image: {
+        src: "/images/projects/other_work/other_spona.png",
+        alt: "Spona marketplace platform interface",
+      },
+      label: "Marketplace platform that scaled to 10K+ agencies",
+      description:
+        "Shaped the product structure of a two-sided B2B marketplace connecting businesses with digital service providers.",
+      tag: "Product Design",
+    },
   },
   // Croatel detail page now renders from croatel-project.data.ts
   // (CROATEL_PROJECT). This entry remains for generateStaticParams and
@@ -268,5 +298,15 @@ export const PROJECT_DETAILS: ProjectDetail[] = [
       ],
     },
     tags: ["UI Design"],
+    otherWorkCard: {
+      image: {
+        src: "/images/projects/other_work/other_croatel.png",
+        alt: "Croatel broadcast graphics composition",
+      },
+      label: "Broadcast graphics for national television",
+      description:
+        "Designed daily broadcast graphics for HRT1 news programming, where pace mattered as much as visual clarity.",
+      tag: "Graphic Design",
+    },
   },
 ];

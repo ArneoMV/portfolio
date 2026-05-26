@@ -46,6 +46,7 @@ export const WORKS: WorkItem[] = [
       "/images/home/work/slideshow/image-2.webp",
       "/images/home/work/slideshow/image-3.webp",
     ],
+    video: "/images/home/work/elite-digital-scene.mp4",
   },
   {
     id: "neogov",
@@ -56,7 +57,7 @@ export const WORKS: WorkItem[] = [
       "/images/home/work/slideshow/image-5.webp",
       "/images/home/work/slideshow/image-6.webp",
     ],
-    video: "/images/home/work/neogov-animation.mp4",
+    video: "/images/home/work/neogov-scene.mp4",
   },
   {
     id: "spona",
@@ -66,7 +67,7 @@ export const WORKS: WorkItem[] = [
       "/images/home/work/slideshow/image-7.webp",
       "/images/home/work/slideshow/image-8.webp",
     ],
-    video: "/images/home/work/spona-animation.mp4",
+    video: "/images/home/work/spona-scene.mp4",
   },
   {
     id: "croatel",
@@ -76,6 +77,7 @@ export const WORKS: WorkItem[] = [
       "/images/home/work/slideshow/image-9.webp",
       "/images/home/work/slideshow/image-10.webp",
     ],
+    video: "/images/home/work/croatel-scene.mp4",
   },
 ];
 

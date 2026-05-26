@@ -1,0 +1,187 @@
+/* ── Homepage — "Trusted by colleagues" recommendations ──────── */
+
+.recommendations-section {
+  padding: var(--space-4xl) 0;
+  background: var(--color-background);
+  /* Section is pinned via ScrollTrigger — overflow:hidden keeps the
+     scattered cards from spilling past the band; min-height fills the
+     viewport so the pin has a full screen to animate within. */
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+.recommendations-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Heading uses the shared `.section-header` molecule (see
+   _section-header.scss). The scoped override below sets a flat
+   heading→cards gap FOR THIS SECTION ONLY — 32px from 768px up, 24px on
+   mobile (via the media block below) — overriding the molecule's
+   responsive margin without touching the shared rule that
+   Services/FAQ/Work/About also consume. */
+.recommendations-container > .section-header {
+  margin-bottom: var(--space-xl); /* 32px — Medium + Large */
+}
+
+/* Cards stage — flex:1 so it fills the vertical space below the header
+   during the pin; the scattered cards are absolutely positioned within
+   it and moved by GSAP transforms. */
+.recommendations-cards-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 600px;
+}
+
+/* Card base — sizing applies in both the scattered and grid states;
+   GSAP controls position/rotation via inline transforms. */
+.recommendation-card {
+  width: 320px;
+  padding: 16px;
+  border-radius: var(--radius-sm); /* 8px */
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* quote icon → quote text gap */
+  will-change: transform;
+}
+
+/* Colour variants — primary/green/orange/red exist as tokens; pink and
+   purple are bespoke to this section, so they're inline hex literals. */
+.recommendation-card--blue {
+  background: var(--color-primary-20);
+}
+.recommendation-card--green {
+  background: var(--color-green-20);
+}
+.recommendation-card--peach {
+  background: var(--color-orange-20);
+}
+.recommendation-card--red {
+  background: var(--color-red-20);
+}
+.recommendation-card--pink {
+  background: #edbff1;
+}
+.recommendation-card--purple {
+  background: #c7bff1;
+}
+
+/* Quote icon — top-left, fixed size, no flex grow. */
+.recommendation-card-quote-icon {
+  width: 32px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+/* Quote body. No bottom margin — the parent flex `gap` spaces it from
+   the author, and the author's `margin-top: auto` (below) absorbs any
+   extra height on cards forced taller by the uniform min-height. */
+.recommendation-card-quote {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  color: var(--color-text-primary);
+}
+
+/* Author block — avatar + text in a row, 12px gap. `margin-top: auto`
+   pins it to the bottom of the card so the quote stays at the top and
+   the empty space on shorter cards sits between them. */
+.recommendation-card-author {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.recommendation-card-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.recommendation-card-author-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recommendation-card-name {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.recommendation-card-role {
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  color: var(--color-text-primary);
+  opacity: 0.7;
+  line-height: 1.3;
+}
+
+/* ── Mobile (<768px): horizontal swipe carousel, no pin ──────── */
+@media (max-width: 767px) {
+  .recommendations-section {
+    /* Split the shorthand so only the bottom gap to FAQ is pinned to an
+       explicit 64px; top keeps its 64px. (Left/right stay 0 from the
+       base rule's shorthand.) */
+    padding-top: var(--space-3xl);
+    padding-bottom: var(--space-3xl); /* 64px to the FAQ section below */
+    min-height: auto; /* no scroll-pinning on mobile */
+    overflow: visible;
+  }
+
+  .recommendations-container {
+    padding: 0; /* let the carousel reach the viewport edges */
+    display: block;
+    height: auto;
+  }
+
+  /* Carousel track — horizontal scroll with snap. */
+  .recommendations-cards-wrap {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    flex: none;
+    min-height: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px;
+    scroll-padding: 16px;
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* Hide the scrollbar (still swipeable). */
+  .recommendations-cards-wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Each card is a fixed-width snap target. Reset any inline transforms
+     defensively (the effect early-exits on mobile, but guards against a
+     desktop→mobile resize mid-session). */
+  .recommendation-card {
+    flex: 0 0 280px;
+    width: auto;
+    scroll-snap-align: start;
+    position: static !important;
+    transform: none !important;
+  }
+
+  /* Header gets normal flow spacing above the carousel. */
+  .recommendations-container > .section-header {
+    padding: 0 16px;
+    margin-bottom: var(--space-lg); /* 24px on mobile */
+  }
+}

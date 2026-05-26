@@ -65,8 +65,7 @@ const PROJECT_ITEMS: ProjectItem[] = [
   },
   {
     label: "Azimut International",
-    image:
-      "/images/home/projects-marquee-image/azimut-international-01.png",
+    image: "/images/home/projects-marquee-image/azimut-international-01.png",
     alt: "Azimut International project preview",
   },
   {
@@ -76,8 +75,7 @@ const PROJECT_ITEMS: ProjectItem[] = [
   },
   {
     label: "Continental Dynamics",
-    image:
-      "/images/home/projects-marquee-image/continental-dynamics-01.png",
+    image: "/images/home/projects-marquee-image/continental-dynamics-01.png",
     alt: "Continental Dynamics project preview",
   },
   {
@@ -169,10 +167,9 @@ export default function ProjectsSection() {
       <div className="projects-container">
         <div className="projects-row projects-row--intro">
           <p className="projects-description">
-            Map users, flows, and constraints to understand how everything
-            connects. Break down complex problems into clear, structured
-            solutions. Break down complex problems into clear, structured
-            solutions.
+            I design products, build websites, and set up AI workflows that take
+            repetitive work off your team. The mix shifts per project. The
+            standard doesn't.
           </p>
           <div className="projects-cta">
             <Button variant="dark" size="sm" href="/work">

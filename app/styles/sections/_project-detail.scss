@@ -446,7 +446,8 @@
   pointer-events: none;
 }
 
-.project-detail-dark-image--mockup-on-frame img.project-detail-dark-image-content {
+.project-detail-dark-image--mockup-on-frame
+  img.project-detail-dark-image-content {
   position: relative;
   z-index: 1;
   width: 400px;
@@ -457,7 +458,8 @@
 
 /* Tablet — image scales down but keeps cap. */
 @media (max-width: 1023px) {
-  .project-detail-dark-image--mockup-on-frame img.project-detail-dark-image-content {
+  .project-detail-dark-image--mockup-on-frame
+    img.project-detail-dark-image-content {
     width: 80%;
     max-width: 400px;
   }
@@ -465,7 +467,8 @@
 
 /* Mobile — image fills container; frame still proportional. */
 @media (max-width: 767px) {
-  .project-detail-dark-image--mockup-on-frame img.project-detail-dark-image-content {
+  .project-detail-dark-image--mockup-on-frame
+    img.project-detail-dark-image-content {
     width: 100%;
     max-width: 100%;
   }
@@ -710,14 +713,14 @@
   max-width: 1100px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 64px;
-  padding-right: 64px;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 @media (max-width: 1439px) and (min-width: 768px) {
   .project-detail-other-container {
-    padding-left: 48px;
-    padding-right: 48px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }
 
@@ -762,9 +765,11 @@
 }
 
 .project-detail-other-card {
+  /* Flex column (so the tag's `align-self: flex-start` hugs its
+     content); no `gap` — inter-element spacing is set per element
+     via margin-top to hit the spec's 16 / 8 / 8 rhythm. */
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
   text-decoration: none;
   color: inherit;
 }
@@ -778,29 +783,27 @@
   transition: background-color 200ms ease;
 }
 
+.project-detail-other-card-image img {
+  object-fit: cover;
+}
+
+/* Alternating heights driven by aspect-ratio so the two cards differ
+   without fixed pixel heights: TALL = 5:4 (490×400), SHORT = 5:3
+   (490×300). The ~100px image-height delta staggers the card bottoms
+   (grid `align-items: start`). Holds at every breakpoint ≥768px. */
 .project-detail-other-card--tall .project-detail-other-card-image {
-  height: 400px;
+  aspect-ratio: 5 / 4;
 }
 
 .project-detail-other-card--short .project-detail-other-card-image {
-  height: 300px;
+  aspect-ratio: 5 / 3;
 }
 
-@media (max-width: 1439px) and (min-width: 768px) {
-  .project-detail-other-card--tall .project-detail-other-card-image {
-    height: 320px;
-  }
-
-  .project-detail-other-card--short .project-detail-other-card-image {
-    height: 240px;
-  }
-}
-
+/* Mobile — cards stack; collapse the tall variant to the short 5:3
+   ratio so both render at the same proportions. */
 @media (max-width: 767px) {
-  .project-detail-other-card--tall .project-detail-other-card-image,
-  .project-detail-other-card--short .project-detail-other-card-image {
-    height: auto;
-    aspect-ratio: 4 / 3;
+  .project-detail-other-card--tall .project-detail-other-card-image {
+    aspect-ratio: 5 / 3;
   }
 }
 
@@ -812,7 +815,8 @@
    read as labels for the imagery above, not as headings competing
    with the section title. */
 .project-detail-other-card-title {
-  margin: 0;
+  /* 16px below the image. */
+  margin: 16px 0 0 0;
   font-family: var(--font-sans);
   font-weight: 700;
   font-size: var(--text-md);
@@ -824,7 +828,8 @@
    card reads at the same body level as paragraphs across the
    detail page. */
 .project-detail-other-card-desc {
-  margin: 0;
+  /* 8px below the title. */
+  margin: 8px 0 0 0;
   font-family: var(--font-sans);
   font-weight: 500;
   font-size: var(--text-lg);
@@ -834,6 +839,8 @@
 
 .project-detail-other-card-tag {
   align-self: flex-start;
+  /* 8px below the description. */
+  margin-top: 8px;
   font-family: var(--font-sans);
   font-weight: 500;
   font-size: 13px;

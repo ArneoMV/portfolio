@@ -114,4 +114,20 @@ export interface ProjectDetail {
    */
   lightSection?: ProjectDetailLightSection;
   tags?: string[];
+  /**
+   * Copy + image for this project's "Other Work" card — the cross-link
+   * cards at the bottom of every detail page. Card-specific so it can
+   * read differently from the hero `description` / `heroImage`.
+   * `OtherWorkCard` consumes this (via PROJECT_DETAILS) for all four
+   * projects, including the bespoke pages (Neogov / Spona / Croatel)
+   * whose detail content lives elsewhere but whose Other-Work card
+   * still comes from here. Optional so legacy entries fall back to the
+   * hero fields.
+   */
+  otherWorkCard?: {
+    image: { src: string; alt: string };
+    label: string;
+    description: string;
+    tag: string;
+  };
 }

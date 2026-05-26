@@ -5,9 +5,9 @@ interface AboutTextProps {
 }
 
 const ABOUT_PARAGRAPHS = [
-  "I’m a product designer from Zagreb who enjoys turning unclear ideas into structured digital products.",
-  "I work best where design, systems, and implementation meet: mapping the problem, simplifying flows, and shaping interfaces that feel clear, usable, and realistic to build.",
-  "I also build my own projects, so I think about design beyond the screen — how it behaves, scales, and becomes a real product.",
+  "I'm a designer from Zagreb with a slightly mixed background.",
+  "Graphic design school first, then a computer science degree, then a few years across product companies, national television, and freelance projects.",
+  "Building things that help people is what I enjoy most, with a few side projects of my own along the way.I also build my own projects, so I think about design beyond the screen. How it behaves, scales, and becomes a real product.",
 ];
 
 /**
