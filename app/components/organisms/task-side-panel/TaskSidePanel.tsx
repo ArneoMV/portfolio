@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import Button from "@/app/components/atoms/button/Button";
 
 export interface TaskPreview {
@@ -15,6 +16,10 @@ interface TaskSidePanelProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   preview: TaskPreview;
   onPreviewChange: (preview: TaskPreview) => void;
+  /** Submission lifecycle — swaps the form for a success message,
+   *  disables the submit button while sending, and shows an inline
+   *  error. Defaults to "idle" so existing callers are unaffected. */
+  status?: "idle" | "submitting" | "success" | "error";
 }
 
 export default function TaskSidePanel({
@@ -23,6 +28,7 @@ export default function TaskSidePanel({
   onSubmit,
   preview,
   onPreviewChange,
+  status = "idle",
 }: TaskSidePanelProps) {
   const panelRef = useRef<HTMLElement>(null);
 
@@ -76,6 +82,18 @@ export default function TaskSidePanel({
         aria-hidden={!open}
         aria-label="Start a project request"
       >
+        {status === "success" ? (
+          <div className="task-side-panel-success">
+            <h3 className="task-side-panel-title">Message sent!</h3>
+            <p className="task-side-panel-subtitle">
+              Thanks for reaching out. I&rsquo;ll get back to you soon.
+            </p>
+            <Button variant="dark" onClick={onClose}>
+              Close
+            </Button>
+          </div>
+        ) : (
+          <>
         <div className="task-side-panel-header">
           <div className="task-side-panel-title-row">
             <h3 className="task-side-panel-title">Start a Project Request</h3>
@@ -139,7 +157,15 @@ export default function TaskSidePanel({
           <div className="task-field">
             <span className="task-field-label">ASSIGNED TO</span>
             <div className="task-assigned-chip">
-              <div className="task-assigned-avatar" aria-hidden="true" />
+              <div className="task-assigned-avatar" aria-hidden="true">
+                <Image
+                  src="/images/avatar_image.png"
+                  alt=""
+                  fill
+                  sizes="24px"
+                  className="object-cover"
+                />
+              </div>
               <span>Arneo MV</span>
             </div>
           </div>
@@ -210,10 +236,19 @@ export default function TaskSidePanel({
             type="submit"
             variant="outline"
             className="task-side-panel-submit"
+            disabled={status === "submitting"}
           >
-            SEND
+            {status === "submitting" ? "Sending…" : "SEND"}
           </Button>
+
+          {status === "error" && (
+            <p className="task-side-panel-error">
+              Something went wrong. Please try again.
+            </p>
+          )}
         </form>
+          </>
+        )}
       </aside>
     </>
   );

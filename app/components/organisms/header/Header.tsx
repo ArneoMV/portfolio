@@ -41,7 +41,12 @@ const SHOW_NEAR_TOP = 40; // always visible while scrollY < this
 const HIDE_AFTER = 80; // don't start hiding until past this offset
 const SCROLL_DELTA = 4; // ignore tiny jitter under this magnitude
 
-export default function Header() {
+type HeaderProps = {
+  /** Opens the contact side panel (wired by SiteShell). */
+  onOpenContact?: () => void;
+};
+
+export default function Header({ onOpenContact }: HeaderProps) {
   const [hidden, setHidden] = useState(false);
   const lastY = useRef(0);
   const ticking = useRef(false);
@@ -94,7 +99,7 @@ export default function Header() {
           </div>
 
           <div className="col-span-10 mobile-col-span-2 flex justify-end">
-            <Button variant="dark" href="#contact">
+            <Button variant="dark" onClick={onOpenContact}>
               Get in touch
             </Button>
           </div>

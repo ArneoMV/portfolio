@@ -202,11 +202,13 @@ textarea.task-field-control {
 }
 
 .task-assigned-avatar {
+  position: relative; /* containing block for the fill <Image> */
   width: 24px;
   height: 24px;
   border-radius: var(--radius-pill);
-  background: var(--color-neutral-30);
+  background: var(--color-neutral-30); /* fallback while the image loads */
   flex-shrink: 0;
+  overflow: hidden; /* clip the avatar image to the circle */
 }
 
 .task-side-panel-divider {
@@ -254,4 +256,25 @@ textarea.task-field-control {
 .task-side-panel-overlay--open {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Success state — replaces the header + form after a successful
+   submission. Centred in the panel; reuses `.task-side-panel-title` /
+   `-subtitle` typography. */
+.task-side-panel-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--space-xl);
+  gap: var(--space-md);
+  text-align: center;
+}
+
+/* Inline error shown under the form when a submission fails. */
+.task-side-panel-error {
+  margin-top: var(--space-sm);
+  color: var(--color-red-60);
+  font-size: var(--text-caption);
 }
