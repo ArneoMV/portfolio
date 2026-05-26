@@ -78,7 +78,7 @@ export default function ContactSection() {
     <section ref={sectionRef} id="contact" className="contact-section">
       <div className="contact-section-inner">
         <div className="contact-header">
-          <h2>arneo@mail.hr</h2>
+          <h2>info@arneomv.com</h2>
         </div>
 
         <div className="contact-scene-host">
