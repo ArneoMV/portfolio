@@ -117,3 +117,30 @@
     height: 25.90%;
   }
 }
+
+/* Desktop/mobile video toggle. The active-project video shows on
+   ≥768px; a single shared placeholder shows on ≤767px (per-project
+   preview switching is desktop-only). Both still inherit the
+   `.screen video` SCREEN_POS positioning above.
+
+   Compounded with `.image` (both videos carry it) so each rule is
+   specificity 0,2,0 — that clears `.screen video`'s `display: block`
+   (0,1,1) and `.image`'s (0,1,0), which would otherwise keep both
+   videos displayed. */
+.image.videoDesktop {
+  display: block;
+}
+
+.image.videoMobile {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .image.videoDesktop {
+    display: none;
+  }
+
+  .image.videoMobile {
+    display: block;
+  }
+}

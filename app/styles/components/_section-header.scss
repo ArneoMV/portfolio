@@ -41,11 +41,12 @@
   width: 100%;
   gap: 8px;
   margin-bottom: 8px;
+  align-items: center;
 }
 
 .section-header__title {
   margin: 0;
-  width: 100%;
+  width: auto;
   max-width: none;
   font-family: var(--font-sans);
   font-weight: 700;
@@ -71,7 +72,7 @@
   line-height: 115%;
   color: var(--color-text-primary);
   text-transform: none;
-  text-align: left;
+  text-align: center;
 }
 
 /* Medium (tablet) — 768px to 1439px. Title scales up; subtitle

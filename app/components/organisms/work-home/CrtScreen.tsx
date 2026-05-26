@@ -47,22 +47,56 @@ export default function CrtScreen({ activeWork }: Props) {
   return (
     <div className={styles.screen} aria-hidden="true">
       {activeWork.video ? (
-        // `key` on activeWork.id forces a fresh remount (and a restart
-        // of the video from frame 0) when the user switches projects
-        // away and back. `.image .imageActive` reuses the same
-        // positioning/mask styling as the slideshow `<img>`s — see the
-        // SCSS file for the dual-use note. autoplay+muted+playsInline
-        // is the standard combo for mobile autoplay (iOS Safari blocks
-        // unmuted autoplay outright).
-        <video
-          key={activeWork.id}
-          src={activeWork.video}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className={`${styles.image} ${styles.imageActive}`}
-        />
+        // Two videos, toggled by CSS at 768px (see `.videoDesktop` /
+        // `.videoMobile`). Both reuse `.image .imageActive` (positioning,
+        // object-fit, opacity) and inherit the SCREEN_POS rectangle via
+        // the `.screen video` rule. `preload="metadata"` keeps the
+        // hidden-on-this-device video from downloading in full.
+        //
+        // Autoplay requires the video to be muted. The `muted` JSX prop
+        // alone is unreliable: React applies `muted` as a DOM property,
+        // not a serialised HTML attribute, and SSR/hydration can leave it
+        // unset — the browser then sees an unmuted `<video autoplay>` and
+        // blocks playback. The `ref` forces `muted = true` on the live
+        // element and calls `play()` to recover any autoplay the browser
+        // refused on the server-rendered markup (it re-runs per remount,
+        // e.g. the desktop video's `key` change on project switch).
+        <>
+          {/* Desktop (≥768px) — the active project's video. `key` forces
+              a remount (restart from frame 0) on project switch. */}
+          <video
+            key={activeWork.id}
+            src={activeWork.video}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            ref={(el) => {
+              if (!el) return;
+              el.muted = true;
+              void el.play().catch(() => {});
+            }}
+            className={`${styles.image} ${styles.imageActive} ${styles.videoDesktop}`}
+          />
+          {/* Mobile (≤767px) — a single shared placeholder; no per-row
+              preview switching on touch, so it never remounts. Swap this
+              src for the composite mobile video in a later task. */}
+          <video
+            src="/images/home/work/neogov-scene.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            ref={(el) => {
+              if (!el) return;
+              el.muted = true;
+              void el.play().catch(() => {});
+            }}
+            className={`${styles.image} ${styles.imageActive} ${styles.videoMobile}`}
+          />
+        </>
       ) : (
         activeWork.images.map((src, i) => (
           // eslint-disable-next-line @next/next/no-img-element

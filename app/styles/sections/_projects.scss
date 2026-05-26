@@ -22,8 +22,8 @@
      flow keeps content top-aligned in any extra empty stretch. */
   min-height: 100vh;
   min-height: 100dvh;
-  padding-top: var(--space-4xl);
-  padding-bottom: var(--space-4xl);
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
   background: var(--color-background);
   /* Sticks at viewport top while Work scrolls up over it, covered by
      Work's z:2. Containing block is `.projects-work-reveal`; sticky
@@ -145,8 +145,8 @@
      during scroll. `env(safe-area-inset-bottom, 0px)` subtracts
      the home-indicator inset on notched devices (~34px). */
   .projects-section {
-    padding-top: var(--space-3xl);
-    padding-bottom: var(--space-3xl);
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-xl);
     min-height: calc(100vh - 138px);
     min-height: calc(100svh - 138px - env(safe-area-inset-bottom, 0px));
   }

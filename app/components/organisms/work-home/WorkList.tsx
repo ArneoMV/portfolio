@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { WORKS } from "./workData";
 import styles from "./WorkList.module.scss";
 
@@ -9,21 +10,19 @@ type Props = {
 };
 
 /**
- * WorkList — four full-width project rows that drive the active work.
+ * WorkList — four full-width project rows. Each row is a Next.js
+ * `<Link>` to `/work/{id}`: clicking (or Enter on a focused row)
+ * navigates, and Next prefetches the target on hover. Hovering also
+ * sets the active work so the desktop CRT preview switches
+ * (`onMouseEnter` only — focus and tap now navigate rather than drive
+ * the preview).
  *
- * Activation paths:
- * - Mouse: hover (`onMouseEnter`) — desktop preview-on-hover.
- * - Touch: tap (`onClick`) — fires reliably on first tap on touch
- *   devices, where `onMouseEnter` would otherwise stick after one
- *   tap and need a second to switch back.
- * - Keyboard: focus (`onFocus`) + Enter / Space (`onKeyDown`) for
- *   parity with button semantics.
+ * Rows are direct grid children of `.list` so the ≥640px subgrid
+ * (label column / subtitle column) still aligns across all four rows;
+ * a wrapping `<li>` would break the subgrid chain.
  *
  * Hover/active state is CSS-only — a short opacity + translateX
- * transition on `.label` / `.labelHovered`. The previous GSAP
- * rotateX + sans→serif-italic font swap looked clean on paper but
- * the font-family change altered glyph metrics mid-tween and forced
- * a reflow that read as stutter.
+ * transition on `.label` / `.labelHovered`.
  */
 export default function WorkList({ activeWorkId, onActivate }: Props) {
   const activate = (id: string) => {
@@ -32,7 +31,7 @@ export default function WorkList({ activeWorkId, onActivate }: Props) {
   };
 
   return (
-    <ul className={styles.list}>
+    <div className={styles.list}>
       {WORKS.map((work) => {
         const isActive = work.id === activeWorkId;
         const itemClass = [styles.item, isActive ? styles.itemActive : ""]
@@ -43,27 +42,18 @@ export default function WorkList({ activeWorkId, onActivate }: Props) {
           .join(" ");
 
         return (
-          <li
+          <Link
             key={work.id}
+            href={`/work/${work.id}`}
             className={itemClass}
-            role="button"
-            aria-pressed={isActive}
-            tabIndex={0}
             onMouseEnter={() => activate(work.id)}
-            onFocus={() => activate(work.id)}
-            onClick={() => activate(work.id)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                activate(work.id);
-              }
-            }}
+            prefetch
           >
             <span className={labelClass}>{work.label}</span>
             <span className={styles.subtitle}>{work.subtitle}</span>
-          </li>
+          </Link>
         );
       })}
-    </ul>
+    </div>
   );
 }

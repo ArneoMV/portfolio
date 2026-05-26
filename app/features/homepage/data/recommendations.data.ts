@@ -33,7 +33,7 @@ export const RECOMMENDATIONS: Recommendation[] = [
     quote:
       "Arneo jumped in quickly and brought strong UX thinking to complex work. Polished visual execution, dependable, and a real sense of ownership.",
     name: "Julio Ramirez",
-    role: "Senior Product Designer at NEOGOV",
+    role: "Senior Product Designer at Buildops",
     avatar: "/images/home/testemonials/testemonial_julio.png",
     color: "green",
   },

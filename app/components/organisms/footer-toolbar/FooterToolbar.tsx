@@ -160,19 +160,22 @@ export default function FooterToolbar() {
                   </div>
                 </div>
 
-                {/* Menu toggle button */}
+                {/* Menu toggle button — text label that swaps MENU/CLOSE.
+                    The `key` on the inner span forces a remount on each
+                    toggle so the fade-in keyframe replays. */}
                 <button
-                  className="ml-[var(--space-xs)] grid shrink-0 grid-cols-3 gap-[3px] p-[var(--space-xs)]"
+                  type="button"
+                  className="footer-toolbar-toggle"
                   aria-label={isOpen ? "Close menu" : "Open menu"}
                   aria-expanded={isOpen}
                   onClick={() => setIsOpen((prev) => !prev)}
                 >
-                  {Array.from({ length: 9 }).map((_, i) => (
-                    <span
-                      key={i}
-                      className="block h-[4px] w-[4px] rounded-full bg-[var(--color-neutral-100)]"
-                    />
-                  ))}
+                  <span
+                    key={isOpen ? "close" : "menu"}
+                    className="footer-toolbar-toggle-text"
+                  >
+                    {isOpen ? "CLOSE" : "MENU"}
+                  </span>
                 </button>
               </div>
             </div>
