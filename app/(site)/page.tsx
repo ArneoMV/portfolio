@@ -19,15 +19,9 @@ export default function HomePage() {
         <HeroSection />
       </div>
 
-      {/* Projects + Work form a reveal pair: Projects sticks at top:0
-          while Work (z:2) scrolls up over it, painting above the
-          sticky Projects (z:1) for a smooth from-bottom reveal. The
-          wrapper exists only to give Projects' sticky a containing
-          block tall enough to span Work's scroll height. */}
-      <div className="projects-work-reveal">
-        <ProjectsSection />
-        <WorkSection />
-      </div>
+      {/* Projects and Work scroll as ordinary sibling blocks. */}
+      <ProjectsSection />
+      <WorkSection />
 
       {/* Lower content (Services + FAQ + About + Footer) and Contact
           form a reveal pair. The lower-content-layer wraps the rail

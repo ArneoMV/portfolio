@@ -4,17 +4,6 @@
    HOMEPAGE PROJECTS SECTION
 ================================ */
 
-/* Reveal wrapper around <ProjectsSection> + <WorkSection> in
-   page.tsx. Its only job: be the positioned containing block for
-   the sticky Projects, with a height tall enough (Projects + Work)
-   that sticky has travel range = Work's height. No rails on this
-   wrapper — Projects renders its own (see ::before / ::after below).
-   Work's full-bleed background sits below in DOM and gets z:2 in
-   _module.scss so it paints over sticky Projects during reveal. */
-.projects-work-reveal {
-  position: relative;
-}
-
 .projects-section {
   /* Cascading fallback: browsers that don't parse `100dvh` keep the
      `100vh` declaration. `min-height` (not `height`) so content taller
@@ -25,15 +14,10 @@
   padding-top: var(--space-xl);
   padding-bottom: var(--space-xl);
   background: var(--color-background);
-  /* Sticks at viewport top while Work scrolls up over it, covered by
-     Work's z:2. Containing block is `.projects-work-reveal`; sticky
-     travel = Work's height. Applies on every breakpoint — desktop
-     and mobile share the same reveal mechanism. */
-  position: sticky;
-  top: 0;
-  /* Lower than .work-section's z:2 so Work paints on top during the
-     reveal scroll. */
-  z-index: 1;
+  /* `relative` is the positioning context for the dotted-rail
+     ::before/::after below (absolute, top:0 → bottom:0). Section
+     scrolls in normal flow — no sticky reveal. */
+  position: relative;
 }
 
 /* Dotted vertical rails through Projects.

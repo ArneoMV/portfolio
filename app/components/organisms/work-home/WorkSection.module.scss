@@ -22,10 +22,6 @@
 .section {
   position: relative;
   width: 100%;
-  /* Higher than `.projects-section`'s z:1 so Work paints over the
-     sticky Projects during the reveal scroll inside
-     `.projects-work-reveal`. */
-  z-index: 2;
 }
 
 /* Medium + Large: pin the section to a single viewport height with the
@@ -40,7 +36,12 @@
    list area stays visible. */
 @media (min-width: 640px) {
   .section {
-    height: 100vh;
+    /* `min-height` (was `height`) now that there's no sticky reveal:
+       the section is at least one viewport tall but grows to its
+       natural (container aspect-ratio) height instead of clipping to
+       exactly 100vh. overflow:hidden stays as a guard for any stray
+       child overflow. */
+    min-height: 100vh;
     overflow: hidden;
   }
 }
