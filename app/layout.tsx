@@ -19,9 +19,10 @@ import {
 
 /**
  * Site-wide metadata defaults. Per-route page.tsx files override
- * `title`, `description`, `openGraph.url`, etc. as needed. The
- * `title.template` here applies the " — Arneo" suffix to any page
- * that sets a plain string title (e.g. "Work" → "Work — Arneo").
+ * `title`, `description`, `openGraph.url`, etc. as needed. The root
+ * `title` is a plain string with no template/suffix: per-page string
+ * titles ("Work", "Lab", a project label) are used verbatim as the tab
+ * label, and any page without its own title falls back to "Arneo MV".
  *
  * No site-wide OG/Twitter image is referenced because no
  * dedicated social-card asset exists yet. Project detail pages
@@ -31,10 +32,7 @@ import {
  */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: {
-    default: SITE_DEFAULT_TITLE,
-    template: "%s — Arneo",
-  },
+  title: "Arneo MV",
   description: SITE_DEFAULT_DESCRIPTION,
   openGraph: {
     type: "website",

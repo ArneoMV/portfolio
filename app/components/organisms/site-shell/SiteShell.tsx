@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import emailjs from "@emailjs/browser";
 import Header from "@/app/components/organisms/header/Header";
 import TaskSidePanel from "@/app/components/organisms/task-side-panel/TaskSidePanel";
 import type { TaskPreview } from "@/app/components/organisms/task-side-panel/TaskSidePanel";
@@ -56,32 +57,43 @@ export default function SiteShell({ children }: SiteShellProps) {
       setStatus("submitting");
 
       const formData = new FormData(form);
-      const payload = {
-        category: formData.get("category"),
-        title: formData.get("title"),
-        description: formData.get("description"),
-        name: formData.get("name"),
-        email: formData.get("email"),
+      // Keys MUST match the EmailJS template variable names:
+      // {{user_email}}, {{user_name}}, {{category}}, {{title}}, {{message}}.
+      // All five are always sent; the dashboard template decides which to
+      // render, so adding {{category}}/{{title}} there needs no code change.
+      const templateParams = {
+        user_email: formData.get("email")?.toString() ?? "",
+        user_name: formData.get("name")?.toString() ?? "",
+        category: formData.get("category")?.toString() ?? "",
+        title: formData.get("title")?.toString() ?? "",
+        message: formData.get("description")?.toString() ?? "",
       };
 
       try {
-        // NOTE: /api/contact does not exist yet — see follow-up. Until
-        // the route handler is added this POST 404s and the panel shows
-        // the error state; the wiring is intentionally complete so the
-        // backend can plug in without touching the UI.
-        const response = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+        const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+        const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+        const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
 
-        if (!response.ok) {
-          throw new Error(`Request failed: ${response.status}`);
+        if (!serviceId || !templateId || !publicKey) {
+          throw new Error(
+            "EmailJS credentials not configured. Check .env.local (and restart the dev server).",
+          );
+        }
+
+        const response = await emailjs.send(
+          serviceId,
+          templateId,
+          templateParams,
+          { publicKey },
+        );
+
+        if (response.status !== 200) {
+          throw new Error(`EmailJS responded with status ${response.status}`);
         }
 
         setStatus("success");
       } catch (error) {
-        console.error("Contact form submission error:", error);
+        console.error("EmailJS submission error:", error);
         setStatus("error");
       }
     },

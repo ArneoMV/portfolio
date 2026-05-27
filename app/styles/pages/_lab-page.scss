@@ -17,7 +17,10 @@
 }
 
 .lab-bg-text {
-  font-family: var(--font-sans);
+  /* Young Serif. NOTE: there is no `--font-serif` token — Young Serif is
+     loaded under `--font-display` (see _tokens.scss / app/layout.tsx), so
+     that's the var that actually yields the serif here. */
+  font-family: var(--font-display);
   font-size: clamp(300px, 72vw, 480px);
   font-weight: 400;
   line-height: 0.78;
