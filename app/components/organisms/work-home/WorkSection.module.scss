@@ -36,11 +36,10 @@
    list area stays visible. */
 @media (min-width: 640px) {
   .section {
-    /* `min-height` (was `height`) now that there's no sticky reveal:
-       the section is at least one viewport tall but grows to its
-       natural (container aspect-ratio) height instead of clipping to
-       exactly 100vh. overflow:hidden stays as a guard for any stray
-       child overflow. */
+    /* `min-height` (not `height`) so the section is at least one
+       viewport tall but grows to its natural (container aspect-ratio)
+       height instead of clipping to exactly 100vh. overflow:hidden
+       stays as a guard for any stray child overflow. */
     min-height: 100vh;
     overflow: hidden;
   }

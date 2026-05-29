@@ -46,9 +46,18 @@ export interface SponaProjectData {
   leadQuote: string;
   stats: CaseStudyStat[];
   contextRow: CaseStudyTextRow & { images: CaseStudyImage[] };
-  /** Additional rows inside the navy panel (Work scope, Scale
-   *  challenge, Design decisions). No outside rows, no callout. */
+  /** Additional label/text rows inside the navy panel (Work scope,
+   *  Scale challenge, Design decisions). */
   insideRows: CaseStudyTextRow[];
+  /** Optional label/text rows rendered OUTSIDE the navy panel.
+   *  Currently unused on Spona — kept here so the shape parities with
+   *  the shared `CaseStudyContextSection` prop surface (and Neogov's
+   *  data), letting future content drop in without a type change. */
+  outsideRows?: CaseStudyTextRow[];
+  /** Optional brand-coloured callout aligned to the right column.
+   *  Currently unused on Spona — kept for parity with the shared
+   *  Context section, same rationale as `outsideRows` above. */
+  callout?: string;
 
   /* ── Showcase (CaseStudyShowcaseSection) ──────────────────── */
   /** Single wide illustration (no small picture-switch variant). */

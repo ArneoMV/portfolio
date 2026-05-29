@@ -21,14 +21,12 @@
 }
 
 /* Dotted vertical rails through Projects.
-   Originally Projects shared a .page-rail-group with Hero and
-   inherited continuous rails. After moving Projects into
-   .projects-work-reveal so sticky has travel room over Work, we
-   render Projects-local rails here at the same x-positions
+   Projects sits outside Hero's `.page-rail-group`, so we render
+   Projects-local rails here at the same x-positions
    (max(0px, calc(50% ± 550px))) and dash pattern as the rail-group,
-   so the visual rail line still reads through Projects. Hero's own
-   rail-group still wraps Hero — its rails are covered by Hero's
-   z:2 section element, same as before, so no Hero visual change. */
+   so the visual rail line reads continuously across both sections.
+   Hero's own rail-group still wraps Hero — its rails are covered by
+   Hero's z:2 section element, so no Hero visual change. */
 .projects-section::before,
 .projects-section::after {
   content: "";
@@ -117,12 +115,12 @@
 
      `min-height` is also overridden here with the same toolbar-aware
      viewport math Hero uses. Without this, the base rule's `100vh /
-     100dvh` makes the sticky-pinned Projects fill the full mobile
-     viewport, and the FooterToolbar (fixed at the bottom, 122px
-     outer footprint from viewport bottom to toolbar top) covers
-     the bottom of Projects' content — most visibly the logo grid
-     (Neogov / Spona). The 138px subtraction = 122 toolbar footprint
-     + 16 designed gap above the toolbar's top edge. `svh` is
+     100dvh` makes Projects fill the full mobile viewport, and the
+     FooterToolbar (fixed at the bottom, 122px outer footprint from
+     viewport bottom to toolbar top) covers the bottom of Projects'
+     content — most visibly the logo grid (Neogov / Spona). The 138px
+     subtraction = 122 toolbar footprint + 16 designed gap above the
+     toolbar's top edge. `svh` is
      preferred over `dvh` for the same reason Hero uses it: it's
      the smallest stable viewport, so the pinned section's bottom
      edge doesn't drift up/down as the URL bar collapses/expands
@@ -383,10 +381,3 @@
     height: 21px;
   }
 }
-
-/* Note: a prior mobile-only Hero → Projects reveal (Hero sticky,
-   rail-group min-height 200vh, .projects-work-reveal margin-top
-   -100vh) was removed when the desktop Projects → Work sticky was
-   extended to all breakpoints above. Mobile now mirrors desktop:
-   Hero scrolls off in normal flow, Projects sticks at top:0 while
-   Work scrolls up over it. */
