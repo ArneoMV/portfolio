@@ -1,0 +1,83 @@
+/* =====================================================================
+   ELITE DIGITAL PROJECT PAGE  —  /work/elite-digital  (bespoke, not
+   the shared ProjectDetailTemplate). This partial holds ONLY Elite
+   Digital's hero and the page wrapper; the Context + Showcase sections
+   are the shared `.case-study-*` components styled in `_case-study.scss`.
+
+   The hero is the THIRD hero variant — full-width banner image in
+   normal flow (no float / no overflow / no panel). It reuses the
+   case-study primitives — `.case-study-rail-container` (1100px rail
+   box) and `.case-study-hero-row` / `.case-study-hero-meta` (label
+   rows + dotted meta wrapper) — so the rows + meta-grid rhythm match
+   Neogov / Spona.
+===================================================================== */
+
+/* Page wrapper — desktop footer/toolbar bottom clearance (the global
+   `.site-main` only reserves toolbar space on mobile). Same pattern
+   Neogov + Spona use. */
+.elite-digital-project-page {
+  padding-bottom: var(--space-5xl);
+}
+
+/* ── Hero / Introduction ───────────────────────────────────────
+   `padding-top: var(--header-height)` clears the fixed site header
+   (a plain `padding: 3xl 0` would let content slide under it). */
+.elite-digital-hero {
+  background: var(--color-background);
+  padding-top: var(--header-height);
+  padding-bottom: var(--space-3xl);
+}
+
+/* Full-width banner — no panel background, no float, no overflow.
+   The image touches both rails and the title sits below it. */
+.elite-digital-hero-top {
+  margin-bottom: var(--space-3xl);
+}
+
+/* The image is wrapped by ZoomableImage's <button>. Resetting it to
+   block + 100% width lets the image span the full rail container. */
+.elite-digital-hero-top .zoomable-image-trigger {
+  display: block;
+  width: 100%;
+  cursor: zoom-in;
+}
+
+/* Specificity beats the global `.zoomable-image-trigger img` rule so
+   the image renders at its natural aspect inside the full-width box. */
+.elite-digital-hero-top .zoomable-image-trigger img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Title below the banner — same leftmost 24px inset Neogov / Spona
+   use for their below-panel titles. Carries the page's primary
+   heading (no eyebrow / display heading above on this variant), so
+   it is rendered as <h1>. */
+.elite-digital-hero-title {
+  margin: var(--space-2xl) 0 var(--space-lg) 0;
+  padding-left: 24px;
+  padding-right: 0;
+  font-family: var(--font-display);
+  font-size: var(--h2-size);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--color-text-primary);
+}
+
+/* Mobile — tighten the vertical air around the banner and halve the
+   title's left inset to match the homepage mobile container. */
+@media (max-width: 767px) {
+  .elite-digital-hero {
+    padding-bottom: var(--space-2xl);
+  }
+
+  .elite-digital-hero-top {
+    margin-bottom: var(--space-xl);
+  }
+
+  .elite-digital-hero-title {
+    padding-left: 16px;
+    font-size: clamp(36px, 8vw, 48px);
+  }
+}

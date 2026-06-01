@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import NeogovProjectPage from "@/app/components/organisms/project-detail/NeogovProjectPage";
 import SponaProjectPage from "@/app/components/organisms/project-detail/SponaProjectPage";
+import EliteDigitalProjectPage from "@/app/components/organisms/project-detail/EliteDigitalProjectPage";
 import CroatelProjectPage from "@/app/components/organisms/project-detail/CroatelProjectPage";
 import ProjectDetailTemplate from "@/app/components/organisms/project-detail/ProjectDetailTemplate";
 import {
@@ -12,6 +13,7 @@ import {
 import { PROJECT_DETAILS } from "@/app/data/project-details.data";
 import { NEOGOV_PROJECT } from "@/app/data/neogov-project.data";
 import { SPONA_PROJECT } from "@/app/data/spona-project.data";
+import { ELITE_DIGITAL_PROJECT } from "@/app/data/elite-digital-project.data";
 import { CROATEL_PROJECT } from "@/app/data/croatel-project.data";
 
 export function generateStaticParams() {
@@ -113,6 +115,9 @@ export async function generateMetadata({
  *     cards internally, so this route doesn't pass props.
  *   • "spona" → the dedicated <SponaProjectPage> (same bespoke
  *     pattern as Neogov: own data, resolves its own "Other Work").
+ *   • "elite-digital" → the dedicated <EliteDigitalProjectPage>
+ *     (same bespoke pattern: own data, third hero variant — a
+ *     full-width banner in normal flow).
  *   • "croatel" → the dedicated <CroatelProjectPage> (same bespoke
  *     pattern: own data, banner-only hero + bespoke light section).
  *   • everything else → the shared <ProjectDetailTemplate> (hero +
@@ -134,6 +139,10 @@ export default async function ProjectPage({
 
   if (slug === SPONA_PROJECT.slug) {
     return <SponaProjectPage />;
+  }
+
+  if (slug === ELITE_DIGITAL_PROJECT.slug) {
+    return <EliteDigitalProjectPage />;
   }
 
   if (slug === CROATEL_PROJECT.slug) {
