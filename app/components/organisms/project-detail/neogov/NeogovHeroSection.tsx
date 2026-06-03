@@ -38,10 +38,10 @@ export default function NeogovHeroSection({ project }: NeogovHeroSectionProps) {
               <ZoomableImage
                 src={hero.src}
                 alt={hero.alt}
-                width={582}
-                height={488}
+                width={565}
+                height={308}
                 priority
-                sizes="(max-width: 767px) 100vw, 50vw"
+                sizes="(max-width: 767px) 100vw, 573px"
               />
             </div>
           )}

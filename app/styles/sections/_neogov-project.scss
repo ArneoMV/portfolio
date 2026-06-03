@@ -29,19 +29,18 @@
 }
 
 /* Hero top — light-blue panel spanning rail-to-rail, text left +
-   composition image right. Vertical padding only; the text gets a
-   left inset and the image touches the right rail. */
+   composition image right. The image sits in normal flow inside its
+   right column (flex-centred on .neogov-hero-top-image below); the
+   panel itself just owns the gradient + grid framing. */
 .neogov-hero-top {
   background: linear-gradient(to bottom, #f6f9fc 0%, #c2d7ee 100%);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
   align-items: center;
-  min-height: 320px;
+  min-height: 360px;
   padding: 0;
   margin-bottom: var(--space-3xl);
-  position: relative; /* positioning context for the absolute image */
-  overflow: visible; /* let the 592px image overflow the panel */
 }
 
 .neogov-hero-top-text {
@@ -51,44 +50,39 @@
   z-index: 3; /* above the overflowing image (z-index 2) */
 }
 
-/* Composition image — absolutely positioned so its 592px height can
-   overflow the 320px panel. The grid cell stays in flow (reserving
-   the right column) but must be `position: static` so the image
-   resolves against the PANEL (`.neogov-hero-top`, position: relative),
-   not the cell — that's what lets it centre against the panel's full
-   height. The image anchors to the panel's right edge and vertical
-   centre, spilling equally above and below. z-index 2 lifts it above
-   the dotted side rails (z-index 1); hero content sits at z-index 3
-   so the image never covers it. */
+/* Composition image's right-column container — flex-centres the image
+   both vertically and horizontally inside the cell. The image lives in
+   normal flow (no absolute / no overflow). z-index 2 on the image
+   still lifts it above the dotted side rails (z-index 1); hero
+   content below the panel sits at z-index 3 so it's never covered. */
 .neogov-hero-top-image {
-  height: 100%;
-  width: 100%;
-  display: grid;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
-/* The image is wrapped by ZoomableImage's <button>. Keep the button
-   static (so the absolute image still resolves against the panel,
-   not the button) and let it collapse to the image — the absolute
-   child is what's visible. */
+/* The image is wrapped by ZoomableImage's <button>. `display: block`
+   lets the wrapper collapse to the image and inherit the flex centring
+   from .neogov-hero-top-image without interfering. */
 .neogov-hero-top-image .zoomable-image-trigger {
-  position: static;
+  display: block;
   width: auto;
   cursor: zoom-in;
 }
 
-/* Selector includes `.zoomable-image-trigger` so it out-specifies the
-   global `.zoomable-image-trigger img { width: 100%; height: auto }`
-   (which loads later) — otherwise the hero image would lose its fixed
-   592px height. */
+/* Image is 573px wide, height auto-derives from aspect ratio.
+   Centered vertically and horizontally inside the right column
+   container via flex on .neogov-hero-top-image. Selector includes
+   `.zoomable-image-trigger` so it out-specifies the global
+   `.zoomable-image-trigger img { width: 100%; height: auto }` rule
+   (which loads later); `max-width: 100%` lets the image shrink with
+   the container when the right column narrows below 573px (tablet). */
 .neogov-hero-top-image .zoomable-image-trigger img {
-  position: absolute;
-  top: 70%;
-  right: -7%;
-  transform: translateY(-50%);
-  height: 592px;
-  width: auto;
-  max-width: none;
+  width: 573px;
+  height: auto;
+  max-width: 100%;
   object-fit: contain;
   display: block;
   z-index: 2;
@@ -128,13 +122,12 @@
   display: block;
 }
 
-/* Hero content below the blue panel — lifted above the overflowing
-   composition image (z-index 2) so it's never covered. Scoped under
-   `.neogov-hero` so the shared `.case-study-hero-row` / `-meta` rows
-   only pick up this z-index inside the Neogov hero, not in other
-   projects' heroes. Defensive: with the image bottom-anchored it only
-   overflows upward today, but this keeps the layout robust if the
-   anchor changes to centre/top. */
+/* Hero content below the blue panel — z-index 3 keeps it above the
+   image's z-index 2 (defensive: the image is contained inside the
+   panel today, but the lift stays robust if its positioning ever
+   changes back to overflow). Scoped under `.neogov-hero` so the
+   shared `.case-study-hero-row` / `-meta` rows only pick up this
+   z-index inside the Neogov hero, not in other projects'. */
 .neogov-hero-title,
 .neogov-hero-user-profile,
 .neogov-hero .case-study-hero-row,
@@ -143,16 +136,13 @@
   z-index: 3;
 }
 
-/* Tablet (768–1023) — keep the 2-col top row, shrink the display, and
-   shrink the composition image so it fits the narrower right column
-   without crowding the text (was 592px at desktop). */
+/* Tablet (768–1023) — keep the 2-col top row and just shrink the
+   display heading. The image shrinks automatically with the right
+   column via `max-width: 100%` on the img rule above, so no
+   img-specific tablet override is needed. */
 @media (max-width: 1023px) and (min-width: 768px) {
   .neogov-hero-display {
     font-size: 40px;
-  }
-
-  .neogov-hero-top-image .zoomable-image-trigger img {
-    height: 440px;
   }
 }
 
