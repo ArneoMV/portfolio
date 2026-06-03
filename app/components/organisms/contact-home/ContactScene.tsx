@@ -25,6 +25,7 @@ import {
 import * as THREE from "three";
 import FloatingObject from "./FloatingObject";
 import ToolbarCollider from "./ToolbarCollider";
+import { useContactPanel } from "@/app/components/organisms/site-shell/contact-panel-context";
 
 // Half-height of the dynamic floor's CuboidCollider (matches the
 // other playground walls). Centre Y = (target top edge) - this value,
@@ -229,11 +230,11 @@ if (typeof window !== "undefined") {
 
 // ── Click routing ──
 
-const EXTERNAL_LINKS: Record<string, string> = {
-  instagram: "https://instagram.com/",
-  github: "https://github.com/",
-  linkedin: "https://linkedin.com/",
-};
+const EXTERNAL_LINKS = {
+  instagram: "https://www.instagram.com/arneomv/",
+  github: "https://github.com/ArneoMV/",
+  linkedin: "https://www.linkedin.com/in/arneomv/",
+} as const;
 
 // ── Inner scene (has access to useThree for viewport-aware bounds) ──
 
@@ -403,6 +404,9 @@ interface ContactSceneProps {
 
 export default function ContactScene({ spawned }: ContactSceneProps) {
   const router = useRouter();
+  // Bridge into SiteShell's TaskSidePanel without prop-drilling through
+  // ContactSection / page.tsx — see contact-panel-context.tsx.
+  const { openContactPanel } = useContactPanel();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -414,14 +418,25 @@ export default function ContactScene({ spawned }: ContactSceneProps) {
   }, []);
 
   const handleSelect = (id: string) => {
-    const external = EXTERNAL_LINKS[id];
-    if (external) {
-      window.open(external, "_blank", "noopener,noreferrer");
+    if (id === "contact") {
+      openContactPanel();
       return;
     }
-    if (id === "work") router.push("/work");
-    else if (id === "lab") router.push("/lab");
-    else if (id === "contact") router.push("/contact");
+    if (id === "work") {
+      router.push("/work");
+      return;
+    }
+    if (id === "lab") {
+      router.push("/lab");
+      return;
+    }
+    const externalUrl = EXTERNAL_LINKS[id as keyof typeof EXTERNAL_LINKS];
+    if (externalUrl) {
+      window.open(externalUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    // Unknown id — log for debug but don't crash the scene.
+    console.warn(`Unknown contact scene id: ${id}`);
   };
 
   return (

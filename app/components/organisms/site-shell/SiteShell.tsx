@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import emailjs from "@emailjs/browser";
 import Header from "@/app/components/organisms/header/Header";
 import TaskSidePanel from "@/app/components/organisms/task-side-panel/TaskSidePanel";
 import type { TaskPreview } from "@/app/components/organisms/task-side-panel/TaskSidePanel";
+import { ContactPanelProvider } from "./contact-panel-context";
 
 const INITIAL_PREVIEW: TaskPreview = {
   category: "",
@@ -110,8 +111,17 @@ export default function SiteShell({ children }: SiteShellProps) {
     };
   }, [isPanelOpen]);
 
+  // Stable context value so consumers (e.g. the 3D contact scene) don't
+  // re-render every time the panel's own state churns (open/preview/status).
+  // `handleOpenContact` is itself useCallback'd with [] deps, so this
+  // identity stays stable across the SiteShell's lifetime.
+  const contactPanelValue = useMemo(
+    () => ({ openContactPanel: handleOpenContact }),
+    [handleOpenContact],
+  );
+
   return (
-    <>
+    <ContactPanelProvider value={contactPanelValue}>
       <Header onOpenContact={handleOpenContact} />
       {children}
       <TaskSidePanel
@@ -122,6 +132,6 @@ export default function SiteShell({ children }: SiteShellProps) {
         onPreviewChange={setPreview}
         status={status}
       />
-    </>
+    </ContactPanelProvider>
   );
 }

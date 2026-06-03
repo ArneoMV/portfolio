@@ -56,12 +56,6 @@ export interface FloatingObjectProps {
   safeBottomYRef?: { current: number };
 }
 
-// Tuned for soft-balloon feel — subtle forces, no aggressive bounce.
-// In a zero-gravity bouncing scene the hover push is symmetric (radial
-// away from the cursor) rather than biased upward.
-const HOVER_IMPULSE = 1.0;
-const HOVER_COOLDOWN = 0.5;
-
 interface FloatingBodyProps extends Omit<FloatingObjectProps, "assetUrl"> {
   sourceScene: THREE.Object3D;
 }
@@ -85,6 +79,10 @@ function FloatingBody({
   safeBottomYRef,
 }: FloatingBodyProps) {
   const bodyRef = useRef<RapierRigidBody>(null);
+  // Retained because `useFloatingPhysics` decrements it every frame
+  // (its param interface requires the ref). Nothing sets it >0 anymore
+  // — the cursor-flee impulse that used to reset it has been removed —
+  // so the decrement is effectively a no-op (Math.max(0, 0 - delta) = 0).
   const hoverCooldownRef = useRef(0);
   const boostTimerRef = useRef(
     BOOST_MIN_INTERVAL +
@@ -128,42 +126,23 @@ function FloatingBody({
     safeBottomYRef,
   });
 
-  const handlePointerEnter = (e: ThreeEvent<PointerEvent>) => {
+  // Hover handlers now only drive the canvas cursor style (via
+  // onHoverStart / onHoverEnd ref-counts in ContactScene). The previous
+  // radial cursor-flee impulse + Y-axis torque were removed so objects
+  // stay clickable instead of darting away.
+  const handlePointerEnter = () => {
     onHoverStart();
-
-    const body = bodyRef.current;
-    if (!body) return;
-    if (hoverCooldownRef.current > 0) return;
-    hoverCooldownRef.current = HOVER_COOLDOWN;
-
-    const pos = body.translation();
-    const p = e.point;
-    const dx = pos.x - p.x;
-    const dy = pos.y - p.y;
-    const len = Math.hypot(dx, dy) || 1;
-
-    body.applyImpulse(
-      {
-        x: (dx / len) * HOVER_IMPULSE,
-        y: (dy / len) * HOVER_IMPULSE,
-        z: 0,
-      },
-      true,
-    );
-    body.applyTorqueImpulse(
-      { x: 0, y: (Math.random() - 0.5) * 0.02, z: 0 },
-      true,
-    );
   };
 
   const handlePointerLeave = () => {
     onHoverEnd();
   };
 
-  // Fire on pointerDown instead of click: the hover impulse displaces the
-  // object between pointerdown and pointerup, which breaks R3F's onClick
-  // pairing. pointerDown fires synchronously before any physics tick can
-  // move the hit target out of the cursor's path.
+  // Fire on pointerDown instead of click: bodies drift constantly in the
+  // idle physics simulation, and any frame-scale movement between
+  // pointerdown and pointerup can break R3F's onClick pairing.
+  // pointerDown fires synchronously before the next physics tick moves
+  // the hit target out of the cursor's path.
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     onSelect();
