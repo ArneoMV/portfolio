@@ -39,4 +39,17 @@
        footer sits flush above the toolbar with no visible empty band. */
     padding-bottom: calc(122px + env(safe-area-inset-bottom, 0px));
   }
+
+  /* Homepage scope (the only page that renders `.contact-section`):
+     drop the toolbar-safe bottom reservation so the dark
+     `.contact-section`'s 100vh extends all the way to the document
+     bottom — the toolbar then overlays the dark canvas instead of a
+     white reserve band below it. The 3D objects already bounce off
+     ToolbarCollider so they can't get trapped behind the toolbar, and
+     the email sits vertically centred (mid-viewport) so it's never
+     covered. /work and project pages keep the 122px reservation
+     above (their light footers stay flush above the toolbar). */
+  .site-main:has(.contact-section) {
+    padding-bottom: 0;
+  }
 }

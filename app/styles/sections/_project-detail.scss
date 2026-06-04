@@ -14,9 +14,18 @@
    bg can be full-bleed while inner content still sits at 1100px. */
 .project-detail {
   font-family: var(--font-sans);
-  /* Bottom clearance = FooterToolbar outer footprint (98 shell + 24
-     offset). Flush — no design gap between footer and toolbar. */
-  padding-bottom: 122px;
+}
+
+/* Bottom clearance — desktop/tablet ONLY. On mobile (≤767px),
+   `.site-main`'s 122px `padding-bottom` provides toolbar clearance;
+   stacking this 122px on top of that produced a 122px double-padding
+   gap on mobile, so the rule is gated to ≥768px. Value = FooterToolbar
+   outer footprint (98 shell + 24 offset) → flush above the toolbar on
+   desktop and tablet. */
+@media (min-width: 768px) {
+  .project-detail {
+    padding-bottom: 122px;
+  }
 }
 
 .project-detail :is(p, h1, h2, h3, h4, dt, dd, span) {

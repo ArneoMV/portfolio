@@ -38,6 +38,14 @@
   /* Foreground layer: paints above .lower-content-layer (z:1) so
      the rail group reads as "behind" Contact during the reveal. */
   z-index: 2;
+  /* Full-bleed dark background. Homepage-scoped by the fact that
+     `.contact-section` only renders on the homepage (ContactSection.tsx
+     is only consumed by app/(site)/page.tsx). Extends the dark colour
+     to viewport edges so the area behind the fixed FooterToolbar
+     (which overlays the bottom 122px) reads dark instead of the white
+     body background. `.contact-section-inner`'s identical background
+     below becomes redundant but kept for layering safety. */
+  background: var(--color-neutral-100);
 }
 
 /* Contact-local rails — Contact used to inherit rails from the
