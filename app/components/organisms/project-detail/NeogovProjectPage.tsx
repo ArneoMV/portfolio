@@ -1,4 +1,4 @@
-import SiteFooter from "@/app/components/organisms/site-footer/SiteFooter";
+import FooterSection from "@/app/components/organisms/footer-home/FooterSection";
 import { NEOGOV_PROJECT } from "@/app/data/neogov-project.data";
 import NeogovHeroSection from "./neogov/NeogovHeroSection";
 import CaseStudyContextSection from "./case-study/CaseStudyContextSection";
@@ -8,37 +8,11 @@ import OtherWorkSection from "./OtherWorkSection";
 import { getOtherProjects } from "./project-detail.helpers";
 
 /**
- * Footer link/meta content for the Neogov page. Local copy of
- * `ProjectDetailTemplate`'s `PROJECT_FOOTER_LINKS` so the Neogov page
- * owns its own footer config and can diverge freely — no coupling
- * back to the shared template.
- */
-const NEOGOV_FOOTER_LINKS: [
-  { href: string; label: string }[],
-  { href: string; label: string }[],
-  { href: string; label: string }[],
-] = [
-  [
-    { href: "/", label: "Home" },
-    { href: "/work", label: "Work" },
-    { href: "/lab", label: "Lab" },
-  ],
-  [
-    { href: "#", label: "Store" },
-    { href: "/#contact", label: "Contact" },
-  ],
-  [
-    { href: "#", label: "Linkedin" },
-    { href: "#", label: "Dribbble" },
-  ],
-];
-
-/**
  * Dedicated, fully bespoke Neogov project page.
  *
  * Composes the custom Neogov sections (hero → dark Context → NOVI
  * design-system band → AI integration → Reflection) and reuses the
- * shared OtherWorkSection + SiteFooter for the page tail. None of the
+ * shared OtherWorkSection + FooterSection for the page tail. None of the
  * shared `ProjectDetailTemplate` sections are used anymore.
  *
  * The `.neogov-project-page` wrapper carries the desktop
@@ -102,22 +76,7 @@ export default function NeogovProjectPage() {
         <CaseStudyImagePairSection {...NEOGOV_PROJECT.reflection} />
       )}
       <OtherWorkSection projects={otherProjects} />
-      <SiteFooter
-        linkGroups={NEOGOV_FOOTER_LINKS}
-        meta={{
-          left: "©Arneo2026",
-          right: (
-            <span className="project-detail-footer-meta-links">
-              <a href="#" className="project-detail-footer-meta-link">
-                Terms
-              </a>{" "}
-              <a href="#" className="project-detail-footer-meta-link">
-                Privacy
-              </a>
-            </span>
-          ),
-        }}
-      />
+      <FooterSection />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import SiteFooter from "@/app/components/organisms/site-footer/SiteFooter";
+import FooterSection from "@/app/components/organisms/footer-home/FooterSection";
 import ProjectHeroSection from "./ProjectHeroSection";
 import ProjectDarkSection from "./ProjectDarkSection";
 import ProjectLightSection from "./ProjectLightSection";
@@ -10,29 +10,6 @@ interface ProjectDetailTemplateProps {
   otherProjects: ProjectDetail[];
 }
 
-// Project-page footer content (Task 1 spec). Different from the
-// homepage footer's link/meta content, so we declare it inline
-// here rather than touching the homepage's hard-coded version.
-const PROJECT_FOOTER_LINKS: [
-  { href: string; label: string }[],
-  { href: string; label: string }[],
-  { href: string; label: string }[],
-] = [
-  [
-    { href: "/", label: "Home" },
-    { href: "/work", label: "Work" },
-    { href: "/lab", label: "Lab" },
-  ],
-  [
-    { href: "#", label: "Store" },
-    { href: "/#contact", label: "Contact" },
-  ],
-  [
-    { href: "#", label: "Linkedin" },
-    { href: "#", label: "Dribbble" },
-  ],
-];
-
 /**
  * Project Detail page template — orchestrates the four sections:
  *   1. <ProjectHeroSection> — title, type+desc, hero image, meta,
@@ -43,9 +20,9 @@ const PROJECT_FOOTER_LINKS: [
  *      the inner `.project-detail-dark-inner` recentres content at
  *      1100px so it lines up with every other section.
  *   3. <OtherWorkSection> — "Other Work" heading + two cards.
- *   4. <SiteFooter> — shared footer organism with project-page
- *      link/meta content (different from homepage's hard-coded
- *      content; homepage's FooterSection is intentionally untouched).
+ *   4. <FooterSection> — canonical homepage footer organism, used
+ *      site-wide after the footer unification pass (the project-page-
+ *      specific `SiteFooter` it used to render has been retired).
  *
  * All four sections share a single `.page-rail-group` wrapper so
  * the dotted vertical rails read continuously from the top of the
@@ -76,22 +53,7 @@ export default function ProjectDetailTemplate({
           <ProjectLightSection lightSection={project.lightSection} />
         )}
         <OtherWorkSection projects={otherProjects} />
-        <SiteFooter
-          linkGroups={PROJECT_FOOTER_LINKS}
-          meta={{
-            left: "©Arneo2026",
-            right: (
-              <span className="project-detail-footer-meta-links">
-                <a href="#" className="project-detail-footer-meta-link">
-                  Terms
-                </a>{" "}
-                <a href="#" className="project-detail-footer-meta-link">
-                  Privacy
-                </a>
-              </span>
-            ),
-          }}
-        />
+        <FooterSection />
       </div>
     </article>
   );

@@ -31,3 +31,16 @@
   margin-right: -0.03em;
   margin-bottom: -0.08em;
 }
+
+/* Mobile (≤767px) — the desktop `clamp(300px, …)` floor renders "LAB"
+   wider than the viewport on phones (Young Serif "LAB" at 300px font-size
+   with `letter-spacing: -0.04em` is ~520px wide; a 360px viewport clips).
+   Drop the floor + the preferred vw + the cap so the word stays inside
+   100vw with a small margin across the 280–767px range. The 280px cap
+   sits just below the desktop floor (300px) so the breakpoint hop at
+   768px reads as smooth growth, not a snap. */
+@media (max-width: 767px) {
+  .lab-bg-text {
+    font-size: clamp(120px, 45vw, 280px);
+  }
+}

@@ -1,4 +1,4 @@
-import SiteFooter from "@/app/components/organisms/site-footer/SiteFooter";
+import FooterSection from "@/app/components/organisms/footer-home/FooterSection";
 import { SPONA_PROJECT } from "@/app/data/spona-project.data";
 import SponaHeroSection from "./spona/SponaHeroSection";
 import CaseStudyContextSection from "./case-study/CaseStudyContextSection";
@@ -8,35 +8,11 @@ import OtherWorkSection from "./OtherWorkSection";
 import { getOtherProjects } from "./project-detail.helpers";
 
 /**
- * Footer link/meta content for the Spona page. Local copy (same shape
- * as Neogov's) so the page owns its own footer config.
- */
-const SPONA_FOOTER_LINKS: [
-  { href: string; label: string }[],
-  { href: string; label: string }[],
-  { href: string; label: string }[],
-] = [
-  [
-    { href: "/", label: "Home" },
-    { href: "/work", label: "Work" },
-    { href: "/lab", label: "Lab" },
-  ],
-  [
-    { href: "#", label: "Store" },
-    { href: "/#contact", label: "Contact" },
-  ],
-  [
-    { href: "#", label: "Linkedin" },
-    { href: "#", label: "Dribbble" },
-  ],
-];
-
-/**
  * Dedicated, fully bespoke Spona project page.
  *
  * Composes the Spona-specific hero with the shared case-study sections
  * (Context → Showcase → two Image-pair sections) and reuses the shared
- * OtherWorkSection + SiteFooter for the page tail. Mirrors
+ * OtherWorkSection + FooterSection for the page tail. Mirrors
  * `NeogovProjectPage`'s structure, including the `.page-rail-group`
  * wrapper that draws the dotted vertical side rails and the desktop
  * footer/toolbar bottom clearance carried by `.spona-project-page`.
@@ -73,22 +49,7 @@ export default function SponaProjectPage() {
       <CaseStudyImagePairSection {...SPONA_PROJECT.crossBorder} />
       <CaseStudyImagePairSection {...SPONA_PROJECT.reflection} />
       <OtherWorkSection projects={otherProjects} />
-      <SiteFooter
-        linkGroups={SPONA_FOOTER_LINKS}
-        meta={{
-          left: "©Arneo2026",
-          right: (
-            <span className="project-detail-footer-meta-links">
-              <a href="#" className="project-detail-footer-meta-link">
-                Terms
-              </a>{" "}
-              <a href="#" className="project-detail-footer-meta-link">
-                Privacy
-              </a>
-            </span>
-          ),
-        }}
-      />
+      <FooterSection />
     </div>
   );
 }

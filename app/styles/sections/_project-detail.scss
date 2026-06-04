@@ -14,7 +14,9 @@
    bg can be full-bleed while inner content still sits at 1100px. */
 .project-detail {
   font-family: var(--font-sans);
-  padding-bottom: var(--space-5xl);
+  /* Bottom clearance = FooterToolbar outer footprint (98 shell + 24
+     offset). Flush — no design gap between footer and toolbar. */
+  padding-bottom: 122px;
 }
 
 .project-detail :is(p, h1, h2, h3, h4, dt, dd, span) {

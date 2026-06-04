@@ -16,7 +16,9 @@
    the shared `.project-detail` article used to provide (global
    `.site-main` only reserves toolbar space on mobile). */
 .neogov-project-page {
-  padding-bottom: var(--space-5xl);
+  /* Bottom clearance = FooterToolbar outer footprint (98 shell + 24
+     offset). Flush — no design gap between footer and toolbar. */
+  padding-bottom: 122px;
 }
 
 /* ── Hero / Introduction ───────────────────────────────────────

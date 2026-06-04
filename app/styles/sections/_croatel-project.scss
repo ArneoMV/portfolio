@@ -8,7 +8,9 @@
 
 /* Page wrapper — desktop footer/toolbar bottom clearance. */
 .croatel-project-page {
-  padding-bottom: var(--space-5xl);
+  /* Bottom clearance = FooterToolbar outer footprint (98 shell + 24
+     offset). Flush — no design gap between footer and toolbar. */
+  padding-bottom: 122px;
 }
 
 /* ── Hero (banner-only, no gradient panel) ─────────────────────

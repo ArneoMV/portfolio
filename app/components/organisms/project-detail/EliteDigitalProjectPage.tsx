@@ -1,4 +1,4 @@
-import SiteFooter from "@/app/components/organisms/site-footer/SiteFooter";
+import FooterSection from "@/app/components/organisms/footer-home/FooterSection";
 import { ELITE_DIGITAL_PROJECT } from "@/app/data/elite-digital-project.data";
 import EliteDigitalHeroSection from "./elite-digital/EliteDigitalHeroSection";
 import CaseStudyContextSection from "./case-study/CaseStudyContextSection";
@@ -7,36 +7,11 @@ import OtherWorkSection from "./OtherWorkSection";
 import { getOtherProjects } from "./project-detail.helpers";
 
 /**
- * Footer link/meta content for the Elite Digital page. Local copy
- * (same shape as Neogov / Spona) so the page owns its own footer
- * config and can diverge freely.
- */
-const ELITE_DIGITAL_FOOTER_LINKS: [
-  { href: string; label: string }[],
-  { href: string; label: string }[],
-  { href: string; label: string }[],
-] = [
-  [
-    { href: "/", label: "Home" },
-    { href: "/work", label: "Work" },
-    { href: "/lab", label: "Lab" },
-  ],
-  [
-    { href: "#", label: "Store" },
-    { href: "/#contact", label: "Contact" },
-  ],
-  [
-    { href: "#", label: "Linkedin" },
-    { href: "#", label: "Dribbble" },
-  ],
-];
-
-/**
  * Dedicated, fully bespoke Elite Digital project page.
  *
  * Composes the Elite Digital-specific hero (full-width banner) with
  * the shared case-study sections (Context → Showcase) and reuses the
- * shared OtherWorkSection + SiteFooter for the page tail. The Context
+ * shared OtherWorkSection + FooterSection for the page tail. The Context
  * section absorbs all of Elite Digital's editorial content — what
  * previously lived in the dark + light sections of the shared
  * template — using insideRows with single inline images (same pattern
@@ -84,22 +59,7 @@ export default function EliteDigitalProjectPage() {
         <CaseStudyShowcaseSection image={ELITE_DIGITAL_PROJECT.showcaseImage} />
       )}
       <OtherWorkSection projects={otherProjects} />
-      <SiteFooter
-        linkGroups={ELITE_DIGITAL_FOOTER_LINKS}
-        meta={{
-          left: "©Arneo2026",
-          right: (
-            <span className="project-detail-footer-meta-links">
-              <a href="#" className="project-detail-footer-meta-link">
-                Terms
-              </a>{" "}
-              <a href="#" className="project-detail-footer-meta-link">
-                Privacy
-              </a>
-            </span>
-          ),
-        }}
-      />
+      <FooterSection />
     </div>
   );
 }

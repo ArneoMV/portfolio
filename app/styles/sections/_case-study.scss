@@ -429,10 +429,17 @@
     display: none;
   }
 
+  /* Full-bleed at ≤767px. width: 100% / height: auto / max-width: 100%
+     are all set explicitly here (rather than relying purely on the
+     base `.case-study-showcase-image` rule above) so the img can't
+     accidentally inherit its HTML `width="600"` attribute as the
+     resolved width — the trigger-button fix below is what actually
+     unlocks 100vw, this is the defensive reaffirmation. */
   .case-study-showcase-image--small {
     display: block;
-    max-width: 360px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
   }
 
   .case-study-showcase
@@ -440,9 +447,21 @@
     display: none;
   }
 
+  /* `width: 100%` is the real wrapper-level fix. The trigger defaults
+     to `display: contents` (no box → inner img resolves its width:100%
+     against the rail container directly = 100vw, which is why desktop
+     works). The mobile picture-switch above flips this button back to
+     `display: block` so the variant swap works, which gives it a box
+     again — and a block `<button>` shrinks to its content's intrinsic
+     size, here the sized `next/image`'s `width="600"` attribute. That
+     collapses the wrapper to 600px and the inner img's `width: 100%`
+     resolves against that instead of 100vw, leaving gutters on any
+     phone wider than 600 CSS-px. Forcing `width: 100%` on the button
+     restores 100vw containing-block geometry for the img. */
   .case-study-showcase
     .zoomable-image-trigger:has(.case-study-showcase-image--small) {
     display: block;
+    width: 100%;
   }
 }
 

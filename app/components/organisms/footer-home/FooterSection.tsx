@@ -21,7 +21,10 @@ const LINK_GROUPS: { href: string; label: string }[][] = [
     { href: "#contact", label: "Contact" },
   ],
   [
-    { href: "#", label: "Store" },
+    // "Store" was removed in the footer-unification pass. The center
+    // column now stands at two items (Behance + Linkedin); the SCSS
+    // grid placement (`.footer-links-col--center`) is item-count
+    // agnostic, so the column still centres cleanly.
     { href: "https://www.behance.net/arneo", label: "Behance" },
     { href: "", label: "Linkedin" },
   ],
