@@ -32,8 +32,8 @@ export default function PrivacyPage() {
 
           <p className="privacy-lead">
             This is the personal portfolio of Arneo Marin-Vincetić. This page
-            explains the limited data the site handles and how it is used. It
-            is written in plain language, not legalese.
+            explains the limited data the site handles and how it is used. It is
+            written in plain language, not legalese.
           </p>
 
           <h2 className="privacy-heading">Analytics</h2>
@@ -41,19 +41,16 @@ export default function PrivacyPage() {
             The site uses Vercel Web Analytics, a privacy-friendly analytics
             tool. It does <strong>not</strong> use cookies and does{" "}
             <strong>not</strong> track individuals across sites. It collects
-            only aggregated, anonymous metrics — page views, referrer, an
-            approximate country, and a device/browser type — so I can see
-            which pages are visited. No personal profile is built.
+            only aggregated, anonymous metrics, page views, referrer, an
+            approximate country, and a device/browser type, so I can see which
+            pages are visited. No personal profile is built.
           </p>
 
           <h2 className="privacy-heading">Contact form</h2>
           <p>
-            If you choose to use the contact form, the name, email, and
-            message you enter are sent (via EmailJS) to my inbox at{" "}
-            <a
-              href="mailto:info@arneomv.com"
-              className="privacy-link"
-            >
+            If you choose to use the contact form, the name, email, and message
+            you enter are sent to my inbox at{" "}
+            <a href="mailto:info@arneomv.com" className="privacy-link">
               info@arneomv.com
             </a>{" "}
             solely so I can reply. This data is not used for marketing and is
@@ -63,8 +60,8 @@ export default function PrivacyPage() {
           <h2 className="privacy-heading">Hosting</h2>
           <p>
             The site is hosted on Vercel. As part of normal operation and
-            security, Vercel may process standard server request data — such
-            as your IP address — when your browser loads a page.
+            security, Vercel may process standard server request data - such as
+            your IP address - when your browser loads a page.
           </p>
 
           <h2 className="privacy-heading">What this site does not do</h2>
@@ -79,10 +76,7 @@ export default function PrivacyPage() {
           <p>
             If you sent a message through the contact form and would like it
             deleted, email{" "}
-            <a
-              href="mailto:info@arneomv.com"
-              className="privacy-link"
-            >
+            <a href="mailto:info@arneomv.com" className="privacy-link">
               info@arneomv.com
             </a>{" "}
             and I will remove it.
