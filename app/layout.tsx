@@ -9,6 +9,7 @@ import {
   UnifrakturCook,
   Vampiro_One,
 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 import {
   SITE_DEFAULT_DESCRIPTION,
@@ -129,6 +130,7 @@ export default function RootLayout({
         className={`${sourceSans.variable} ${youngSerif.variable} ${vt323.variable} ${unifrakturCook.variable} ${vampiroOne.variable}`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
