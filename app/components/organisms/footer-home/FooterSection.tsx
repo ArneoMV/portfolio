@@ -28,7 +28,7 @@ const LINK_GROUPS: { href: string; label: string }[][] = [
     { href: "https://www.behance.net/arneo", label: "Behance" },
     { href: "", label: "Linkedin" },
   ],
-  [{ href: "#", label: "Privacy policy" }],
+  [{ href: "/privacy", label: "Privacy policy" }],
 ];
 
 export default function FooterSection() {

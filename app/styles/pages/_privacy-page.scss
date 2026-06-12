@@ -1,0 +1,131 @@
+/* =====================================================================
+   PRIVACY PAGE  —  /privacy
+
+   Plain-text legal-style page. Mirrors the /work and project-page
+   shell pattern: `.page-rail-group` wrapper (continuous dotted side
+   rails at the 1100px box edges) + a centred max-width content
+   column inside the global `.container` padding. No bespoke
+   composition — just a single readable text column, Source Sans 3
+   for body, Young Serif for the page title to match other pages.
+
+   The desktop bottom clearance matches the four project pages (122px
+   = FooterToolbar outer footprint: 98 shell + 24 offset). It is
+   wrapped in `@media (min-width: 768px)` because on mobile the
+   global `.site-main` already reserves 122px of toolbar clearance
+   via `_page.scss`; stacking another 122px on top of that would
+   produce a 122px double-padding gap.
+===================================================================== */
+
+.privacy-page {
+  font-family: var(--font-sans);
+  /* Clears the fixed site header (≈104px) and gives the page a
+     visible top edge below it. Matches the `padding-top: 124px`
+     `.work-page-shell` uses. */
+  padding-top: 124px;
+}
+
+@media (min-width: 768px) {
+  .privacy-page {
+    padding-bottom: 122px;
+  }
+}
+
+/* Narrow text column inside the global `.container` 1100px-rail box.
+   Capped at 720px so paragraph measure stays comfortable on wide
+   viewports; centred via auto margins. The container's per-breakpoint
+   horizontal padding (64/48/16) still applies at the rail edges, so
+   on very narrow viewports the column is just `viewport - 32px`. */
+.privacy-content {
+  width: 100%;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  color: var(--color-text-primary);
+}
+
+/* Page heading — Young Serif at the same display weight other
+   project hero titles use. */
+.privacy-title {
+  margin: 0 0 var(--space-lg) 0;
+  font-family: var(--font-display);
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+/* Lead paragraph after the title — slightly larger than body copy
+   so it reads as an intro without needing a separate eyebrow row. */
+.privacy-lead {
+  margin: 0 0 var(--space-2xl) 0;
+  font-family: var(--font-sans);
+  font-size: clamp(18px, 1.6vw, 21px);
+  line-height: 1.5;
+}
+
+/* Section headings — sans, smaller than the page title. */
+.privacy-heading {
+  margin: var(--space-2xl) 0 var(--space-md) 0;
+  font-family: var(--font-sans);
+  font-size: clamp(20px, 1.8vw, 24px);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/* Body paragraphs and list items share the same measure. */
+.privacy-content p,
+.privacy-content li {
+  margin: 0 0 var(--space-md) 0;
+  font-family: var(--font-sans);
+  font-size: clamp(16px, 1.3vw, 18px);
+  line-height: 1.55;
+}
+
+.privacy-list {
+  margin: 0 0 var(--space-md) 0;
+  padding-left: 24px;
+  list-style: disc;
+}
+
+.privacy-list li {
+  margin-bottom: var(--space-xxs);
+}
+
+/* Inline links — underline only, neutral colour, hover deepens. */
+.privacy-link {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color 160ms ease;
+}
+
+.privacy-link:hover,
+.privacy-link:focus-visible {
+  color: var(--color-neutral-100);
+}
+
+/* "Last updated" line — slightly muted, sits at the bottom of the
+   text column with extra top margin to separate from the last
+   section. */
+.privacy-updated {
+  margin-top: var(--space-2xl);
+  font-family: var(--font-sans);
+  font-size: var(--text-caption);
+  color: var(--color-neutral-70);
+}
+
+/* Mobile — pull the top clearance in a little (smaller header) and
+   tighten the vertical rhythm between sections. */
+@media (max-width: 767px) {
+  .privacy-page {
+    padding-top: 96px;
+  }
+
+  .privacy-content {
+    max-width: 100%;
+  }
+
+  .privacy-heading {
+    margin-top: var(--space-xl);
+  }
+}
