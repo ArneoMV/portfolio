@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ScrollTrigger } from "@/lib/gsap/gsap-init";
 
+import ThumbCanvas from "./ThumbCanvas";
+
 const ROLES = [
   "BUILDER",
   "NEXT.JS",
@@ -18,21 +20,47 @@ type MenuItem = {
   label: string;
   href: string;
   external?: boolean;
+  /** GLB model shown inside the 48x48 .footer-menu-thumb when the
+   *  menu is open. The render is gated by `isOpen` so each per-thumb
+   *  canvas only mounts (and only owns a WebGL context) while the
+   *  user is looking at the menu. Authored materials pass through —
+   *  see ThumbCanvas for the materials pipeline. */
+  modelUrl: string;
 };
 
 const MENU_ITEMS: MenuItem[] = [
-  { label: "HOME", href: "/" },
-  { label: "LAB", href: "/lab" },
-  { label: "WORK", href: "/work" },
+  {
+    label: "HOME",
+    href: "/",
+    modelUrl: "/images/home/house.glb",
+  },
+  {
+    label: "LAB",
+    href: "/lab",
+    modelUrl: "/images/home/test_tube.glb",
+  },
+  {
+    label: "WORK",
+    href: "/work",
+    modelUrl: "/images/home/picture.glb",
+  },
   {
     label: "Book a call",
     href: "https://calendly.com/arneo-marinvincetic/quick-intro-session",
     external: true,
+    modelUrl: "/images/home/calendar.glb",
   },
 ];
 
 export default function FooterToolbar() {
   const [isOpen, setIsOpen] = useState(false);
+  // Which menu row is hovered. Drives the `active` prop on the
+  // matching <ThumbCanvas>, which in turn ramps the in-scene wobble.
+  // Hover is tracked on the DOM row (not the canvas), so links stay
+  // clickable and the canvas keeps `pointer-events: none`. Touch
+  // devices fire onMouseEnter post-tap but the link has already
+  // navigated by then, so the brief hover-state is harmless.
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const marqueeText = ROLES.join(",\u00A0\u00A0");
 
@@ -90,9 +118,31 @@ export default function FooterToolbar() {
               <div className="footer-menu">
                 {MENU_ITEMS.map((item, i) => {
                   const style = { transitionDelay: `${i * 40}ms` };
+                  // Hover detected on the row (not the canvas) so the
+                  // whole link area triggers the wobble, not just the
+                  // 48x48 icon. Pair with onMouseLeave that clears
+                  // only if THIS row is still the current hover, so
+                  // fast pointer moves between rows don't double-clear.
+                  const handleEnter = () => setHoveredIndex(i);
+                  const handleLeave = () =>
+                    setHoveredIndex((prev) => (prev === i ? null : prev));
+
                   const content = (
                     <>
-                      <div className="footer-menu-thumb" />
+                      <div className="footer-menu-thumb">
+                        {/* One small <Canvas> per thumb, rendered only
+                            while the menu is open so the GL contexts
+                            exist only when visible. The canvas fills
+                            the 48x48 box and is pointer-events: none
+                            so the parent <Link>/<a> stays clickable.
+                            `active` ramps the in-scene hover wobble. */}
+                        {isOpen && (
+                          <ThumbCanvas
+                            modelUrl={item.modelUrl}
+                            active={hoveredIndex === i}
+                          />
+                        )}
+                      </div>
                       <span className="footer-menu-label">{item.label}</span>
                     </>
                   );
@@ -107,6 +157,8 @@ export default function FooterToolbar() {
                         className="footer-menu-item"
                         style={style}
                         onClick={handleNavClick}
+                        onMouseEnter={handleEnter}
+                        onMouseLeave={handleLeave}
                       >
                         {content}
                       </a>
@@ -120,6 +172,8 @@ export default function FooterToolbar() {
                       className="footer-menu-item"
                       style={style}
                       onClick={handleNavClick}
+                      onMouseEnter={handleEnter}
+                      onMouseLeave={handleLeave}
                     >
                       {content}
                     </Link>
@@ -182,6 +236,7 @@ export default function FooterToolbar() {
           </div>
         </div>
       </div>
+
     </nav>
   );
 }

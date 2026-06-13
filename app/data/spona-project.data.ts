@@ -80,7 +80,7 @@ export const SPONA_PROJECT: SponaProjectData = {
   description:
     "Global B2B platform for hiring agencies and managing digital projects. Worked on the product structure that scaled it to a network of 10K+ agencies.",
   introduction:
-    "Spona is a global B2B platform that connects businesses with vetted digital service providers — agencies that handle marketing, web development, branding, and everything in between. I joined as the product designer and helped shape the platform from early concept through implementation. Most of the work came down to one challenge: building a product structure that could hold up as the network of agencies grew from hundreds to thousands.",
+    "Spona is a global B2B platform connecting businesses with vetted digital agencies for marketing, web development, and branding. I joined as product designer, shaping a structure that holds up as the network scales from hundreds to thousands.",
 
   // ── Hero ──────────────────────────────────────────────────
   tagline: "Two sides, one system.",
@@ -154,7 +154,7 @@ export const SPONA_PROJECT: SponaProjectData = {
       {
         src: "/images/projects/spona/spona_mockup_02.png",
         alt: "Spona company profile page on monitor",
-        caption: "Company profile",
+        caption: " End-to-End (E2E)",
       },
     ],
   },

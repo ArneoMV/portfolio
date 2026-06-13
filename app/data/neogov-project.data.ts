@@ -113,7 +113,7 @@ export const NEOGOV_PROJECT: NeogovProjectData = {
     year: "2024-2026",
   },
   introduction:
-    "NEOGOV is the HR platform behind counties, school districts, and city halls across the United States. I started on product flows for eForms, Onboard, and Analytics, then joined the design system team to work on the patterns and components those products share. A lot of the work came down to one question: how do you change something in one place without breaking it in five others. Toward the end I helped coordinate AI feature integration across the platform, which mostly meant translating product decisions into design system patterns that could actually scale.",
+    "NEOGOV is the HR platform behind counties, school districts, and city halls across the US. I worked on product flows for eForms, Onboard, and Analytics, then joined the design system team building shared patterns and components, including coordinating AI feature integration so product decisions translated into patterns that scale.",
   darkSection: {
     leftText:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",

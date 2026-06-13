@@ -80,31 +80,77 @@ export default function Header({ onOpenContact }: HeaderProps) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const dataHidden = hidden ? "true" : "false";
+
   return (
-    <header className="site-header" data-hidden={hidden ? "true" : "false"}>
+    <>
+      <HeaderLocationBlend dataHidden={dataHidden} />
+
+      {/* The actual header keeps only the right-side CTA. The empty
+          col-span-2 placeholder preserves the 12-col grid so the CTA
+          column lands in the exact same right-flush position as
+          before. */}
+      <header className="site-header" data-hidden={dataHidden}>
+        <div className="site-header-inner">
+          <div className="grid-layout items-start">
+            <div className="col-span-2 mobile-col-span-2" />
+
+            <div className="col-span-10 mobile-col-span-2 flex justify-end">
+              <Button variant="dark" onClick={onOpenContact}>
+                Get in touch
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+    </>
+  );
+}
+
+/**
+ * SIBLING of <header className="site-header">, NOT a descendant.
+ *
+ * Extracted out of the header so `mix-blend-mode: difference` on the
+ * inner location text can actually composite against page content.
+ * `.site-header` itself is a stacking context (position: fixed +
+ * z-index: 50, plus transform + will-change for the auto-hide), which
+ * would trap the blend. This wrapper has NO z-index, NO transform, NO
+ * will-change, so it stays in the root stacking context and the blend
+ * reaches `.site-main` underneath.
+ *
+ * Auto-hide is mirrored from .site-header via the same `data-hidden`
+ * attribute, but the slide is animated on `top` instead of `transform`
+ * (transform would re-create a stacking context and trap the blend at
+ * rest).
+ *
+ * The inner wrapper reuses .site-header-inner styling (same 1260
+ * max-width, same paddings) so the block lands in PIXEL-IDENTICAL
+ * position at every breakpoint vs. when it lived inside <header>.
+ */
+function HeaderLocationBlend({ dataHidden }: { dataHidden: "true" | "false" }) {
+  return (
+    <div
+      className="site-header-blend"
+      data-hidden={dataHidden}
+      aria-hidden="true"
+    >
       <div className="site-header-inner">
         <div className="grid-layout items-start">
           <div className="col-span-2 mobile-col-span-2">
             <div className="flex items-start gap-[var(--space-xs)]">
               <GlobeIcon />
-              <div className="flex flex-col gap-[4px]">
-                <p className="text-[21px] font-medium leading-[130%] text-[var(--color-neutral-100)]">
+              <div className="site-header-location flex flex-col gap-[4px]">
+                <p className="text-[21px] font-medium leading-[130%]">
                   Croatia Based
                 </p>
-                <p className="text-nowrap text-[21px] font-medium leading-[130%] text-[var(--color-neutral-80)]">
+                <p className="text-nowrap text-[21px] font-medium leading-[130%]">
                   Working globally
                 </p>
               </div>
             </div>
           </div>
-
-          <div className="col-span-10 mobile-col-span-2 flex justify-end">
-            <Button variant="dark" onClick={onOpenContact}>
-              Get in touch
-            </Button>
-          </div>
         </div>
       </div>
-    </header>
+    </div>
   );
 }

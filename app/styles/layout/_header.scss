@@ -98,3 +98,59 @@
     animation: none;
   }
 }
+
+/* ── Location-block sibling (".site-header-blend") ──────────────────
+   Hosts ONLY the globe icon + "Croatia Based / Working globally"
+   text. Rendered as a SIBLING of <header> (not a descendant) so
+   `mix-blend-mode: difference` on the inner text can reach page
+   content underneath. The header's own stacking context (position
+   fixed + z-index 50 + transform + will-change) would otherwise
+   trap the blend.
+
+   CRITICAL: no z-index, no transform, no will-change, no opacity<1,
+   no filter, no isolation: isolate, no backdrop-filter — every one
+   of those would re-create a stacking context and re-trap the
+   blend. The slide-up is animated on `top` instead of `transform`.
+
+   Pointer-events off because the icon + text are decorative; the
+   only interactive element in the header (the "Get in touch" CTA)
+   lives in the real <header> and stays clickable as before. */
+.site-header-blend {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  /* No z-index → stays in the root stacking context so its child
+     blend reaches `.site-main` painted earlier in DOM order. */
+  transition: top 240ms ease;
+}
+
+/* Auto-hide: slide via `top` (NOT transform). Header content is
+   ~80px tall on desktop; -160px guarantees the block leaves the
+   visible viewport entirely on mobile too (smaller header heights
+   still clear). Mirrors `.site-header`'s 240ms ease. */
+.site-header-blend[data-hidden="true"] {
+  top: -160px;
+}
+
+/* Respect reduced motion — match .site-header's existing reduced-
+   motion posture (no rule there either, since `transition` is a
+   tasteful 240ms; here we also leave the transition in place). If
+   stricter no-motion is wanted, uncomment below.
+   @media (prefers-reduced-motion: reduce) {
+     .site-header-blend { transition: none; }
+   }
+*/
+
+/* Difference blend on the white text. Children inherit color so the
+   inner <p> elements (which used to carry Tailwind text-* utilities)
+   pick up #fff cleanly even if those utilities are still present. */
+.site-header-location {
+  color: #fff;
+  mix-blend-mode: difference;
+}
+
+.site-header-location p {
+  color: inherit;
+}

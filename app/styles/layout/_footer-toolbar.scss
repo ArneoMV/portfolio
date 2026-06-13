@@ -126,17 +126,24 @@
   height: 48px;
   flex-shrink: 0;
   border-radius: var(--radius-sm, 8px);
-  background-color: var(--color-neutral-20);
+  /* No background — the 3D model sits on a transparent square. The
+     canvas inside is `alpha: true`, so wherever the model doesn't
+     paint, the underlying toolbar shell colour shows through. */
+  background-color: transparent;
   transform: scale(0.7);
   transform-origin: bottom left;
-  transition:
-    transform 0.4s cubic-bezier(0.34, 1.4, 0.64, 1),
-    background-color 0.4s ease;
+  transition: transform 0.4s cubic-bezier(0.34, 1.4, 0.64, 1);
+  /* Position context for the per-thumb <ThumbCanvas>'s R3F wrapper
+     (the wrapper is `position: relative` with width/height 100%, so
+     it fills this box). overflow: hidden clips any stray pixels at
+     the rounded corners; harmless on a transparent square but kept
+     in case a future model overflows the box. */
+  position: relative;
+  overflow: hidden;
 }
 
 .footer-toolbar-shell--open .footer-menu-thumb {
   transform: scale(1);
-  background-color: var(--color-neutral-40);
 }
 
 .footer-menu-label {
@@ -158,3 +165,4 @@
   transform: translateY(0);
   color: var(--color-neutral-90);
 }
+
