@@ -162,53 +162,135 @@ textarea.task-field-control {
   min-height: 64px;
 }
 
-/* Category select — custom arrow via absolutely positioned icon */
-.task-select-wrap {
+/* ── Category combobox (custom listbox, replaces native <select>) ───
+   The native <select> was replaced with this custom listbox because
+   native <option> elements are not reliably stylable across browsers
+   (Chrome/Safari/Edge ignore padding-left on the popup, which made
+   the design's 8px inset impossible). This custom combobox is built
+   from plain DOM elements so SCSS fully controls every state.
+
+   Wire format and a11y: see CategoryField in TaskSidePanel.tsx. The
+   hidden <input name="category"> preserves the original FormData
+   payload, so the EmailJS submission is identical. */
+.task-combobox {
   position: relative;
   display: block;
 }
 
-.task-select-wrap select {
-  appearance: none;
-  -webkit-appearance: none;
+/* Mimics the .task-field-control look so the category trigger
+   visually matches the surrounding text-input fields: same font,
+   same hairline bottom border, same focus colour, same hit area. */
+.task-combobox-trigger {
   width: 100%;
-  padding-right: var(--space-2xl);
-  cursor: pointer;
-  background-image: none;
-}
-
-.task-select-arrow {
-  position: absolute;
-  top: 50%;
-  right: var(--space-xs);
-  transform: translateY(-50%);
-  width: 18px;
-  height: 18px;
-  pointer-events: none;
-  opacity: 0.65;
-  display: block;
-}
-
-.task-assigned-chip {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
+  justify-content: space-between;
+  gap: var(--space-xs);
+  font-family: inherit;
   font-size: var(--text-md);
+  line-height: 140%;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-xs) 0;
+  outline: none;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 150ms ease;
+}
+
+.task-combobox-trigger:focus-visible,
+.task-combobox--open .task-combobox-trigger {
+  border-color: var(--color-primary-60);
+}
+
+/* Placeholder styling matches the existing text-input placeholder. */
+.task-combobox-placeholder {
+  color: var(--color-neutral-60);
+}
+
+.task-combobox-value {
   color: var(--color-text-primary);
 }
 
-.task-assigned-avatar {
-  position: relative; /* containing block for the fill <Image> */
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-pill);
-  background: var(--color-neutral-30); /* fallback while the image loads */
+.task-combobox-arrow {
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
-  overflow: hidden; /* clip the avatar image to the circle */
+  opacity: 0.65;
+  display: block;
+  transition: transform 200ms ease;
+}
+
+.task-combobox--open .task-combobox-arrow {
+  transform: rotate(180deg);
+}
+
+/* Open listbox panel — absolutely positioned just below the trigger.
+   max-height + overflow-y: auto keep it from extending past the
+   surrounding panel when more options are added in the future; with
+   only 3 options today the natural height (~3 × 44px + 16px padding
+   ≈ 150px) fits well inside the side panel without scrolling.
+
+   z-index lifts it above the trigger's bottom border + any following
+   form-field bottom border the open list visually crosses. The
+   panel's own stacking context (`.task-side-panel` z-index: 60) is
+   the parent; this z is local to that stacking context. */
+.task-combobox-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 5;
+  margin: 0;
+  padding: var(--space-xs) 0;
+  list-style: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.18);
+  outline: none;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+/* Option rows — left padding is the ENTIRE POINT of this rebuild:
+   guaranteed 8px inset in every browser. min-height: 44px gives a
+   comfortable touch target on mobile (Apple HIG / Material guidelines
+   both call for 44px+). The active/hover state uses a neutral tint;
+   selected state (aria-selected="true") uses a brand tint so the
+   currently-selected option is visually distinct even when it's not
+   the keyboard-active one. */
+.task-combobox-option {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding-left: 8px;
+  padding-right: var(--space-md);
+  padding-top: var(--space-xs);
+  padding-bottom: var(--space-xs);
+  font-family: inherit;
+  font-size: var(--text-md);
+  line-height: 140%;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 120ms ease;
+}
+
+.task-combobox-option--active,
+.task-combobox-option:hover {
+  background: var(--color-neutral-20);
+}
+
+.task-combobox-option[aria-selected="true"] {
+  background: var(--color-primary-10);
+  font-weight: 600;
+}
+
+.task-combobox-option[aria-selected="true"].task-combobox-option--active {
+  background: var(--color-primary-20);
 }
 
 .task-side-panel-divider {
