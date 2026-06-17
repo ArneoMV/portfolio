@@ -1,0 +1,89 @@
+/* =====================================================================
+   NOT-FOUND PAGE  —  app/(site)/not-found.tsx
+
+   Centred single-column layout. Renders inside `.site-main`, so the
+   global header clearance + FooterToolbar bottom clearance from
+   `_page.scss` already apply; this rule only sets the interior
+   composition. min-height fills the viewport between header and
+   toolbar so the page never looks empty on tall monitors.
+
+   Typography matches the privacy page and project hero titles:
+   Young Serif at display weight for the page heading, Source Sans 3
+   for body. The "404" eyebrow uses the same display family at a
+   larger clamp so it reads as the dominant element without needing
+   an illustration. Three action buttons reuse the `.button` atom and
+   inherit its variants — no bespoke button styles here.
+===================================================================== */
+
+.not-found-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: var(--space-3xl) var(--space-md);
+  color: var(--color-text-primary);
+}
+
+/* Capped at 600px for a tight, focused composition; on small screens
+   it shrinks naturally inside the `.site-main` padding. */
+.not-found-page-inner {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+}
+
+/* Large display number — Young Serif at the same hero-scale clamp
+   range project titles use. Tracks slightly tight at the larger end
+   to keep the three glyphs visually balanced. */
+.not-found-page-code {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(80px, 18vw, 160px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text-primary);
+}
+
+/* Page heading — sits just below the 404 with a touch of breathing
+   room. Young Serif, scaled with clamp to match other page titles. */
+.not-found-page-heading {
+  margin: var(--space-lg) 0 var(--space-md) 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4.2vw, 44px);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+}
+
+/* Body copy — slightly larger than default for a single-paragraph
+   page where the line carries the explanation alone. */
+.not-found-page-body {
+  margin: 0 0 var(--space-2xl) 0;
+  font-family: var(--font-sans);
+  font-size: clamp(16px, 1.4vw, 18px);
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}
+
+/* Actions — stack vertically on mobile so each pill stays full-width
+   inside the 600px column; switch to a centred row at tablet+ so the
+   three CTAs read as a single horizontal band. `align-items: stretch`
+   on mobile gives each button the same touchable width without us
+   needing to set one on the Button atom. */
+.not-found-page-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-sm);
+}
+
+@media (min-width: 768px) {
+  .not-found-page-actions {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+}
