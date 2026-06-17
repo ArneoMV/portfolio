@@ -30,12 +30,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
-    {
-      url: `${SITE_URL}/lab`,
-      lastModified,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
+    // Lab route hidden during job-search positioning. Restore by uncommenting.
+    // {
+    //   url: `${SITE_URL}/lab`,
+    //   lastModified,
+    //   changeFrequency: "monthly",
+    //   priority: 0.7,
+    // },
   ];
 
   const projectRoutes: MetadataRoute.Sitemap = PROJECT_DETAILS.map(

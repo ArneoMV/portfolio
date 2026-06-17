@@ -17,7 +17,8 @@ import Link from "next/link";
 const LINK_GROUPS: { href: string; label: string }[][] = [
   [
     { href: "/work", label: "Work" },
-    { href: "/lab", label: "Lab" },
+    // Lab link hidden during job-search positioning. Restore by uncommenting.
+    // { href: "/lab", label: "Lab" },
     { href: "#contact", label: "Contact" },
   ],
   [

@@ -43,7 +43,8 @@
 
 // pages — standalone routes
 @use "pages/work-page";
-@use "pages/lab-page";
+// Lab page hidden during job-search positioning. Restore by uncommenting.
+// @use "pages/lab-page";
 @use "pages/privacy-page";
 
 // components — reusable UI primitives

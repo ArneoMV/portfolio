@@ -134,23 +134,24 @@ const ASSETS = [
     yRot: 0.3,
     spawnDelay: 0,
   },
-  {
-    id: "lab",
-    label: "Lab",
-    assetUrl: "/images/home/test_tube.glb",
-    tint: "#9ae0a8",
-    targetSize: 2.4,
-    spawnYBelowCeiling: 1.0,
-    xFrac: -0.52,
-    z: 0.04,
-    mass: 0.52,
-    linearDamping: 0.035,
-    ivx: -0.9,
-    ivy: -3.5,
-    ivry: -0.32,
-    yRot: -0.2,
-    spawnDelay: 360,
-  },
+  // Lab 3D object hidden during job-search positioning. Restore by uncommenting.
+  // {
+  //   id: "lab",
+  //   label: "Lab",
+  //   assetUrl: "/images/home/test_tube.glb",
+  //   tint: "#9ae0a8",
+  //   targetSize: 2.4,
+  //   spawnYBelowCeiling: 1.0,
+  //   xFrac: -0.52,
+  //   z: 0.04,
+  //   mass: 0.52,
+  //   linearDamping: 0.035,
+  //   ivx: -0.9,
+  //   ivy: -3.5,
+  //   ivry: -0.32,
+  //   yRot: -0.2,
+  //   spawnDelay: 360,
+  // },
   {
     id: "contact",
     label: "Contact",
@@ -426,10 +427,11 @@ export default function ContactScene({ spawned }: ContactSceneProps) {
       router.push("/work");
       return;
     }
-    if (id === "lab") {
-      router.push("/lab");
-      return;
-    }
+    // Lab routing hidden during job-search positioning. Restore by uncommenting.
+    // if (id === "lab") {
+    //   router.push("/lab");
+    //   return;
+    // }
     const externalUrl = EXTERNAL_LINKS[id as keyof typeof EXTERNAL_LINKS];
     if (externalUrl) {
       window.open(externalUrl, "_blank", "noopener,noreferrer");

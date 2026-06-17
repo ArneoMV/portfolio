@@ -34,11 +34,12 @@ const MENU_ITEMS: MenuItem[] = [
     href: "/",
     modelUrl: "/images/home/house.glb",
   },
-  {
-    label: "LAB",
-    href: "/lab",
-    modelUrl: "/images/home/test_tube.glb",
-  },
+  // Lab menu item hidden during job-search positioning. Restore by uncommenting.
+  // {
+  //   label: "LAB",
+  //   href: "/lab",
+  //   modelUrl: "/images/home/test_tube.glb",
+  // },
   {
     label: "WORK",
     href: "/work",
