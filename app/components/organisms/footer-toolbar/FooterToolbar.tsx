@@ -99,8 +99,13 @@ export default function FooterToolbar() {
 
   return (
     <nav
-      className="pointer-events-none fixed bottom-[var(--space-lg)] left-0 z-50"
+      className="pointer-events-none fixed left-0 z-50"
       style={{
+        // Bottom offset combines the design's 24px gap with the
+        // iOS/Android safe-area-inset so the toolbar clears the home
+        // indicator / gesture bar. `env()` resolves to 0 where there
+        // is no inset, so non-affected devices keep the original 24px.
+        bottom: "calc(var(--space-lg) + env(safe-area-inset-bottom))",
         right: "var(--panel-offset, 0px)",
         transition: "right 250ms ease-out",
       }}

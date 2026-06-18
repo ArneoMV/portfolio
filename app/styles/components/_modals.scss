@@ -7,7 +7,11 @@
   top: 0;
   right: 0;
   width: 560px;
-  max-width: 100vw;
+  /* 100% (not 100vw) so on narrow phones the panel never extends past
+     the visual viewport when a vertical scrollbar is present — 100vw
+     includes the scrollbar gutter, 100% resolves against the initial
+     containing block (= viewport minus scrollbar). */
+  max-width: 100%;
   height: 100vh;
   z-index: 60;
   background: var(--color-surface);
@@ -60,8 +64,11 @@
    paths stay consistent. */
 .task-side-panel-close {
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+  /* 44x44 meets the WCAG 2.5.5 / Apple HIG / Material minimum touch
+     target. The internal 18x18 SVG is centred by the inline-flex,
+     so visual icon size is unchanged — only the hit-area grows. */
+  width: 44px;
+  height: 44px;
   border-radius: 999px;
   background: transparent;
   border: 1px solid var(--color-neutral-30);
@@ -316,7 +323,23 @@ textarea.task-field-control {
 
 @media (max-width: 767px) {
   .task-side-panel {
-    width: 100vw;
+    /* See max-width above — 100% avoids horizontal overflow from the
+       scrollbar gutter that 100vw includes. */
+    width: 100%;
+  }
+
+  /* Mobile-only safe-area inset — on iOS phones with a home indicator
+     and Android with gesture nav, the bottom of the visual viewport
+     is occupied by system UI. `max()` keeps the existing 32px padding
+     on devices without an inset (older phones, desktop emulation) and
+     grows to the inset value (~34px on iPhone 14) elsewhere so the
+     submit button isn't obscured by the gesture bar. */
+  .task-side-panel-body {
+    padding-bottom: max(var(--space-xl), env(safe-area-inset-bottom));
+  }
+
+  .task-side-panel-success {
+    padding-bottom: max(var(--space-xl), env(safe-area-inset-bottom));
   }
 }
 
