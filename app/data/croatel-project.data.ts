@@ -190,12 +190,12 @@ export const CROATEL_PROJECT: CroatelProjectData = {
         {
           src: "/images/projects/croatel/hrt_mockup_tv_02.png",
           alt: "TV mockup showing DANTE 700 broadcast graphic",
-          caption: "End-To-End Project Management",
+          caption: "Dimitrije Popović - Dimitrije i Dante",
         },
         {
           src: "/images/projects/croatel/hrt_mockup_tv_03.png",
           alt: "TV mockup showing UK Festival graphic",
-          caption: "Company profile",
+          caption: "13. Festival mediteranskog filma Split",
         },
       ],
     },
