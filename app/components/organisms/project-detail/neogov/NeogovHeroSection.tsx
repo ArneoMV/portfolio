@@ -1,4 +1,5 @@
 import ZoomableImage from "@/app/components/molecules/zoomable-image/ZoomableImage";
+import ProjectLogo from "@/app/components/molecules/project-logo/ProjectLogo";
 import ProjectMetaGrid from "../ProjectMetaGrid";
 import type { NeogovProjectData } from "@/app/data/neogov-project.data";
 
@@ -47,7 +48,19 @@ export default function NeogovHeroSection({ project }: NeogovHeroSectionProps) {
           )}
         </div>
 
-        <h2 className="neogov-hero-title">{project.title}</h2>
+        {project.logo ? (
+          <div className="neogov-hero-title">
+            <ProjectLogo
+              src={project.logo.src}
+              alt={project.logo.alt}
+              href={project.logo.href}
+              width={project.logo.width}
+              height={project.logo.height}
+            />
+          </div>
+        ) : (
+          <h2 className="neogov-hero-title">{project.title}</h2>
+        )}
 
         {/* "What I built" is the bespoke label per the design — not
             the shared template's `typeOfWorkLabel` ("Challenge"),

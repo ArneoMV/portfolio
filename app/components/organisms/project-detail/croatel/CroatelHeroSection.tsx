@@ -1,5 +1,5 @@
-import Image from "next/image";
 import ZoomableImage from "@/app/components/molecules/zoomable-image/ZoomableImage";
+import ProjectLogo from "@/app/components/molecules/project-logo/ProjectLogo";
 import ProjectMetaGrid from "../ProjectMetaGrid";
 import type { CroatelProjectData } from "@/app/data/croatel-project.data";
 
@@ -36,17 +36,19 @@ export default function CroatelHeroSection({
         </div>
 
         <div className="croatel-hero-logos">
-          <Image
+          <ProjectLogo
             className="croatel-hero-logo-main"
             src={project.croatelLogo.src}
             alt={project.croatelLogo.alt}
+            href={project.croatelLogo.href}
             width={project.croatelLogo.width}
             height={project.croatelLogo.height}
           />
-          <Image
+          <ProjectLogo
             className="croatel-hero-logo-secondary"
             src={project.hrtLogo.src}
             alt={project.hrtLogo.alt}
+            href={project.hrtLogo.href}
             width={project.hrtLogo.width}
             height={project.hrtLogo.height}
           />

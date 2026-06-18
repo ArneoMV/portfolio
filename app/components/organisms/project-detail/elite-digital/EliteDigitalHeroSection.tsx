@@ -1,4 +1,5 @@
 import ZoomableImage from "@/app/components/molecules/zoomable-image/ZoomableImage";
+import ProjectLogo from "@/app/components/molecules/project-logo/ProjectLogo";
 import ProjectMetaGrid from "../ProjectMetaGrid";
 import type { EliteDigitalProjectData } from "@/app/data/elite-digital-project.data";
 
@@ -41,7 +42,19 @@ export default function EliteDigitalHeroSection({
           />
         </div>
 
-        <h1 className="elite-digital-hero-title">{project.title}</h1>
+        <h1 className="elite-digital-hero-title">
+          {project.logo ? (
+            <ProjectLogo
+              src={project.logo.src}
+              alt={project.logo.alt}
+              href={project.logo.href}
+              width={project.logo.width}
+              height={project.logo.height}
+            />
+          ) : (
+            project.title
+          )}
+        </h1>
 
         {/* "What I built" — same bespoke label Neogov + Spona render,
             kept hardcoded so the data shape doesn't need a duplicate

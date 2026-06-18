@@ -47,6 +47,11 @@ export interface NeogovProjectData {
   eyebrow?: string;
   /** Large serif hero heading. */
   displayHeading?: string;
+  /** Clickable Neogov wordmark rendered in place of the old H2 text
+      title. Opens the company site in a new tab. SVG dimensions match
+      the file's intrinsic `width`/`height`; rendered height is locked
+      at 40px by the shared `.project-logo-image` rule. */
+  logo?: { src: string; alt: string; href: string; width: number; height: number };
   /** Hero composition image — single source (the design uses one
       image across breakpoints; CSS handles responsive sizing). */
   heroCompositionImage?: { src: string; alt: string };
@@ -148,6 +153,13 @@ export const NEOGOV_PROJECT: NeogovProjectData = {
   // ─── Bespoke Neogov page content ───────────────────────────
   eyebrow: "NEOGOV",
   displayHeading: "From Product Execution to Systems Thinking",
+  logo: {
+    src: "/images/home/Neogov_Logo.svg",
+    alt: "Neogov",
+    href: "https://www.neogov.com/",
+    width: 193,
+    height: 28,
+  },
   heroCompositionImage: {
     src: "/images/projects/neogov/neogov_hero.png",
     alt: "Neogov UI composition with employee profile, dashboard, and design system cards",

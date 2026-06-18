@@ -43,6 +43,18 @@ export interface EliteDigitalProjectData {
    *  like Neogov, NOT bottom-overflowing like Spona — third hero
    *  variant). */
   heroImage: { src: string; alt: string };
+  /** Optional clickable Elite Digital wordmark rendered in place of
+   *  the old H1 text title. Opens the company site in a new tab. SVG
+   *  dimensions match the file's intrinsic width/height; rendered
+   *  height is locked at 40px by the shared `.project-logo-image`
+   *  rule. When absent the hero falls back to the H1 with `title`. */
+  logo?: {
+    src: string;
+    alt: string;
+    href: string;
+    width: number;
+    height: number;
+  };
 
   /* ── Context section (CaseStudyContextSection) ────────────── */
   leadQuote?: string;
@@ -86,6 +98,13 @@ export const ELITE_DIGITAL_PROJECT: EliteDigitalProjectData = {
   heroImage: {
     src: "/images/projects/elite-digital/elite-digital-hero-image.png",
     alt: "Elite Digital project hero showing the design for fast delivery case study",
+  },
+  logo: {
+    src: "/images/home/EliteDigital_Logo.svg",
+    alt: "Elite Digital",
+    href: "https://elite-digital.hr/",
+    width: 376,
+    height: 30,
   },
 
   // ── Context ───────────────────────────────────────────────

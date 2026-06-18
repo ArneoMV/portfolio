@@ -37,10 +37,19 @@ export interface SponaProjectData {
   taglineDescription: string;
   /** In-column composition image (right side of the panel). */
   heroCompositionImage: { src: string; alt: string };
-  /** Optional brand logo used as the title below the panel. When
-   *  absent the hero falls back to an H2 with `title`. SVG dimensions
-   *  match the file's viewBox so next/image keeps the aspect ratio. */
-  logo?: { src: string; alt: string; width: number; height: number };
+  /** Optional clickable brand logo used as the title below the panel.
+   *  When absent the hero falls back to an H2 with `title`. SVG
+   *  dimensions match the file's viewBox so next/image keeps the
+   *  aspect ratio; the rendered height is locked at 40px by the shared
+   *  `.project-logo-image` rule. `href` opens the company site in a
+   *  new tab via the shared `ProjectLogo` component. */
+  logo?: {
+    src: string;
+    alt: string;
+    href: string;
+    width: number;
+    height: number;
+  };
 
   /* ── Context section (CaseStudyContextSection) ────────────── */
   leadQuote: string;
@@ -98,6 +107,7 @@ export const SPONA_PROJECT: SponaProjectData = {
   logo: {
     src: "/images/projects/spona/spona-logo-purple.svg",
     alt: "Spona",
+    href: "https://spona.io/",
     width: 140,
     height: 32,
   },

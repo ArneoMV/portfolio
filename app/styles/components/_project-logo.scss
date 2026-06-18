@@ -1,0 +1,46 @@
+/* =====================================================================
+   PROJECT LOGO  —  shared header wordmark for /work/[slug] heroes
+
+   Renders inside Neogov / Spona / Elite Digital / Croatel hero
+   sections. Every hero uses the same 40px image height so the logo
+   footprint is identical regardless of the asset's intrinsic size; the
+   anchor's hover/focus chrome is shared here as well.
+
+   The component is `ProjectLogo` in app/components/molecules/project-logo/.
+   Per-hero layout (left inset, gap to sibling logo, flex anchor) is
+   applied through an extra className passed into the component, NOT
+   overridden here — keeping this file project-agnostic.
+===================================================================== */
+
+.project-logo-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  border-radius: var(--radius-xs);
+  /* Subtle hover dim only — no transform / underline. The logo is the
+     identity moment in the hero, hover should feel quiet. */
+  transition: opacity 150ms ease;
+}
+
+.project-logo-link:hover {
+  opacity: 0.7;
+}
+
+.project-logo-link:focus-visible {
+  outline: 2px solid var(--color-primary-60);
+  outline-offset: 4px;
+}
+
+/* Fixed 40px logo height on every project page across desktop and
+   mobile. `width: auto` keeps the asset's aspect ratio from the
+   intrinsic dimensions next/image renders. `max-width: 100%` is the
+   safety net for ultra-narrow viewports where a wide wordmark (e.g.
+   Elite Digital at 376×30 → ~501px wide at 40 tall) might exceed the
+   container — the image then shrinks proportionally instead of
+   bleeding past the rail. */
+.project-logo-image {
+  display: block;
+  height: 40px;
+  width: auto;
+  max-width: 100%;
+}

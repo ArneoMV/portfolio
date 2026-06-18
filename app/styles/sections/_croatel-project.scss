@@ -50,15 +50,12 @@
   margin-bottom: var(--space-2xl);
 }
 
-.croatel-hero-logo-main {
-  height: 40px;
-  width: auto;
-}
-
-.croatel-hero-logo-secondary {
-  height: 32px;
-  width: auto;
-}
+/* Per-logo wrappers — the shared `.project-logo-image` rule enforces
+   the 40px image height (Croatel + HRT now line up at the same
+   wordmark height regardless of intrinsic SVG dimensions), so no
+   per-logo size override is needed here. Class names are retained so
+   future per-logo layout tweaks (e.g. nudging HRT down by a px) have
+   a hook without touching the shared link styles. */
 
 /* ── Light section (bespoke alternating layout) ──────────────── */
 .croatel-light {

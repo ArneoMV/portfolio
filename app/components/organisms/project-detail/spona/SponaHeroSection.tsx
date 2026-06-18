@@ -1,5 +1,5 @@
-import Image from "next/image";
 import ZoomableImage from "@/app/components/molecules/zoomable-image/ZoomableImage";
+import ProjectLogo from "@/app/components/molecules/project-logo/ProjectLogo";
 import ProjectMetaGrid from "../ProjectMetaGrid";
 import type { SponaProjectData } from "@/app/data/spona-project.data";
 
@@ -53,10 +53,10 @@ export default function SponaHeroSection({ project }: SponaHeroSectionProps) {
 
         {logo ? (
           <h2 className="spona-hero-title spona-hero-title--logo">
-            <Image
-              className="spona-hero-logo"
+            <ProjectLogo
               src={logo.src}
               alt={logo.alt}
+              href={logo.href}
               width={logo.width}
               height={logo.height}
             />

@@ -36,8 +36,24 @@ export interface CroatelProjectData {
 
   /* ── Hero (project-specific, banner-only, no gradient panel) ── */
   heroBannerImage: { src: string; alt: string };
-  croatelLogo: { src: string; alt: string; width: number; height: number };
-  hrtLogo: { src: string; alt: string; width: number; height: number };
+  /** Clickable Croatel wordmark + HRT client logo. Both opened in a
+   *  new tab via the shared `ProjectLogo` component; rendered height
+   *  is locked at 40px so the two wordmarks line up regardless of
+   *  intrinsic dimensions. */
+  croatelLogo: {
+    src: string;
+    alt: string;
+    href: string;
+    width: number;
+    height: number;
+  };
+  hrtLogo: {
+    src: string;
+    alt: string;
+    href: string;
+    width: number;
+    height: number;
+  };
 
   /* ── Dark Context section (CaseStudyContextSection) ── */
   leadQuote: string;
@@ -87,21 +103,24 @@ export const CROATEL_PROJECT: CroatelProjectData = {
     src: "/images/projects/croatel/hrt_hero_image.png",
     alt: "Croatel broadcast graphics composition with Zagreb, celebrations, politicians, sport, and culture imagery",
   },
+  // Switched from the project-local PNGs to the shared SVG wordmarks
+  // in /public/images/home/ — same files the homepage Projects list
+  // uses. Existing PNGs (logo_Croatel.png, HRT_logo 1.png) stay on
+  // disk unreferenced. Filename "Coatel_Logo.svg" is the asset's
+  // existing typo, kept verbatim so the path resolves.
   croatelLogo: {
-    src: "/images/projects/croatel/logo_Croatel.png",
+    src: "/images/home/Coatel_Logo.svg",
     alt: "Croatel",
-    width: 180,
-    height: 40,
+    href: "https://www.croatel.hr/",
+    width: 185,
+    height: 32,
   },
-  // NOTE: the source file ships with a SPACE in its name
-  // ("HRT_logo 1.png"), not an underscore. Referenced verbatim here;
-  // rename the asset to "HRT_logo_1.png" + update this path if the
-  // space ever causes tooling friction.
   hrtLogo: {
-    src: "/images/projects/croatel/HRT_logo 1.png",
-    alt: "HRT",
-    width: 50,
-    height: 40,
+    src: "/images/home/HRT_Logo.svg",
+    alt: "HRT (Croatian Radiotelevision)",
+    href: "https://www.hrt.hr/",
+    width: 66,
+    height: 32,
   },
 
   // ── Dark Context section ──────────────────────────────────

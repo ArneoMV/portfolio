@@ -118,14 +118,14 @@
   color: var(--color-text-primary);
 }
 
+/* When the H2 title carries the logo (not text), the inline-flex
+   ProjectLogo link sits inside the wrapper. line-height: 1 collapses
+   the H2's text-line box around the 40px image so vertical rhythm
+   to the surrounding rows is driven by the image height alone, not
+   the font's line-height. The shared `.project-logo-image` rule
+   handles the 40px height — no per-project size override here. */
 .spona-hero-title--logo {
   line-height: 1;
-}
-
-.spona-hero-logo {
-  display: block;
-  height: 40px;
-  width: auto;
 }
 
 /* Tablet (768–1023) — the image is naturally smaller, so a shallower
@@ -204,9 +204,5 @@
     font-size: var(--text-md);
     color: #6d50f6; /* brand purple — matches the tagline per design */
     opacity: 1;
-  }
-
-  .spona-hero-logo {
-    height: 32px;
   }
 }
