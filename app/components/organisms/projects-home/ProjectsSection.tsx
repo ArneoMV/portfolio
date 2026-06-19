@@ -168,8 +168,8 @@ export default function ProjectsSection() {
         <div className="projects-row projects-row--intro">
           <p className="projects-description">
             I design products, build websites, and set up AI workflows that take
-            repetitive work off your team. The mix shifts per project. The
-            standard doesn't.
+            repetitive work off your team. The mix shifts per project, and the
+            standard thrives.
           </p>
           <div className="projects-cta">
             <Button variant="dark" size="sm" href="/work">
