@@ -186,9 +186,18 @@ function SkillCard({ skill }: { skill: Skill }) {
       <p className="svc-skill-card-box svc-skill-card-box--description">
         {skill.description}
       </p>
-      <p className="svc-skill-card-box svc-skill-card-box--tools">
-        {skill.tools}
-      </p>
+      {/* Tools box — each tool renders as a blue chip via the reused
+          `.svc-tag .svc-tag--polish` rule (the only blue variant in
+          the existing `.svc-tag--*` palette). The wrapping flex row
+          is owned by `.svc-skill-card-box--tools` so the chips wrap
+          to multiple lines as the card narrows. */}
+      <div className="svc-skill-card-box svc-skill-card-box--tools">
+        {skill.tools.map((tool) => (
+          <span key={tool} className="svc-tag svc-tag--polish">
+            {tool}
+          </span>
+        ))}
+      </div>
     </li>
   );
 }

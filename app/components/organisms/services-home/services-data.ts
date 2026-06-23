@@ -121,7 +121,10 @@ export const PHASES: Phase[] = [
 export interface Skill {
   title: string;
   description: string;
-  tools: string;
+  /** Tool names rendered as individual chips in the second inner
+   *  box of each skill card (reuses the existing `.svc-tag --polish`
+   *  blue chip variant — see `_services.scss`). */
+  tools: string[];
 }
 
 export const SKILLS: Skill[] = [
@@ -129,18 +132,18 @@ export const SKILLS: Skill[] = [
     title: "Design",
     description:
       "Design across the full range, from visuals and motion to research and systems.",
-    tools: "Figma, Adobe Creative Suite, After Effects, Figma Make, Nano Banana",
+    tools: ["Figma", "Adobe Suite", "Motion", "Figma make", "Nano Banana"],
   },
   {
     title: "Development",
     description:
       "Frontend development from design to production. Modern React apps and marketing sites.",
-    tools: "React, Next.js, CSS/SCSS, Claude Code",
+    tools: ["React", "Next.js", "CSS/SCSS", "Claude Code"],
   },
   {
     title: "AI Automation",
     description:
       "Custom Make.com automations and AI workflows that save hours of manual work.",
-    tools: "Claude API, Claude Code, Make.com",
+    tools: ["Claude API", "Claude Code", "Make.com"],
   },
 ];

@@ -223,6 +223,17 @@
   color: var(--color-neutral-100);
 }
 
+/* Tools box — chip row layout. The chip visual itself is the
+   existing `.svc-tag .svc-tag--polish` (blue) rule; this rule only
+   adds the row flex container so chips wrap cleanly inside the
+   16px-padded white box. Scoped to the skill card so it doesn't
+   affect the diagram's `.svc-card`s. */
+.svc-skill-card-box--tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
 /* ── Diagram canvas ─────────────────────────────────────────── */
 
 .svc-diagram {
