@@ -1,7 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import SectionHeader from "@/app/components/molecules/section-header/SectionHeader";
-import { PHASES, type Phase, type PhaseCta as PhaseCtaData } from "./services-data";
+import {
+  PHASES,
+  SKILLS,
+  type Phase,
+  type PhaseCta as PhaseCtaData,
+  type Skill,
+} from "./services-data";
 
 const TOOLS = [
   { name: "Slack for messaging", src: "/images/home/logo/slack_logo.svg" },
@@ -56,10 +62,24 @@ export default function ServicesSection() {
             depend on a flush container). */}
         <div className="svc-header-wrap">
           <SectionHeader
-            title="From idea to live website"
-            subtitle="I handle both design and development, so the process stays simple and everything moves faster."
+            title="What I bring"
+            subtitle="Skills, tools, and how I work"
           />
         </div>
+
+        {/* Skills cluster — three "What I bring" cards rendered as a
+            sibling ABOVE `.svc-diagram` so the diagram's absolute
+            coords and mobile connector cadence stay untouched. Each
+            card reuses the Discovery (blue) phase palette for the
+            outer surface + title, and the existing `.svc-card`
+            inner-task-card recipe for the two stacked white inner
+            boxes (description / tools). Mapped from `SKILLS` in
+            `services-data.ts`. */}
+        <ul className="svc-skills">
+          {SKILLS.map((skill) => (
+            <SkillCard key={skill.title} skill={skill} />
+          ))}
+        </ul>
 
         <div className="svc-diagram">
           {/* Desktop / tablet dotted connector lines for the
@@ -150,6 +170,26 @@ export default function ServicesSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+/* Local subcomponent for one "What I bring" card. Kept local (not a
+   molecule) because the only render site is the cluster above. The
+   markup is a list item so the cluster's outer `<ul>` keeps semantic
+   list semantics; the inner stacked boxes are plain `<p>` elements
+   so screen readers announce the description and tools as ordinary
+   text below the card's `<h3>` title. */
+function SkillCard({ skill }: { skill: Skill }) {
+  return (
+    <li className="svc-skill-card">
+      <h3 className="svc-skill-card-title">{skill.title}</h3>
+      <p className="svc-skill-card-box svc-skill-card-box--description">
+        {skill.description}
+      </p>
+      <p className="svc-skill-card-box svc-skill-card-box--tools">
+        {skill.tools}
+      </p>
+    </li>
   );
 }
 

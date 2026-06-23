@@ -106,3 +106,41 @@ export const PHASES: Phase[] = [
     },
   },
 ];
+
+/* ── Skills cluster ─────────────────────────────────────────
+ *
+ * Three "What I bring" skill cards rendered as a sibling cluster
+ * ABOVE `.svc-diagram` in `ServicesSection.tsx`. The cluster gives
+ * the section a brief skills/tools summary before the process
+ * diagram below it; the diagram itself is untouched.
+ *
+ * Each skill renders as an outer pastel card with two stacked
+ * white inner boxes (description, tools) — see `.svc-skills` and
+ * `.svc-skill-card` rules in `_services.scss`. */
+
+export interface Skill {
+  title: string;
+  description: string;
+  tools: string;
+}
+
+export const SKILLS: Skill[] = [
+  {
+    title: "Design",
+    description:
+      "Design across the full range, from visuals and motion to research and systems.",
+    tools: "Figma, Adobe Creative Suite, After Effects, Figma Make, Nano Banana",
+  },
+  {
+    title: "Development",
+    description:
+      "Frontend development from design to production. Modern React apps and marketing sites.",
+    tools: "React, Next.js, CSS/SCSS, Claude Code",
+  },
+  {
+    title: "AI Automation",
+    description:
+      "Custom Make.com automations and AI workflows that save hours of manual work.",
+    tools: "Claude API, Claude Code, Make.com",
+  },
+];

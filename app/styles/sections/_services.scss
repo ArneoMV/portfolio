@@ -120,6 +120,109 @@
   }
 }
 
+/* Large screens (≥1024px) — double the gap between the preceding
+   Work section and the "What I bring" cluster. Scoped to the
+   container's top padding (the sole owner of the Work→Services
+   visual gap; Work contributes no bottom margin). Tablet 768–1023
+   keeps the base 48px (var(--space-2xl)); mobile still has 0 via
+   the `.svc-section { padding-top: 0 }` override below. */
+@media (min-width: 1024px) {
+  .svc-container {
+    padding-top: var(--space-4xl);
+  }
+}
+
+/* ── Skills cluster ─────────────────────────────────────────── */
+
+/* "What I bring" cluster — three skill cards rendered as a sibling
+   ABOVE `.svc-diagram`, NOT inside it. Sitting outside the diagram
+   keeps the absolute-positioned kanban coords and the five
+   `.svc-mobile-connector` segments' document-order cadence
+   pixel-identical to before the cluster was added.
+
+   The cluster matches `.svc-header-wrap`'s 64 / 48 / 16 horizontal
+   inset across breakpoints so the three cards visually align with
+   the SectionHeader title above them. Bottom margin = --space-3xl
+   so the diagram below keeps its previous rhythm. */
+.svc-skills {
+  list-style: none;
+  margin: 0 0 var(--space-3xl) 0;
+  padding: 0;
+  padding-left: 64px;
+  padding-right: 64px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* `align-items: start` overrides grid's default `stretch` so each
+     card sizes to its content rather than being forced to the
+     tallest sibling's height. */
+  align-items: start;
+  gap: var(--space-md);
+}
+
+@media (max-width: 1439px) and (min-width: 768px) {
+  .svc-skills {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .svc-skills {
+    grid-template-columns: 1fr;
+    padding-left: 16px;
+    padding-right: 16px;
+    gap: var(--space-sm);
+  }
+}
+
+/* Outer skill card — reuses Discovery's blue palette (`--color-primary-10`
+   surface, `--color-primary-90` title) so the cluster reads as part of
+   the same Phase-card family. Padding / radius / gap match `.svc-column`
+   so the visual rhythm matches the diagram cards. No border, no shadow
+   — the pastel background defines the edge, matching Phase cards. */
+.svc-skill-card {
+  display: flex;
+  flex-direction: column;
+  /* Flex gap governs both title→first-box and box→box spacing.
+     --space-sm resolves to 12px; using the token keeps the cluster's
+     vertical rhythm in sync with the global spacing scale. */
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: 12px;
+  background: var(--color-primary-10);
+  box-sizing: border-box;
+}
+
+.svc-skill-card-title {
+  /* Margin reset so the flex gap above is the SOLE source of the
+     title→first-box spacing — previously a 4px bottom margin stacked
+     on top of the 12px gap, producing a 16px visual gap. */
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--color-primary-90);
+}
+
+/* Inner stacked white boxes — reuse `.svc-card`'s recipe (white bg +
+   1px neutral-20 border + 8px radius + 16px padding) so the two
+   inner boxes read as the same family as the inner task cards
+   inside each Phase column. Plain grey body text, no tags. */
+.svc-skill-card-box {
+  margin: 0;
+  padding: 16px;
+  background: var(--color-neutral-10);
+  border: 1px solid var(--color-neutral-20);
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.35;
+  color: var(--color-neutral-100);
+}
+
 /* ── Diagram canvas ─────────────────────────────────────────── */
 
 .svc-diagram {
