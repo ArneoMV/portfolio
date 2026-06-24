@@ -634,31 +634,36 @@
   line-height: 1.2;
 }
 
-.svc-tag--strategy {
-  background: var(--color-red-10);
-  color: var(--color-red-80);
+/* Column-scoped tag tones — all tags inside a Phase column inherit
+   that column's hue (Discovery blue / Building green / Ship orange)
+   so each column reads as one visual tone instead of the previous
+   per-tag mixed palette. Higher specificity (0,2,0) than the legacy
+   per-id rules; scoped via the `.svc-column--<phase>` ancestor so
+   the skill-cluster chips above the diagram (which also use
+   `.svc-tag` + `.svc-tag--polish`) are NOT affected — they sit
+   outside any `.svc-column--*` wrapper. */
+.svc-column--discovery .svc-tag {
+  background: var(--color-primary-20);
+  color: var(--color-primary-90);
 }
 
-.svc-tag--direction {
-  background: var(--color-orange-20);
-  color: var(--color-orange-90);
-}
-
-.svc-tag--ui {
+.svc-column--building .svc-tag {
   background: var(--color-green-20);
   color: var(--color-green-90);
 }
 
-.svc-tag--system {
-  background: var(--color-purple-20);
-  color: var(--color-purple-90);
+.svc-column--ship .svc-tag {
+  background: var(--color-orange-20);
+  color: var(--color-orange-90);
 }
 
-.svc-tag--frontend {
-  background: var(--color-red-20);
-  color: var(--color-red-90);
-}
-
+/* `.svc-tag--polish` is RETAINED — used by the skill-cluster chips
+   above the diagram ([ServicesSection.tsx] SkillCard renders
+   `<span class="svc-tag svc-tag--polish">` per tool). The other
+   five per-id variants (strategy / direction / ui / system /
+   frontend) were removed: inside the diagram they're overridden by
+   the column-scoped rules above, and they have no consumer
+   anywhere else. */
 .svc-tag--polish {
   background: var(--color-primary-20);
   color: var(--color-primary-90);
