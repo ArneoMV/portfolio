@@ -183,20 +183,21 @@ function SkillCard({ skill }: { skill: Skill }) {
   return (
     <li className="svc-skill-card">
       <h3 className="svc-skill-card-title">{skill.title}</h3>
-      <p className="svc-skill-card-box svc-skill-card-box--description">
-        {skill.description}
-      </p>
-      {/* Tools box — each tool renders as a blue chip via the reused
-          `.svc-tag .svc-tag--polish` rule (the only blue variant in
-          the existing `.svc-tag--*` palette). The wrapping flex row
-          is owned by `.svc-skill-card-box--tools` so the chips wrap
-          to multiple lines as the card narrows. */}
-      <div className="svc-skill-card-box svc-skill-card-box--tools">
-        {skill.tools.map((tool) => (
-          <span key={tool} className="svc-tag svc-tag--polish">
-            {tool}
-          </span>
-        ))}
+      {/* Single inner box per card — description text on top, blue
+          chip row directly below it. The box owns its own vertical
+          flex stack (gap: --space-sm) so the description→chips
+          rhythm comes from one place. Chips reuse the existing
+          `.svc-tag .svc-tag--polish` rule for the blue pill visual;
+          `.svc-skill-card-tools` only adds the wrapping flex row. */}
+      <div className="svc-skill-card-box">
+        <p className="svc-skill-card-description">{skill.description}</p>
+        <div className="svc-skill-card-tools">
+          {skill.tools.map((tool) => (
+            <span key={tool} className="svc-tag svc-tag--polish">
+              {tool}
+            </span>
+          ))}
+        </div>
       </div>
     </li>
   );

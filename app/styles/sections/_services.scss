@@ -206,10 +206,14 @@
   color: var(--color-primary-90);
 }
 
-/* Inner stacked white boxes — reuse `.svc-card`'s recipe (white bg +
-   1px neutral-20 border + 8px radius + 16px padding) so the two
-   inner boxes read as the same family as the inner task cards
-   inside each Phase column. Plain grey body text, no tags. */
+/* Single inner box per skill card — reuses `.svc-card`'s recipe
+   (white bg + 1px neutral-20 border + 8px radius + 16px padding)
+   so the box reads as the same family as the inner task cards
+   inside each Phase column. The box is a vertical flex stack so
+   the description text + chip row are rhythm-spaced from one
+   place (--space-sm = 12px). Typography here is inherited by the
+   <p> description; the chip row sets its own font on each
+   `.svc-tag` span. */
 .svc-skill-card-box {
   margin: 0;
   padding: 16px;
@@ -221,14 +225,24 @@
   font-size: 16px;
   line-height: 1.35;
   color: var(--color-neutral-100);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
-/* Tools box — chip row layout. The chip visual itself is the
-   existing `.svc-tag .svc-tag--polish` (blue) rule; this rule only
-   adds the row flex container so chips wrap cleanly inside the
-   16px-padded white box. Scoped to the skill card so it doesn't
+/* Description paragraph — reset the UA default <p> margin so the
+   box's flex gap is the SOLE source of description→chips spacing
+   (otherwise the UA top/bottom 1em margins would compound it). */
+.svc-skill-card-description {
+  margin: 0;
+}
+
+/* Chip row INSIDE the box — flex-wrap so chips break to multiple
+   lines as the card narrows. The chip visual itself is the existing
+   `.svc-tag .svc-tag--polish` (blue) rule; this rule only adds the
+   wrapping row container. Scoped to the skill card so it doesn't
    affect the diagram's `.svc-card`s. */
-.svc-skill-card-box--tools {
+.svc-skill-card-tools {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
