@@ -12,7 +12,13 @@
      includes the scrollbar gutter, 100% resolves against the initial
      containing block (= viewport minus scrollbar). */
   max-width: 100%;
+  /* 100vh fallback for older browsers; 100dvh is the dynamic
+     viewport that excludes mobile browser chrome (iOS Safari URL
+     bar, Android nav). Using 100dvh means the panel + its bottom
+     safe-area padding never sit under a transient toolbar that
+     would otherwise hide the SEND button. */
   height: 100vh;
+  height: 100dvh;
   z-index: 60;
   background: var(--color-surface);
   box-shadow: -16px 0 48px -24px rgba(0, 0, 0, 0.18);
@@ -21,6 +27,11 @@
   transform: translateX(100%);
   transition: transform 250ms ease-out;
   pointer-events: none;
+  /* `overflow: hidden` (NOT auto) — the panel itself is NOT the scroll
+     surface; the inner `.task-side-panel-scroll` is. Keeping the
+     panel as the non-scrolling positioned ancestor lets the floating
+     `.task-side-panel-close` use `position: absolute` against the
+     panel and stay put while content beneath it scrolls. */
   overflow: hidden;
 }
 
@@ -30,23 +41,16 @@
 }
 
 .task-side-panel-header {
-  /* flex-shrink: 0 so the header keeps its full content height even
-     when the body is taller than the panel — otherwise the default
-     shrink: 1 lets the header compress and overlap the form. */
-  flex-shrink: 0;
-  padding: var(--space-xl) var(--space-xl) var(--space-lg);
+  /* Header now scrolls with the rest of the content (the floating
+     close X handles "always visible" on its own via position: absolute),
+     so no flex pinning is needed. Right padding bumped to clear the
+     floating close button: 32px base + 44px button width = 76px so
+     the title text never runs under the X. */
+  padding: var(--space-xl);
+  padding-right: calc(var(--space-xl) + 44px);
+  padding-bottom: var(--space-lg);
   background: var(--color-neutral-10);
   border-bottom: 1px solid var(--color-border);
-}
-
-/* Title + close X share the first row of the header so the close
-   button vertically aligns with the heading and stays clear of the
-   subtitle below. */
-.task-side-panel-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
 }
 
 .task-side-panel-title {
@@ -58,19 +62,25 @@
   color: var(--color-text-primary);
 }
 
-/* Circular X button — transparent surface with a hairline border so
-   it reads as a chrome control rather than a CTA. Wired to the same
-   onClose handler used by overlay-click and ESC, so all three close
-   paths stay consistent. */
+/* Floating circular X — anchored to the panel's top-right corner via
+   position: absolute against the non-scrolling `.task-side-panel`
+   (the nearest positioned ancestor). z-index lifts it above the
+   inner `.task-side-panel-scroll` so it stays visible while content
+   scrolls beneath it. Opaque surface background so scrolling content
+   doesn't read through the button. `top` respects the top safe-area
+   inset so on notched phones the X clears the system UI. */
 .task-side-panel-close {
-  flex-shrink: 0;
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + var(--space-md));
+  right: var(--space-md);
+  z-index: 1;
   /* 44x44 meets the WCAG 2.5.5 / Apple HIG / Material minimum touch
      target. The internal 18x18 SVG is centred by the inline-flex,
      so visual icon size is unchanged — only the hit-area grows. */
   width: 44px;
   height: 44px;
   border-radius: 999px;
-  background: transparent;
+  background: var(--color-surface);
   border: 1px solid var(--color-neutral-30);
   color: var(--color-neutral-100);
   display: inline-flex;
@@ -84,7 +94,7 @@
 }
 
 .task-side-panel-close:hover {
-  background: var(--color-neutral-10);
+  background: var(--color-neutral-20);
   border-color: var(--color-neutral-40);
 }
 
@@ -106,16 +116,26 @@
   color: var(--color-text-secondary);
 }
 
-.task-side-panel-body {
+/* Single scroll surface — wraps the header (title + subtitle) AND
+   the form so everything scrolls as one column. The floating close X
+   is a sibling (NOT inside this wrapper) so it doesn't scroll with
+   the content. `flex: 1; min-height: 0` lets the wrapper consume
+   the panel's full height; the panel's own `overflow: hidden` +
+   viewport-bound height (`100dvh`) provides the containing block
+   this scrolls against. `-webkit-overflow-scrolling: touch` is the
+   no-op-on-modern-Safari iOS momentum-scroll hint. Background page
+   is independently frozen by `body.task-panel-open` in _state.scss. */
+.task-side-panel-scroll {
   flex: 1;
-  /* min-height: 0 releases the default `min-height: auto` (= the
-     body's content min-content height) so flex actually sizes this
-     to "panel height − header height". Without it, overflow-y: auto
-     has nothing to scroll against because the body insists on being
-     at least its content's full height. */
   min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+}
+
+.task-side-panel-body {
   padding: var(--space-xl);
-  // overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
@@ -167,137 +187,6 @@
 textarea.task-field-control {
   resize: vertical;
   min-height: 64px;
-}
-
-/* ── Category combobox (custom listbox, replaces native <select>) ───
-   The native <select> was replaced with this custom listbox because
-   native <option> elements are not reliably stylable across browsers
-   (Chrome/Safari/Edge ignore padding-left on the popup, which made
-   the design's 8px inset impossible). This custom combobox is built
-   from plain DOM elements so SCSS fully controls every state.
-
-   Wire format and a11y: see CategoryField in TaskSidePanel.tsx. The
-   hidden <input name="category"> preserves the original FormData
-   payload, so the EmailJS submission is identical. */
-.task-combobox {
-  position: relative;
-  display: block;
-}
-
-/* Mimics the .task-field-control look so the category trigger
-   visually matches the surrounding text-input fields: same font,
-   same hairline bottom border, same focus colour, same hit area. */
-.task-combobox-trigger {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-xs);
-  font-family: inherit;
-  font-size: var(--text-md);
-  line-height: 140%;
-  color: var(--color-text-primary);
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--color-border);
-  padding: var(--space-xs) 0;
-  outline: none;
-  cursor: pointer;
-  text-align: left;
-  transition: border-color 150ms ease;
-}
-
-.task-combobox-trigger:focus-visible,
-.task-combobox--open .task-combobox-trigger {
-  border-color: var(--color-primary-60);
-}
-
-/* Placeholder styling matches the existing text-input placeholder. */
-.task-combobox-placeholder {
-  color: var(--color-neutral-60);
-}
-
-.task-combobox-value {
-  color: var(--color-text-primary);
-}
-
-.task-combobox-arrow {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  opacity: 0.65;
-  display: block;
-  transition: transform 200ms ease;
-}
-
-.task-combobox--open .task-combobox-arrow {
-  transform: rotate(180deg);
-}
-
-/* Open listbox panel — absolutely positioned just below the trigger.
-   max-height + overflow-y: auto keep it from extending past the
-   surrounding panel when more options are added in the future; with
-   only 3 options today the natural height (~3 × 44px + 16px padding
-   ≈ 150px) fits well inside the side panel without scrolling.
-
-   z-index lifts it above the trigger's bottom border + any following
-   form-field bottom border the open list visually crosses. The
-   panel's own stacking context (`.task-side-panel` z-index: 60) is
-   the parent; this z is local to that stacking context. */
-.task-combobox-list {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  z-index: 5;
-  margin: 0;
-  padding: var(--space-xs) 0;
-  list-style: none;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.18);
-  outline: none;
-  max-height: 240px;
-  overflow-y: auto;
-}
-
-/* Option rows — left padding is the ENTIRE POINT of this rebuild:
-   guaranteed 8px inset in every browser. min-height: 44px gives a
-   comfortable touch target on mobile (Apple HIG / Material guidelines
-   both call for 44px+). The active/hover state uses a neutral tint;
-   selected state (aria-selected="true") uses a brand tint so the
-   currently-selected option is visually distinct even when it's not
-   the keyboard-active one. */
-.task-combobox-option {
-  display: flex;
-  align-items: center;
-  min-height: 44px;
-  padding-left: 8px;
-  padding-right: var(--space-md);
-  padding-top: var(--space-xs);
-  padding-bottom: var(--space-xs);
-  font-family: inherit;
-  font-size: var(--text-md);
-  line-height: 140%;
-  color: var(--color-text-primary);
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 120ms ease;
-}
-
-.task-combobox-option--active,
-.task-combobox-option:hover {
-  background: var(--color-neutral-20);
-}
-
-.task-combobox-option[aria-selected="true"] {
-  background: var(--color-primary-10);
-  font-weight: 600;
-}
-
-.task-combobox-option[aria-selected="true"].task-combobox-option--active {
-  background: var(--color-primary-20);
 }
 
 .task-side-panel-divider {
