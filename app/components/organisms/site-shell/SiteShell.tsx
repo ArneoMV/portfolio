@@ -8,8 +8,6 @@ import type { TaskPreview } from "@/app/components/organisms/task-side-panel/Tas
 import { ContactPanelProvider } from "./contact-panel-context";
 
 const INITIAL_PREVIEW: TaskPreview = {
-  category: "",
-  title: "",
   description: "",
 };
 
@@ -59,14 +57,14 @@ export default function SiteShell({ children }: SiteShellProps) {
 
       const formData = new FormData(form);
       // Keys MUST match the EmailJS template variable names:
-      // {{user_email}}, {{user_name}}, {{category}}, {{title}}, {{message}}.
-      // All five are always sent; the dashboard template decides which to
-      // render, so adding {{category}}/{{title}} there needs no code change.
+      // {{user_email}}, {{user_name}}, {{message}}.
+      // The old {{category}} and {{title}} keys are no longer sent (form
+      // fields removed). If the dashboard template still references
+      // either token it will render blank — prune those tokens from the
+      // template to keep the email clean.
       const templateParams = {
         user_email: formData.get("email")?.toString() ?? "",
         user_name: formData.get("name")?.toString() ?? "",
-        category: formData.get("category")?.toString() ?? "",
-        title: formData.get("title")?.toString() ?? "",
         message: formData.get("description")?.toString() ?? "",
       };
 
