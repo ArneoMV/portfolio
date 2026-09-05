@@ -159,11 +159,30 @@
      project pages, the project-detail sticky rail) don't have to
      hardcode the value. Derived from `.site-nav-inner`: 16px
      padding-top + 40px content (the avatar is the tallest item in
-     the row; the name + marquee text column measures ~39px) + 16px
-     padding-bottom = 72px. Mobile shrinks the avatar to 36px, but
-     `.site-nav-inner`'s `min-height: 72px` holds the bar at the same
-     height on every breakpoint — so this one value is exact
-     everywhere, with no per-breakpoint override to keep in sync.
-     Keep in step with `min-height` on `.site-nav-inner`. */
-  --header-height: 72px;
+     the row; the name + marquee text column measures ~39px) + 24px
+     padding-bottom = 128px.
+
+     Mobile trims the padding (32/16) and the avatar (36px) for
+     32 + 36 + 16 = 84px, so unlike the previous uniform bar this
+     token needs the breakpoint override below.
+
+     Keep both in step with `min-height` on `.site-nav-inner`. */
+  --header-height: 128px;
+
+  /* Contact TaskSidePanel width on ≥768px. Single source of truth:
+     `.task-side-panel` sizes itself from it, and `_state.scss` feeds
+     it to `--panel-offset` so SiteNav slides by exactly the panel's
+     width and clears it completely. Below 768px the panel goes
+     full-width and the offset is not applied at all. */
+  --panel-width: 560px;
+}
+
+/* SiteNav is shorter on mobile (see `_site-nav.scss`). Overriding the
+   token here keeps every consumer — the hero's top margin, the four
+   project heroes, the work/privacy shells, the project-detail sticky
+   rail — correct without touching any of them. */
+@media (max-width: 767px) {
+  :root {
+    --header-height: 84px;
+  }
 }

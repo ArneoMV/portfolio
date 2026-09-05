@@ -166,22 +166,17 @@
    justify-content: space-between, so the title container sits at
    the top of the section and the slideshow frame sits at the
    bottom. Flex `order` puts container first / frame second in the
-   visual stack. The section's min-height is calc(100vh - 130px)
-   so its bottom edge lands 8px above the fixed FooterToolbar's
-   top edge (toolbar = 24px bottom offset + 98px shell + 8px gap). */
+   visual stack. The section fills the viewport height — with the
+   bottom toolbar gone, nothing overlays the section's bottom edge. */
 @media (max-width: 767px) {
   .hero-section {
     /* Flex column with space-between pushes container to the top
        and frame to the bottom; the empty middle fills the section's
        remaining vertical space. height: auto lets content drive
-       size, and min-height calc carves the section so its bottom
-       sits 16px above the FooterToolbar's top edge. The 138px is
-       hardcoded because no CSS variable currently exposes the
-       toolbar's outer height — its anchor (`bottom: var(--space-lg)
-       = 24px`) + collapsed shell (`max-height: 98px`) + designed
-       gap (16px) = 138px. Toolbar expansion (max-height: 600px) is
-       a user-triggered state, not the default; expanded toolbar
-       will overlap Hero's bottom, which is acceptable.
+       size, and min-height floors the section to the viewport.
+       The old `- 138px` carve-out reserved the fixed FooterToolbar's
+       footprint; the toolbar is gone, so the section now runs to the
+       bottom of the viewport.
 
        Viewport cascade — uses the smallest stable viewport so the
        section size doesn't change as the iOS Safari/Brave URL bar
@@ -190,10 +185,10 @@
        when the URL bar collapsed; combined with
        `justify-content: space-between`, the frame visibly drifted
        down during scroll. Pinning to `svh` instead keeps the
-       layout fixed — there will be a small empty gap below
-       FooterToolbar at maximally-collapsed scroll positions
-       (URL bar gone, extra screen real estate unused), which is
-       the accepted trade-off for a stable layout.
+       layout fixed — there will be a small empty gap at the
+       bottom at maximally-collapsed scroll positions (URL bar gone,
+       extra screen real estate unused), which is the accepted
+       trade-off for a stable layout.
          1. `100vh` — legacy fallback for browsers without small
             viewport units (Safari <15.4, ~2022).
          2. `100svh` — small viewport height: the smallest stable
@@ -201,14 +196,15 @@
             final — `min-height` floors the section to this value
             regardless of URL-bar state, so the frame never moves.
        `env(safe-area-inset-bottom, 0px)` subtracts the home-
-       indicator inset on notched iPhones (~34px) so the section's
-       bottom edge stays above the inset, not under it. */
+       indicator inset on notched iPhones (~34px) so the frame at the
+       section's bottom edge stays above the inset, not under it.
+       This is device chrome, not toolbar clearance — it stays. */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: auto;
-    min-height: calc(100vh - 138px);
-    min-height: calc(100svh - 138px - env(safe-area-inset-bottom, 0px));
+    min-height: 100vh;
+    min-height: calc(100svh - env(safe-area-inset-bottom, 0px));
   }
 
   /* Slideshow frame: drop the desktop `absolute left-0 top-0 w-full
@@ -240,11 +236,9 @@
      desktop 100% stretch so the container hugs its text content;
      the section's flex space-between handles the empty middle.
      `order: 1` puts it at the top of the section. `margin-top`
-     clears the fixed Header overlay plus a 16px gap so the title's
-     top edge lands exactly 16px below the Header's bottom edge.
-     The top gap (16px) is intentionally larger than the bottom
-     gap (frame → FooterToolbar = 8px) by design — asymmetric on
-     purpose. */
+     clears the fixed SiteNav overlay plus a 16px gap so the title's
+     top edge lands exactly 16px below the nav's bottom edge. Tracks
+     `--header-height` automatically. */
   .hero-container {
     height: auto;
     order: 1;
@@ -355,14 +349,14 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Header and FooterToolbar fade out while preloader is on screen. */
-header,
-nav[aria-label="Bottom navigation"] {
+/* SiteNav fades out while the preloader is on screen. `.site-nav`
+   declares its own `transition` shorthand (opacity + right), which
+   wins on specificity — keep the two opacity timings in step. */
+header {
   transition: opacity 400ms ease;
 }
 
-body.is-preloading header,
-body.is-preloading nav[aria-label="Bottom navigation"] {
+body.is-preloading header {
   opacity: 0;
   pointer-events: none;
 }

@@ -8,26 +8,13 @@
    composition — just a single readable text column, Source Sans 3
    for body, Young Serif for the page title to match other pages.
 
-   The desktop bottom clearance matches the four project pages (122px
-   = FooterToolbar outer footprint: 98 shell + 24 offset). It is
-   wrapped in `@media (min-width: 768px)` because on mobile the
-   global `.site-main` already reserves 122px of toolbar clearance
-   via `_page.scss`; stacking another 122px on top of that would
-   produce a 122px double-padding gap.
 ===================================================================== */
 
 .privacy-page {
   font-family: var(--font-sans);
-  /* Clears the fixed site header (≈104px) and gives the page a
-     visible top edge below it. Matches the `padding-top: 124px`
-     `.work-page-shell` uses. */
-  padding-top: 124px;
-}
-
-@media (min-width: 768px) {
-  .privacy-page {
-    padding-bottom: 122px;
-  }
+  /* Clears the fixed SiteNav and gives the page a visible top edge
+     below it. Matches what `.work-page-shell` uses. */
+  padding-top: var(--header-height);
 }
 
 /* Narrow text column inside the global `.container` 1100px-rail box.
@@ -114,13 +101,12 @@
   color: var(--color-neutral-70);
 }
 
-/* Mobile — pull the top clearance in a little (smaller header) and
-   tighten the vertical rhythm between sections. */
+/* Mobile — tighten the vertical rhythm between sections. The top
+   clearance is NOT overridden here any more: SiteNav is the same
+   72px tall on every breakpoint, so `var(--header-height)` on the
+   base rule is already correct. (The old override trimmed 124px to
+   96px because the retired header was shorter on mobile.) */
 @media (max-width: 767px) {
-  .privacy-page {
-    padding-top: 96px;
-  }
-
   .privacy-content {
     max-width: 100%;
   }

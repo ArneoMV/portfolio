@@ -7,8 +7,10 @@
    `.footer-toolbar-*` (bottom bar) — both retired.
 
    Height is deterministic: the 40px avatar is the tallest item in
-   the row, so 40 + 16 + 16 = 72px, which is what `--header-height`
-   in core/_tokens.scss is set to. Change one, change the other.
+   the row, so 64 (padding-top) + 40 + 24 (padding-bottom) = 128px
+   on desktop, and 32 + 36 + 16 = 84px on mobile. Both numbers are
+   mirrored by `--header-height` in core/_tokens.scss (which carries
+   a matching mobile override). Change one, change the other.
 
    The bar itself is transparent (as the old `.site-header` was) —
    it overlays page content rather than sitting on a surface.
@@ -18,12 +20,25 @@
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
+  /* Slides left by exactly the contact panel's width while
+     `body.task-panel-open` is set, so the Work / Contact links stay
+     visible instead of being covered by the panel. `--panel-offset`
+     is 0px otherwise (and on mobile, where the panel is full-width),
+     so the nav sits flush to the right edge and returns flush on
+     close. Declared in `utils/_state.scss`.
+
+     `position: fixed` is why this is needed at all: the body's
+     `padding-right` shifts in-flow content but has no effect on
+     viewport-fixed elements. */
+  right: var(--panel-offset, 0px);
   z-index: 50;
-  /* Preloader fade only. No scroll-hide transform — this nav is
-     static by design; `_hero.scss` fades `header` while
-     `body.is-preloading` is set. */
-  transition: opacity 400ms ease;
+  /* `right` matches the panel's own 250ms ease-out transform and the
+     body's padding-right transition, so nav and content move as one.
+     No scroll-hide transform — this nav is static by design;
+     `_hero.scss` fades `header` while `body.is-preloading` is set. */
+  transition:
+    right 250ms ease-out,
+    opacity 400ms ease;
 }
 
 .site-nav-inner {
@@ -33,20 +48,37 @@
   gap: var(--space-md);
 
   width: 100%;
-  /* 1260px — 80px wider than the 1100px dotted `.page-rail-group`
-     rails on each side, inherited from the old `.site-header-inner`.
-     The identity lockup and the links then sit *across* the rail
-     x-positions (`calc(50% ± 550px)`) rather than inside them, so
-     the rails visually pass through them at scroll-top. */
-  max-width: 1260px;
+  /* Rail-aligned. 1100px + auto margins is the same box
+     `.hero-container` and `.work-page-shell` use, and it is exactly
+     where `.page-rail-group` draws its dotted guides
+     (`calc(50% ± 550px)`) — so this element's edges land ON the
+     rails, and the 24px padding below insets the nav content just
+     inside them, matching the page content underneath.
+
+     This replaces the old `.site-header-inner` width of 1260px,
+     which was deliberately 80px wider per side so the rails passed
+     THROUGH the retired header's location block and CTA. That
+     effect died with those two blocks; inheriting the width just
+     pushed the lockup and links outside the rails. */
+  max-width: 1100px;
   margin-left: auto;
   margin-right: auto;
 
-  padding-top: var(--space-md);
-  padding-bottom: var(--space-md);
-  /* border-box (Tailwind Preflight) — this INCLUDES the 32px of
-     vertical padding, so the row floor is the 40px avatar. */
-  min-height: 72px;
+  /* Per design: 64px above the lockup, 24px below (bottom was not
+     annotated — 24px is the working value). */
+  padding-top: var(--space-3xl);
+  padding-bottom: var(--space-lg);
+  /* 24px inset measured from the RAIL edge, since the box above is
+     the rail box. Above 1100px that is 24px inside the dotted
+     guides; at or below 1100px the rails clamp to the viewport
+     edges, so it resolves to 24px from the viewport edge — still
+     24px inside the rail either way. */
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+  /* border-box (Tailwind Preflight) — this INCLUDES the 88px of
+     vertical padding, so the row floor is the 40px avatar:
+     64 + 40 + 24 = 128. */
+  min-height: 128px;
 }
 
 /* ── Identity lockup (home link) ── */
@@ -102,6 +134,11 @@
   line-height: 1.3;
   color: var(--color-text-primary);
   white-space: nowrap;
+  /* Ellipsize rather than bleed out of the lockup. Matters most while
+     the panel is open on a narrow desktop (768–950px), where the nav
+     is squeezed into what's left beside the 560px panel. */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ── Role marquee ── */
@@ -139,7 +176,8 @@
 .site-nav-links {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  /* 24px between "Work" and "Contact", per design. */
+  gap: var(--space-lg);
   flex-shrink: 0;
 }
 
@@ -152,9 +190,16 @@
   background: transparent;
   cursor: pointer;
 
-  font-family: var(--font-sans);
-  font-size: var(--text-xs);
-  font-weight: 600;
+  /* VT323 — the same pixel font the marquee's `.label-tech` uses.
+     Sized up from the 16px it replaced because VT323's cap height is
+     small for its em: 21px here reads at about the optical weight of
+     the 16px Source Sans it replaces, and matches the 16px
+     `.site-nav-name` beside it. Weight stays 400 — VT323 ships only
+     that face (see the next/font loader in app/layout.tsx), so any
+     heavier value would just synthesise a smeared fake bold. */
+  font-family: var(--font-tech);
+  font-size: var(--text-md);
+  font-weight: 400;
   line-height: 1.3;
   white-space: nowrap;
   text-decoration: none;
@@ -179,12 +224,19 @@
    every `--header-height` consumer out of step. */
 @media (max-width: 767px) {
   .site-nav-inner {
-    /* Below 1100px the dotted rails clamp to the viewport edges, so
-       the "content crosses the rails" trick no longer applies —
-       give the row a normal 16px gutter instead (matches
-       `.container`). */
+    /* Desktop's 64px top would eat a fifth of a phone screen before
+       any content — halved to 32px, with the 24px bottom pulled to
+       16px so the bar stays visually balanced. 32 + 36 + 16 = 84.
+
+       Sides drop 24px → 16px: below 1100px the dotted rails clamp to
+       the viewport edges, so the "content crosses the rails" trick no
+       longer applies, and 16px matches `.container`'s mobile gutter
+       while buying back 16px of row width at 360px. */
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-md);
     padding-left: 16px;
     padding-right: 16px;
+    min-height: 84px;
     gap: var(--space-sm);
   }
 
@@ -207,11 +259,13 @@
   }
 
   .site-nav-links {
-    gap: var(--space-sm);
+    /* 24px → 16px. VT323 is monospace, so the links are wide for
+       their point size; 16px still separates them clearly. */
+    gap: var(--space-md);
   }
 
   .site-nav-link {
-    font-size: var(--text-caption);
+    font-size: var(--text-sm);
   }
 }
 

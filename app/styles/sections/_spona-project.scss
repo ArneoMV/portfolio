@@ -11,20 +11,6 @@
    flow inside its grid column (no absolute positioning / overflow).
 ===================================================================== */
 
-/* Page wrapper — desktop footer/toolbar bottom clearance (the global
-   `.site-main` only reserves toolbar space on mobile). */
-/* Bottom clearance — desktop/tablet ONLY. On mobile (≤767px),
-   `.site-main`'s 122px `padding-bottom` provides toolbar clearance;
-   stacking this 122px on top of that produced a 122px double-padding
-   gap on mobile, so the rule is gated to ≥768px. Value = FooterToolbar
-   outer footprint (98 shell + 24 offset) → flush above the toolbar on
-   desktop and tablet. */
-@media (min-width: 768px) {
-  .spona-project-page {
-    padding-bottom: 122px;
-  }
-}
-
 /* ── Hero / Introduction ───────────────────────────────────────
    `padding-top: var(--header-height)` clears the fixed site header. */
 .spona-hero {

@@ -5,8 +5,8 @@
 /* ── Shared Work-page shell ──────────────────────────────────
    One wrapper for both /work and /work/[slug]. Caps content at
    the rail width, centres it horizontally, and puts the page's
-   first content edge at exactly 124px from the top of the page
-   so the fixed site header (~104px tall) never overlaps it.
+   first content edge below the fixed SiteNav via
+   `--header-height`, so the nav never overlaps it.
 
    Inner sections still use the global `.container` class for
    their own inline padding — the shell only handles vertical
@@ -24,7 +24,7 @@
   max-width: 1100px;
   margin-left: auto;
   margin-right: auto;
-  padding-top: 124px;
+  padding-top: var(--header-height);
   font-family: var(--font-sans);
 
   .title-h4,
@@ -229,22 +229,9 @@
         Medium (≥640) :  64px
         Large  (≥1024): 124px
 
-   2. `padding-bottom: 138px` on desktop only (≥768px) — reserves
-      space below the Footer so the fixed FooterToolbar's outer
-      footprint (122px shell + 16px designed gap) doesn't overlap
-      Footer content. Mobile (<768) already has this reservation via
-      `.site-main`'s mobile padding-bottom in `_page.scss`; layering
-      it here too would double-reserve. The 768 breakpoint is
-      intentionally different from the spacing breakpoints (640 /
-      1024) because the toolbar reservation tracks the toolbar's
-      "is this mobile or desktop" gate, while the spacing tracks the
-      listing's design breakpoints — they're conceptually different
-      knobs.
-
-   This slot is scoped to /work because the homepage renders the
-   Footer above a `<ContactSection>` that paints over the toolbar
-   in its own reveal layer — Contact provides the toolbar clearance
-   there, so the homepage Footer doesn't need bottom padding. */
+   The slot used to add `padding-bottom: 138px` on desktop to clear
+   the fixed FooterToolbar. The toolbar is gone, so the Footer is the
+   last thing on the page and ends flush with the document bottom. */
 .work-page-footer-slot {
   margin-top: 48px;
 }
@@ -258,12 +245,6 @@
 @media (min-width: 1024px) {
   .work-page-footer-slot {
     margin-top: 124px;
-  }
-}
-
-@media (min-width: 768px) {
-  .work-page-footer-slot {
-    padding-bottom: 138px;
   }
 }
 

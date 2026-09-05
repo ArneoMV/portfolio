@@ -50,10 +50,6 @@ export interface FloatingObjectProps {
   onHoverStart: () => void;
   onHoverEnd: () => void;
   label: string;
-  /** Shared ref carrying the toolbar's top edge in world Y. Below this
-   *  line is "trapped under the toolbar"; the body is ejected upward
-   *  on the next frame. -Infinity disables the path. */
-  safeBottomYRef?: { current: number };
 }
 
 interface FloatingBodyProps extends Omit<FloatingObjectProps, "assetUrl"> {
@@ -76,7 +72,6 @@ function FloatingBody({
   onHoverEnd,
   label,
   isObj = false,
-  safeBottomYRef,
 }: FloatingBodyProps) {
   const bodyRef = useRef<RapierRigidBody>(null);
   // Retained because `useFloatingPhysics` decrements it every frame
@@ -123,7 +118,6 @@ function FloatingBody({
     boostTimerRef,
     homePositionX,
     mass,
-    safeBottomYRef,
   });
 
   // Hover handlers now only drive the canvas cursor style (via

@@ -28,17 +28,6 @@ export const BOOST_MAX_INTERVAL = 2.5;
 const MAX_SPEED = 5.0;
 const MAX_ANG_SPEED = 4.0;
 
-// Stuck-prevention (mobile only). EJECT_BUFFER lifts a relocated body
-// far enough above the safe line that it doesn't immediately re-trip.
-// SOFT_GUARD_BAND is the slim region just above the safe line where a
-// near-stationary body gets a gentle upward nudge instead of being
-// teleported.
-const STUCK_EJECT_BUFFER = 0.4;
-const STUCK_SOFT_GUARD_BAND = 0.6;
-const STUCK_LOW_SPEED = 0.35;
-const STUCK_NUDGE_IMPULSE_Y = 1.4;
-const STUCK_EJECT_VEL_Y = 2.0;
-
 export interface UseFloatingPhysicsParams {
   bodyRef: RefObject<RapierRigidBody | null>;
   /** Decremented every frame; reset to HOVER_COOLDOWN by the hover handler. */
@@ -47,15 +36,18 @@ export interface UseFloatingPhysicsParams {
   boostTimerRef: RefObject<number>;
   homePositionX?: number;
   mass: number;
-  /** Toolbar's top edge in world Y; below this is "trapped under the toolbar". */
-  safeBottomYRef?: { current: number };
 }
 
 /**
  * Per-frame physics for a floating Contact-section body: micro-drift,
- * optional soft spring, randomized min-speed boost, hard velocity caps,
- * and stuck-prevention against the toolbar collider (now active on
- * both breakpoints — see comment on the safeBottomYRef branch below).
+ * optional soft spring, randomized min-speed boost, and hard velocity
+ * caps.
+ *
+ * This used to also run stuck-prevention: the retired FooterToolbar
+ * overlaid the canvas, and any body that ended up in the dead zone
+ * behind it was ejected back above its top edge. With the toolbar
+ * gone the playground is sealed by the static floor at the canvas
+ * bottom, so there is no trap zone left to escape.
  */
 export function useFloatingPhysics({
   bodyRef,
@@ -63,7 +55,6 @@ export function useFloatingPhysics({
   boostTimerRef,
   homePositionX,
   mass,
-  safeBottomYRef,
 }: UseFloatingPhysicsParams) {
   useFrame((_, delta) => {
     const body = bodyRef.current;
@@ -141,53 +132,6 @@ export function useFloatingPhysics({
     if (as > MAX_ANG_SPEED) {
       const k = MAX_ANG_SPEED / as;
       body.setAngvel({ x: a.x * k, y: a.y * k, z: a.z * k }, true);
-    }
-
-    // Stuck-prevention: keep bodies clear of the toolbar area.
-    // safeBottomY is the toolbar collider's top edge in world Y, which
-    // is also where SceneContents pins the dynamic floor wall. Runs on
-    // both desktop and mobile now (previously gated to mobile only) so
-    // any body that somehow ends up below the safe line — fast tunnel
-    // through the wall, spawn misfire, etc. — gets ejected back above
-    // it. With the wall in place this should fire rarely; it's a
-    // safety net rather than the primary mechanism. Two paths:
-    //   - hard eject: body sank below the safe line — relocate above
-    //     it and replace velocity upward.
-    //   - soft nudge: body is just above the safe line with very low
-    //     speed — risk of pinning against the collider. Gentle upward
-    //     impulse without teleporting.
-    if (safeBottomYRef) {
-      const safeY = safeBottomYRef.current;
-      if (Number.isFinite(safeY)) {
-        const pos = body.translation();
-        if (pos.y < safeY) {
-          body.setTranslation(
-            { x: pos.x, y: safeY + STUCK_EJECT_BUFFER, z: pos.z },
-            true,
-          );
-          body.setLinvel(
-            {
-              x: (Math.random() - 0.5) * 1.5,
-              y: STUCK_EJECT_VEL_Y,
-              z: 0,
-            },
-            true,
-          );
-        } else if (pos.y < safeY + STUCK_SOFT_GUARD_BAND) {
-          const v3 = body.linvel();
-          const s3 = Math.hypot(v3.x, v3.y, 0);
-          if (s3 < STUCK_LOW_SPEED) {
-            body.applyImpulse(
-              {
-                x: (Math.random() - 0.5) * 1.0,
-                y: STUCK_NUDGE_IMPULSE_Y,
-                z: 0,
-              },
-              true,
-            );
-          }
-        }
-      }
     }
   });
 }

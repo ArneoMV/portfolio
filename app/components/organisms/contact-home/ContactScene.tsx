@@ -5,73 +5,14 @@
 // (scene.environment, gl.domElement.style.cursor). The hooks-immutability
 // rule does not apply to imperative scene/renderer mutation.
 
-import {
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
-import {
-  CuboidCollider,
-  Physics,
-  RigidBody,
-  type RapierRigidBody,
-} from "@react-three/rapier";
+import { CuboidCollider, Physics, RigidBody } from "@react-three/rapier";
 import * as THREE from "three";
 import FloatingObject from "./FloatingObject";
-import ToolbarCollider from "./ToolbarCollider";
 import { useContactPanel } from "@/app/components/organisms/site-shell/contact-panel-context";
-
-// Half-height of the dynamic floor's CuboidCollider (matches the
-// other playground walls). Centre Y = (target top edge) - this value,
-// so the wall's top face lands exactly at the requested Y.
-const FLOOR_HALF_HEIGHT = 0.3;
-
-interface DynamicFloorProps {
-  /** Toolbar's top edge in world Y (or -Infinity before measurement). */
-  safeBottomYRef: { current: number };
-  /** Used until `safeBottomYRef` becomes finite — keeps the playground
-   *  sealed even before ToolbarCollider's first useFrame. */
-  fallbackY: number;
-}
-
-/**
- * Floor wall whose Y position follows the toolbar's top edge every
- * frame. Replaces the static canvas-bottom floor — that one left a
- * gap between the canvas bottom and the toolbar where objects could
- * sit "under" the toolbar. With this dynamic wall, objects collide
- * with the floor at the toolbar's top edge instead and never enter
- * that dead zone.
- */
-function DynamicFloor({ safeBottomYRef, fallbackY }: DynamicFloorProps) {
-  const ref = useRef<RapierRigidBody>(null);
-
-  useFrame(() => {
-    if (!ref.current) return;
-    const safe = safeBottomYRef.current;
-    const top = Number.isFinite(safe) ? safe : fallbackY;
-    // Body centre = (desired top face Y) - half-height, so the
-    // collider's TOP face sits exactly at `top`.
-    ref.current.setTranslation({ x: 0, y: top - FLOOR_HALF_HEIGHT, z: 0 }, true);
-  });
-
-  return (
-    <RigidBody
-      ref={ref}
-      type="fixed"
-      colliders={false}
-      friction={0.1}
-      restitution={0.7}
-    >
-      <CuboidCollider args={[40, FLOOR_HALF_HEIGHT, 10]} />
-    </RigidBody>
-  );
-}
 
 // Target visual height of each 3D object on mobile, in CSS pixels.
 // Converted to world units at runtime via the canvas pixel/world ratio
@@ -95,7 +36,7 @@ const DEBUG_PHYSICS = false;
 // ── Asset manifest ──
 // Each object enters from just below the ceiling collider with a
 // gentle downward initial velocity, then drifts through the
-// zero-gravity playground bouncing off the four walls + ToolbarCollider
+// zero-gravity playground bouncing off the four walls
 // indefinitely. The previous up-from-floor entrance routinely placed
 // bodies inside the MenuToolbar's safe-bottom zone on mobile, causing
 // some objects to spawn already trapped under the toolbar. Top-spawn
@@ -272,11 +213,6 @@ function SceneContents({ spawned, onSelect, isMobile }: SceneContentsProps) {
     return Math.min(MOBILE_TARGET_PX * wuPerPx, 2.4);
   }, [isMobile, wuPerPx]);
 
-  // Shared write-once-per-frame channel for the toolbar's safe-top Y.
-  // ToolbarCollider writes; FloatingObject reads. Default -Infinity =
-  // no ejection (desktop default).
-  const safeBottomYRef = useRef<number>(-Infinity);
-
   // Spawn positions:
   //   Anchored to the ceiling collider (same on desktop + mobile) so
   //   every body starts in the top portion of the canvas and drifts
@@ -285,10 +221,9 @@ function SceneContents({ spawned, onSelect, isMobile }: SceneContentsProps) {
   //   spawn too low. Negative ivy on every asset (see ASSETS) drives
   //   the downward entrance.
   //
-  //   The dynamic floor (see <DynamicFloor>) is anchored to the
-  //   toolbar's top edge, so the live playground is bounded between
-  //   the ceiling and that floor — top-spawn keeps every body well
-  //   inside the safe area at mount time.
+  //   The floor sits at the canvas bottom, so the live playground is
+  //   bounded between the ceiling and that floor — top-spawn keeps
+  //   every body well inside the safe area at mount time.
   const spawnPositions = useMemo<[number, number, number][]>(() => {
     const minY = halfH * 0.1;
     return ASSETS.map((a) => {
@@ -337,34 +272,29 @@ function SceneContents({ spawned, onSelect, isMobile }: SceneContentsProps) {
 
   return (
     <>
-      {/* Static walls — ceiling + left + right. Restitution 0.7 keeps
-          bounces lively without feeling rubbery; friction is low so
-          glancing collisions don't kill motion. The floor was removed
-          from this fixed body and replaced by <DynamicFloor> below,
-          which pins itself to the toolbar's top edge so objects can't
-          slip into the gap behind / under the MenuToolbar. */}
+      {/* Static walls — floor + ceiling + left + right. Restitution
+          0.7 keeps bounces lively without feeling rubbery; friction is
+          low so glancing collisions don't kill motion.
+
+          The floor is back on this fixed body. It was briefly a
+          separate <DynamicFloor> that tracked the retired
+          FooterToolbar's top edge, so objects couldn't settle in the
+          dead zone behind the bar. With no toolbar overlaying the
+          canvas it is just the canvas bottom again, declared exactly
+          like the other three walls: `floorY` is already a wall
+          CENTRE (`-halfH - 0.3`), so with a 0.3 half-height the inner
+          face lands precisely on the viewport edge. */}
       <RigidBody
         type="fixed"
         colliders={false}
         friction={0.1}
         restitution={0.7}
       >
+        <CuboidCollider position={[0, floorY, 0]} args={[40, 0.3, 10]} />
         <CuboidCollider position={[0, ceilingY, 0]} args={[40, 0.3, 10]} />
         <CuboidCollider position={[-wallX, 0, 0]} args={[0.3, 40, 10]} />
         <CuboidCollider position={[wallX, 0, 0]} args={[0.3, 40, 10]} />
       </RigidBody>
-
-      {/* Dynamic floor — every frame the body's translation tracks
-          `safeBottomYRef` (top edge of the toolbar collider in world Y)
-          minus the floor's half-height, so the floor's TOP face lands
-          exactly at the toolbar's top edge. Before ToolbarCollider has
-          measured (safeBottomYRef = -Infinity), the floor falls back
-          to the canvas-bottom Y so the playground is always sealed. */}
-      <DynamicFloor safeBottomYRef={safeBottomYRef} fallbackY={floorY} />
-
-      {/* Invisible collider matching the MenuToolbar DOM rect, so floating
-          objects bounce off it rather than passing through. */}
-      <ToolbarCollider isMobile={isMobile} safeBottomYRef={safeBottomYRef} />
 
       {ASSETS.map((a, i) =>
         liveSet.has(i) ? (
@@ -383,7 +313,6 @@ function SceneContents({ spawned, onSelect, isMobile }: SceneContentsProps) {
             label={a.label}
             mass={a.mass}
             linearDamping={a.linearDamping}
-            safeBottomYRef={safeBottomYRef}
             onSelect={() => onSelect(a.id)}
             onHoverStart={onHoverStart}
             onHoverEnd={onHoverEnd}

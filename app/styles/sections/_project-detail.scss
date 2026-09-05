@@ -8,24 +8,13 @@
 ===================================================================== */
 
 /* Page root — pins Source Sans 3 across the whole template and
-   leaves room above for the fixed site header (~104px) and below
-   for the fixed BottomToolbar (~122px). The dark section escapes
+   leaves room above for the fixed SiteNav via `--header-height`.
+   (It also used to reserve ~122px below for the retired bottom
+   toolbar; the page now ends flush.) The dark section escapes
    the rail container by living outside `.page-rail-group`, so the
    bg can be full-bleed while inner content still sits at 1100px. */
 .project-detail {
   font-family: var(--font-sans);
-}
-
-/* Bottom clearance — desktop/tablet ONLY. On mobile (≤767px),
-   `.site-main`'s 122px `padding-bottom` provides toolbar clearance;
-   stacking this 122px on top of that produced a 122px double-padding
-   gap on mobile, so the rule is gated to ≥768px. Value = FooterToolbar
-   outer footprint (98 shell + 24 offset) → flush above the toolbar on
-   desktop and tablet. */
-@media (min-width: 768px) {
-  .project-detail {
-    padding-bottom: 122px;
-  }
 }
 
 .project-detail :is(p, h1, h2, h3, h4, dt, dd, span) {
@@ -34,9 +23,11 @@
 
 /* ── Section 1 — Hero / Introduction ───────────────────────── */
 
+/* `padding-top: var(--header-height)` clears the fixed SiteNav —
+   same as the four bespoke project heroes. */
 .project-detail-hero {
   background: var(--color-background);
-  padding-top: 124px;
+  padding-top: var(--header-height);
   padding-bottom: var(--space-3xl);
 }
 
@@ -57,10 +48,9 @@
 }
 
 @media (max-width: 767px) {
-  .project-detail-hero {
-    padding-top: 96px;
-  }
-
+  /* No mobile top-clearance override: SiteNav is 72px on every
+     breakpoint, so the base `var(--header-height)` already fits.
+     (The old 96px trimmed the retired header's 124px on mobile.) */
   .project-detail-hero-container {
     padding-left: 16px;
     padding-right: 16px;
@@ -539,9 +529,10 @@
   }
 
   /* Sticky left column — lead text stays visible while the right
-     column scrolls past in normal flow. `top` is the fixed-header
-     height (--header-height = 124px) plus a 24px visual breathing
-     gap so the sticky text doesn't kiss the header's bottom edge.
+     column scrolls past in normal flow. `top` is the fixed nav's
+     height (`--header-height`) plus a 24px visual breathing gap so
+     the sticky text doesn't kiss the nav's bottom edge — it tracks
+     the token, so the retune from 124px to 72px carried through.
      `align-self: start` is belt-and-braces in case a future change
      overrides the grid's `align-items: start` and stretches the
      left cell — sticky doesn't work inside a stretched grid item

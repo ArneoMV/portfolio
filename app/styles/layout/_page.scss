@@ -1,55 +1,10 @@
 // Shared page-shell primitives — owns `.site-main` and any other
 // page-level wrappers.
-
-/* Mobile-only bottom reservation for the fixed FooterToolbar.
-
-   Math: toolbar's top edge sits 122px above viewport bottom
-   (24px `bottom` offset + 98px collapsed shell). The designed
-   visual gap between page content's bottom edge and the toolbar's
-   top edge is 16px, so total reservation = 122 + 16 = 138px.
-
-   Without this reservation the last 138px of `.site-main`'s
-   scrollable content sits beneath / against the toolbar at
-   max-scroll and can't be reached cleanly.
-
-   Applies to every route under `(site)/` since `<main className=
-   "site-main">` wraps each route's `{children}` (homepage, work,
-   work/[slug], lab, coaching, about, contact share the same site
-   layout).
-
-   Sections that need toolbar-aware sizing internally (Hero,
-   Projects sticky pin) own their own `min-height: calc(100svh -
-   138px - env(safe-area-inset-bottom, 0px))` — those are *local*
-   reservations for elements anchored to the section's bottom edge
-   (Hero's frame at section bottom; Projects' logo grid inside the
-   sticky pin). `.site-main`'s padding-bottom is the *global*
-   reservation that lets the document's bottom scroll past the
-   toolbar overlay zone. The two stack additively for sections
-   with their own calc, which is fine — the bottom-most edge of
-   `.site-main` (just below the last section) gets the 138px gap,
-   so Contact / Footer content can scroll to 16px above the
-   toolbar's top edge.
-
-   `env(safe-area-inset-bottom, 0px)` adds the home-indicator inset
-   on notched iPhones (~34px) so the gap clears that zone too. */
-@media (max-width: 767px) {
-  .site-main {
-    /* 122 = FooterToolbar outer footprint (98 shell + 24 offset).
-       Was 138 = 122 + 16 designed gap; the gap was removed so the
-       footer sits flush above the toolbar with no visible empty band. */
-    padding-bottom: calc(122px + env(safe-area-inset-bottom, 0px));
-  }
-
-  /* Homepage scope (the only page that renders `.contact-section`):
-     drop the toolbar-safe bottom reservation so the dark
-     `.contact-section`'s 100vh extends all the way to the document
-     bottom — the toolbar then overlays the dark canvas instead of a
-     white reserve band below it. The 3D objects already bounce off
-     ToolbarCollider so they can't get trapped behind the toolbar, and
-     the email sits vertically centred (mid-viewport) so it's never
-     covered. /work and project pages keep the 122px reservation
-     above (their light footers stay flush above the toolbar). */
-  .site-main:has(.contact-section) {
-    padding-bottom: 0;
-  }
-}
+//
+// `.site-main` previously carried a mobile-only `padding-bottom`
+// reserving ~122px for the fixed FooterToolbar, plus a
+// `:has(.contact-section)` carve-out that dropped the reservation on
+// the homepage so the dark Contact section could reach the document
+// bottom. Both are gone with the toolbar — the nav is at the top now,
+// so nothing overlays the bottom of the page and every route ends
+// flush. Left as a placeholder for future page-level primitives.

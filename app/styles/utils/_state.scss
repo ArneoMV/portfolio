@@ -5,6 +5,17 @@
 
 /* ================================
    TASK SIDE PANEL — global offset
+
+   `--panel-offset` is "how far a viewport-fixed element must move
+   left to clear the open panel", so it equals the panel's width.
+   SiteNav is its only consumer (`right: var(--panel-offset)` in
+   `_site-nav.scss`) — without it the nav's right-hand Work / Contact
+   links would sit underneath the panel.
+
+   It is deliberately NOT the same number as `padding-right` below.
+   That one shifts page *content* and is a design choice (content
+   slides most of the way, the panel overlaps its last ~140px);
+   the nav has to clear the panel completely or its links disappear.
 ================================ */
 
 :root {
@@ -22,9 +33,13 @@ body.task-panel-open {
   overflow-y: hidden;
 }
 
+// Gated to ≥768px: below that the panel is full-width (see
+// `_modals.scss`), so there is nowhere to shift to. `--panel-offset`
+// stays 0px there and the nav simply stays put while the panel covers
+// it — no off-screen slide, no horizontal scroll.
 @media (min-width: 768px) {
   body.task-panel-open {
-    --panel-offset: 420px;
+    --panel-offset: var(--panel-width);
     padding-right: 420px;
   }
 }

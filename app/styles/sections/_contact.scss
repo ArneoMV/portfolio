@@ -41,10 +41,9 @@
   /* Full-bleed dark background. Homepage-scoped by the fact that
      `.contact-section` only renders on the homepage (ContactSection.tsx
      is only consumed by app/(site)/page.tsx). Extends the dark colour
-     to viewport edges so the area behind the fixed FooterToolbar
-     (which overlays the bottom 122px) reads dark instead of the white
-     body background. `.contact-section-inner`'s identical background
-     below becomes redundant but kept for layering safety. */
+     to the viewport edges rather than stopping at the rail box.
+     `.contact-section-inner`'s identical background below becomes
+     redundant but kept for layering safety. */
   background: var(--color-neutral-100);
 }
 
