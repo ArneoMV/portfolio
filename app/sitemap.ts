@@ -9,9 +9,11 @@ import { SITE_URL } from "@/lib/site-config";
  * updates the sitemap on the next build with no separate edit.
  *
  * Routes intentionally excluded:
- *   - /contact, /about — page.tsx returns null (stub routes); the
- *     real contact + about content lives inside the homepage so
- *     surfacing the stub URLs would just produce empty SERP entries.
+ *   - /contact, /about — routes deleted with the nav rework; both
+ *     were empty stubs and the real contact + about content lives
+ *     inside the homepage. They now fall through to the branded 404.
+ *     Contact is reached via SiteNav's "Contact" button, which opens
+ *     the TaskSidePanel rather than navigating.
  *   - /coaching — placeholder page with no real content yet.
  */
 export default function sitemap(): MetadataRoute.Sitemap {

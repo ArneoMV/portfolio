@@ -25,7 +25,7 @@ import styles from "./WorkSection.module.scss";
  * column grid on ≥640px (labels left, tag subtitles right) so the
  * tag rows align vertically across all four projects.
  *
- * Header + FooterToolbar are NOT rendered here — they live globally
+ * SiteNav is NOT rendered here — it lives globally
  * in app/(site)/layout.tsx and would otherwise duplicate.
  */
 export default function WorkSection() {

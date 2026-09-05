@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import emailjs from "@emailjs/browser";
-import Header from "@/app/components/organisms/header/Header";
+import SiteNav from "@/app/components/organisms/site-nav/SiteNav";
 import TaskSidePanel from "@/app/components/organisms/task-side-panel/TaskSidePanel";
 import type { TaskPreview } from "@/app/components/organisms/task-side-panel/TaskSidePanel";
 import { ContactPanelProvider } from "./contact-panel-context";
@@ -19,13 +19,15 @@ type SiteShellProps = {
 
 /**
  * Client boundary for the (site) layout. Holds the contact side-panel
- * open/submit state and renders Header + children + TaskSidePanel
+ * open/submit state and renders SiteNav + children + TaskSidePanel
  * together, so the root/route layouts can stay server components.
  *
- * The "Get in touch" Header button opens the panel; the panel's own
+ * SiteNav's "Contact" button opens the panel — it reads
+ * `openContactPanel` off ContactPanelProvider rather than taking a
+ * prop, so no handler is drilled into the nav. The panel's own
  * Escape / outside-click / close-button handlers call `onClose`. While
  * open, `body.task-panel-open` is toggled to drive the scroll-lock and
- * the FooterToolbar's `--panel-offset` shift (see utils/_state.scss).
+ * the `--panel-offset` shift (see utils/_state.scss).
  */
 export default function SiteShell({ children }: SiteShellProps) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -99,8 +101,9 @@ export default function SiteShell({ children }: SiteShellProps) {
     [],
   );
 
-  // Sync the global body class that drives scroll-lock + FooterToolbar
-  // offset. Cleanup guards against the class sticking if SiteShell
+  // Sync the global body class that drives scroll-lock + the
+  // `--panel-offset` shift. Cleanup guards against the class sticking
+  // if SiteShell
   // unmounts while the panel is open.
   useEffect(() => {
     document.body.classList.toggle("task-panel-open", isPanelOpen);
@@ -120,7 +123,7 @@ export default function SiteShell({ children }: SiteShellProps) {
 
   return (
     <ContactPanelProvider value={contactPanelValue}>
-      <Header onOpenContact={handleOpenContact} />
+      <SiteNav />
       {children}
       <TaskSidePanel
         open={isPanelOpen}

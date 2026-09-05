@@ -5,8 +5,8 @@ import { useContactPanel } from "@/app/components/organisms/site-shell/contact-p
 
 /**
  * Branded 404 — caught by the (site) routing group, so it inherits
- * SiteShell (Header + ContactPanelProvider) and FooterToolbar from
- * the layout above. Triggered by:
+ * SiteShell (SiteNav + ContactPanelProvider) from the layout above.
+ * Triggered by:
  *   - any unmatched URL within the (site) group
  *   - explicit `notFound()` calls (currently the disabled /lab route)
  *

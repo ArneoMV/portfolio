@@ -29,7 +29,6 @@ input[type="radio"],
 select,
 summary,
 label[for],
-.footer-menu-item,
 .contact-header a,
 .about-word-slot {
   cursor: url("/icons/SmoothHand.cur"), pointer;
@@ -57,8 +56,7 @@ textarea,
   body,
   a,
   button,
-  [role="button"],
-  .footer-menu-item {
+  [role="button"] {
     cursor: auto;
   }
 }

@@ -154,11 +154,16 @@
   --radius-xl: 24px;
   --radius-pill: 999px;
 
-  /* Layout chrome — single source of truth for the Header's outer
-     height so sections that need to clear it (Hero mobile, etc.)
-     don't have to hardcode the value. Derived from `.site-header-inner`:
-     32px padding-top + ~59px content (2 lines × 21px × 130% +
-     4px gap) + 32px padding-bottom ≈ 123px. Rounded to 124 for a
-     small safety buffer against subpixel rendering. */
-  --header-height: 124px;
+  /* Layout chrome — single source of truth for SiteNav's outer
+     height so sections that need to clear it (Hero mobile, the four
+     project pages, the project-detail sticky rail) don't have to
+     hardcode the value. Derived from `.site-nav-inner`: 16px
+     padding-top + 40px content (the avatar is the tallest item in
+     the row; the name + marquee text column measures ~39px) + 16px
+     padding-bottom = 72px. Mobile shrinks the avatar to 36px, but
+     `.site-nav-inner`'s `min-height: 72px` holds the bar at the same
+     height on every breakpoint — so this one value is exact
+     everywhere, with no per-breakpoint override to keep in sync.
+     Keep in step with `min-height` on `.site-nav-inner`. */
+  --header-height: 72px;
 }

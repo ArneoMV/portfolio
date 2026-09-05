@@ -21,8 +21,7 @@
 @use "layout/page";
 @use "layout/container";
 @use "layout/grid";
-@use "layout/header";
-@use "layout/footer-toolbar";
+@use "layout/site-nav";
 
 // sections — homepage content blocks + project-detail template
 @use "sections/hero";

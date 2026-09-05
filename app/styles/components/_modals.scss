@@ -233,7 +233,7 @@ textarea.task-field-control {
 }
 
 /* Dim overlay — fades over page content while the panel is open.
-   z-55 places it above the FooterToolbar (z-50) but below the panel
+   z-55 places it above SiteNav (z-50) but below the panel
    itself (z-60), so the panel reads as fully lit and the rest of the
    page reads as dimmed/disabled. Click-through is gated by
    pointer-events: only the open variant intercepts pointer events. */

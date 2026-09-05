@@ -3,16 +3,15 @@
 import { createContext, useContext, type ReactNode } from "react";
 
 /**
- * Bridge for non-Header components (the 3D contact scene, future
- * surface CTAs, etc.) that need to open the contact TaskSidePanel
- * without prop-drilling through unrelated layers. SiteShell owns the
- * panel state and provides this context once near the (site) layout
- * root; any descendant reads it via `useContactPanel()`.
+ * Bridge for every component that needs to open the contact
+ * TaskSidePanel without prop-drilling through unrelated layers —
+ * SiteNav's "Contact" button, the 3D contact scene, the 404 page.
+ * SiteShell owns the panel state and provides this context once near
+ * the (site) layout root; any descendant reads it via
+ * `useContactPanel()`.
  *
- * Header still uses the direct `onOpenContact` prop because it's a
- * sibling SiteShell renders itself — not a descendant — and the prop
- * is already wired and stable. The context complements that path; it
- * doesn't replace it.
+ * This is now the only path in. The retired Header took a drilled
+ * `onOpenContact` prop; SiteNav does not.
  */
 type ContactPanelContextValue = {
   openContactPanel: () => void;
