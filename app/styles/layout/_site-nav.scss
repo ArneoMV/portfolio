@@ -7,14 +7,22 @@
    `.footer-toolbar-*` (bottom bar) — both retired.
 
    Height is deterministic because every line-height in the lockup
-   is a unitless multiplier, so nothing depends on font metrics:
-   the identity card's text column (name + 8px gap + marquee) is
-   taller than the avatar and sets the card height, which sets the
-   bar height.
-     desktop: card 16 + (27.3 + 8 + 18.2) + 16 = 85.5
-              bar  64 + 85.5 + 24 = 173.5 -> 174
-     mobile:  card 16 + (23.4 + 8 + 15.6) + 16 = 79
-              bar  32 + 79 + 16 = 127 -> 128
+   is a unitless multiplier, so nothing depends on font metrics. On
+   desktop the 60px avatar — not the text column — is the tallest
+   thing in the identity card, so the avatar sets the card height,
+   which sets the bar height. (Measured in-browser, not derived from
+   the design file; the two disagreed.)
+     desktop: card 8 + 60 + 8 = 76      text column is only 45.5
+              bar  24 + 76 + 24 = 124   no min-height, content governs
+     mobile:  card 8 + 39 + 8 = 55      text column governs at 39
+              bar  32 + 55 + 16 = 103   (102.98 exactly)
+   Mobile has no floor either, so it has TWO natural heights: under
+   380px the marquee is hidden and the 36px avatar governs instead
+   (card 52, bar 32 + 52 + 16 = 100). `--header-height`'s mobile
+   override is a single value and takes the taller of the two (103),
+   which leaves a ~3px gap under 380px rather than a 3px overlap
+   above it — a gap is invisible, an overlap is a bug.
+
    Both are mirrored by `--header-height` in core/_tokens.scss (which
    carries a matching mobile override). Change one, change the other.
 
@@ -70,9 +78,11 @@
   margin-left: auto;
   margin-right: auto;
 
-  /* Per design: 64px above the lockup, 24px below (bottom was not
-     annotated — 24px is the working value). */
-  padding-top: var(--space-3xl);
+  /* 24px above and below the lockup. The design annotated 64px on
+     top; it was pulled to 24px for a tighter bar. Neither number is
+     free — `--header-height` in core/_tokens.scss mirrors this sum,
+     so change both together. */
+  padding-top: var(--space-lg);
   padding-bottom: var(--space-lg);
   /* 24px inset measured from the RAIL edge, since the box above is
      the rail box. Above 1100px that is 24px inside the dotted
@@ -81,11 +91,12 @@
      24px inside the rail either way. */
   padding-left: var(--space-lg);
   padding-right: var(--space-lg);
-  /* border-box (Tailwind Preflight) — this INCLUDES the 88px of
-     vertical padding. The row floor is the auto-height identity
-     card, whose text column (not the 40px avatar) governs:
-     64 + 85.5 + 24 = 173.5, rounded up to a whole pixel. */
-  min-height: 174px;
+  /* Deliberately no `min-height` on desktop: the row is exactly as
+     tall as the auto-height identity card plus the 48px of vertical
+     padding above. The card is governed by its 60px avatar, which is
+     taller than the 45.5px text column beside it, so the bar lands
+     at 24 + 76 + 24 = 124px. Mobile is content-driven too — see the
+     breakpoint block at the foot of this file. */
 }
 
 /* ── Identity lockup (home link) ── */
@@ -266,9 +277,9 @@
    every `--header-height` consumer out of step. */
 @media (max-width: 767px) {
   .site-nav-inner {
-    /* Desktop's 64px top would eat a fifth of a phone screen before
-       any content — halved to 32px, with the 24px bottom pulled to
-       16px so the bar stays visually balanced. 32 + 36 + 16 = 84.
+    /* 32px top / 16px bottom: tighter than desktop's 24/24 but
+       deliberately top-heavy, so the lockup sits off the status bar.
+       With the 55px card that totals 32 + 55 + 16 = 103.
 
        Sides drop 24px → 16px: below 1100px the dotted rails clamp to
        the viewport edges, so the "content crosses the rails" trick no
@@ -278,10 +289,10 @@
     padding-bottom: var(--space-md);
     padding-left: 16px;
     padding-right: 16px;
-    /* 32 + 79 (card) + 16 = 127, rounded up. The card is taller than
-       before because its vertical padding went 8 -> 16 and its text
-       column now governs instead of the avatar. */
-    min-height: 128px;
+    /* No `min-height` here either, matching desktop: the bar is
+       exactly its content. See the geometry block at the top of this
+       file for the two mobile cases (marquee shown vs hidden) and
+       `--header-height`'s mobile override in core/_tokens.scss. */
     gap: var(--space-sm);
   }
 

@@ -157,19 +157,24 @@
   /* Layout chrome — single source of truth for SiteNav's outer
      height so sections that need to clear it (Hero mobile, the four
      project pages, the project-detail sticky rail) don't have to
-     hardcode the value. Derived from `.site-nav-inner`: 16px
+     hardcode the value. Derived from `.site-nav-inner`: 24px
      padding-top + the auto-height identity card + 24px
-     padding-bottom. The card is driven by its text column (name +
-     8px gap + marquee), which is taller than the 40px avatar:
-     16 + (27.3 + 8 + 18.2) + 16 = 85.5, so 64 + 85.5 + 24 = 173.5,
-     rounded up to 174px.
+     padding-bottom. The card is driven by its 60px avatar, which is
+     taller than the text column beside it (name 27.3 + marquee 18.2
+     = 45.5, with no gap between them): 8 + 60 + 8 = 76 card, so
+     24 + 76 + 24 = 124px. Measured in-browser at 768/1024/1440.
 
-     Mobile keeps the same card padding but smaller type (18/12) and
-     a tighter bar (32/16): 16 + 47 + 16 = 79 card, 32 + 79 + 16 =
-     127 -> 128px — hence the breakpoint override below.
+     Mobile keeps the same card padding but a 36px avatar and smaller
+     type (18/12), and is content-driven too (no min-height). It has
+     two natural heights: 102.98px at >=380px, and 100px below that,
+     where the marquee is hidden and the 36px avatar governs the card
+     instead of the text column. This single override takes the
+     taller of the two, so content is flush at >=380px and sits ~3px
+     low on a 360/375px phone — a gap, never an overlap.
 
-     Keep both in step with `min-height` on `.site-nav-inner`. */
-  --header-height: 174px;
+     Keep in step with `.site-nav-inner`: both breakpoints are
+     content-driven, so any padding or avatar change moves these. */
+  --header-height: 124px;
 
   /* Contact TaskSidePanel width on ≥768px. Single source of truth:
      `.task-side-panel` sizes itself from it, and `_state.scss` feeds
@@ -185,6 +190,6 @@
    rail — correct without touching any of them. */
 @media (max-width: 767px) {
   :root {
-    --header-height: 128px;
+    --header-height: 103px;
   }
 }
