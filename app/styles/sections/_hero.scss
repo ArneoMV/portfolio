@@ -351,12 +351,29 @@
 
 /* SiteNav fades out while the preloader is on screen. `.site-nav`
    declares its own `transition` shorthand (opacity + right), which
-   wins on specificity — keep the two opacity timings in step. */
+   wins on specificity — keep the two opacity timings in step.
+
+   `.site-nav-blend` is the second fixed layer holding Work / Contact
+   (see layout/_site-nav.scss). It is a <div>, not the <header>, so it
+   has to be named explicitly below or the links would stay at full
+   opacity and pop in over the preloader while the rest of the nav is
+   still faded out.
+
+   It is deliberately NOT added to the `transition` rule here. This
+   file is @use'd after layout/_site-nav.scss, so a `.site-nav-blend`
+   transition declared at equal specificity would win the cascade and
+   replace that layer's own shorthand — which also carries
+   `right 250ms ease-out`. Losing that makes the blend layer snap
+   sideways the instant the contact panel opens while `.site-nav`
+   eases across, visibly tearing the row in half for 250ms. The layer
+   already declares `opacity 400ms ease` itself, so it needs nothing
+   from this rule. */
 header {
   transition: opacity 400ms ease;
 }
 
-body.is-preloading header {
+body.is-preloading header,
+body.is-preloading .site-nav-blend {
   opacity: 0;
   pointer-events: none;
 }

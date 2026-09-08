@@ -224,6 +224,76 @@
   }
 }
 
+/* ── Blend layer ──
+   A second fixed layer holding nothing but Work / Contact, so
+   `mix-blend-mode: difference` can be declared on a fixed element
+   instead of inside one.
+
+   Why it cannot live on `.site-nav-link`: `.site-nav` is
+   `position: fixed` (with `z-index: 50` on top of that), so it
+   creates a stacking context — and a stacking context is an isolated
+   blending group. A blend on any descendant can only see backdrop
+   painted *within* that group, which here is just the transparent
+   bar, so `difference` would resolve against nothing and the links
+   would render plain white over every section. Moving the blend onto
+   a fixed element makes its backdrop the root stacking context: the
+   page itself. (`position: fixed` creates a stacking context
+   unconditionally, independent of `z-index`, so there is no version
+   of this that works from inside `.site-nav`.)
+
+   The layer spans the whole bar and so overlaps the identity card,
+   but everything except the two links is fully transparent, and
+   `difference` weights by source alpha — a zero-alpha source returns
+   the backdrop unchanged. The card, avatar, name and marquee are
+   therefore never blended; they stay in `.site-nav` untouched. */
+.site-nav-blend {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* Slides with the nav so the links keep clearing the contact
+     panel. Same custom property and same 250ms ease-out as
+     `.site-nav`, so the two layers move as one — a mismatch here
+     would visibly tear the row apart mid-slide. */
+  right: var(--panel-offset, 0px);
+  z-index: 50;
+  transition:
+    right 250ms ease-out,
+    opacity 400ms ease;
+
+  mix-blend-mode: difference;
+
+  /* The layer covers the full bar width, including the empty space
+     over the hero, so it must not swallow clicks. Re-enabled on the
+     links themselves below. */
+  pointer-events: none;
+}
+
+/* Same rail box as the header's row, so the links land pixel-for-
+   pixel where they did before the split: same 1100px max-width, same
+   24px padding, same `align-items: center`. Only two things change. */
+.site-nav-inner--blend {
+  /* 1. The identity card is not in this layer, so `space-between`
+        would park the links on the left. */
+  justify-content: flex-end;
+
+  /* 2. Row height. In the header the row is as tall as the identity
+        card (76px desktop), and the links centre against that. Here
+        the links are the only content, so without a floor the row
+        would collapse to their own 27.3px and they would ride ~24px
+        too high. `--header-height` is exactly the header row's
+        height, so borrowing it restores the same centre line — and
+        it tracks automatically if the card's height ever changes. */
+  min-height: var(--header-height);
+}
+
+/* Reserves the links' footprint in the header row — see the comment
+   on the element in SiteNav.tsx. Paints nothing and takes no clicks;
+   it exists purely so the identity card keeps its old width. */
+.site-nav-links--spacer {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* ── Links ── */
 
 .site-nav-links {
@@ -259,6 +329,21 @@
   color: var(--color-text-primary);
 
   transition: color 200ms ease;
+
+  /* The layer above is `pointer-events: none`; the links opt back
+     in so they stay clickable. */
+  pointer-events: auto;
+}
+
+/* White is not a style choice here, it is what makes the blend
+   readable: `difference` computes |backdrop - source|, so a pure
+   white source inverts the backdrop exactly (255 - x). Any other
+   colour returns a partial, hue-shifted result — the previous
+   `--color-text-primary` (#2d333a) would read as a muddy near-no-op
+   on the white hero. Scoped to the blend layer so the rule dies with
+   it if the experiment is reverted. */
+.site-nav-blend .site-nav-link {
+  color: var(--color-neutral-10);
 }
 
 .site-nav-link:hover {
