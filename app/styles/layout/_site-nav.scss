@@ -346,6 +346,22 @@
   color: var(--color-neutral-10);
 }
 
+/* Hover, blended. The unscoped blue below is wrong under
+   `difference`: it is not a dimmer white, it is a different hue, so
+   the result swings by background — |#fff - #3f77c7| lands on orange
+   (#c08838) over the white hero but stays blue-ish over the dark
+   contact section. Dropping the white to 70% alpha instead scales the
+   inversion rather than recolouring it, so the text reads as a gentle
+   dim of whatever it already was, identically over every section.
+
+   Specificity (0,3,0) puts this above both the blue `:hover` and the
+   white base colour, and scoping it to the blend layer keeps the
+   plain blue hover intact for a non-blended nav — so reverting the
+   experiment cannot strand a white-on-white hover. */
+.site-nav-blend .site-nav-link:hover {
+  color: rgb(255 255 255 / 70%);
+}
+
 .site-nav-link:hover {
   color: var(--color-primary-70);
 }
