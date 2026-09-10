@@ -155,7 +155,21 @@ export default function SiteNav() {
           Geometry is the same `.site-nav-inner` box the header uses,
           so the links land exactly where they did; `--blend` only
           flips the justification and restores the row height. See
-          `layout/_site-nav.scss`. */}
+          `layout/_site-nav.scss`.
+
+          Landmarks: this puts the "Primary" <nav> at the top level,
+          a sibling of the <header> banner rather than inside it. That
+          is deliberate and valid — a navigation landmark needs no
+          banner ancestor — and reading/tab order is still banner
+          (home link) -> Primary nav (Work, Contact) -> main. Do not
+          "fix" it by wrapping both layers in one <header>: the
+          preloader rule `body.is-preloading header { opacity: 0 }`
+          would then hit the wrapper, and opacity below 1 creates a
+          stacking context, isolating this blend for the whole 400ms
+          fade-in — white links on the white hero, invisible until the
+          fade completes. The aria-hidden spacer above adds no landmark
+          (it is a <div>) and is ignored by the accessibility tree, so
+          this stays the only navigation landmark on the page. */}
       <div className="site-nav-blend">
         <div className="site-nav-inner site-nav-inner--blend">
           <nav className="site-nav-links" aria-label="Primary">
