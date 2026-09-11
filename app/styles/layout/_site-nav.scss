@@ -2,26 +2,24 @@
    SITE NAV
 
    The site's only navigation. Fixed to the top on every breakpoint:
-   identity lockup (avatar + name + role marquee) left, Work /
-   Contact right. Replaces the former `.site-header` (top) and
-   `.footer-toolbar-*` (bottom bar) — both retired.
+   identity lockup (name + role marquee) left, Work / Contact right.
+   Replaces the former `.site-header` (top) and `.footer-toolbar-*`
+   (bottom bar) — both retired.
 
    Height is deterministic because every line-height in the lockup
-   is a unitless multiplier, so nothing depends on font metrics. On
-   desktop the 60px avatar — not the text column — is the tallest
-   thing in the identity card, so the avatar sets the card height,
-   which sets the bar height. (Measured in-browser, not derived from
-   the design file; the two disagreed.)
-     desktop: card 8 + 60 + 8 = 76      text column is only 45.5
-              bar  24 + 76 + 24 = 124   no min-height, content governs
-     mobile:  card 8 + 39 + 8 = 55      text column governs at 39
-              bar  32 + 55 + 16 = 103   (102.98 exactly)
-   Mobile has no floor either, so it has TWO natural heights: under
-   380px the marquee is hidden and the 36px avatar governs instead
-   (card 52, bar 32 + 52 + 16 = 100). `--header-height`'s mobile
-   override is a single value and takes the taller of the two (103),
-   which leaves a ~3px gap under 380px rather than a 3px overlap
-   above it — a gap is invisible, an overlap is a bug.
+   is a unitless multiplier, so nothing depends on font metrics. The
+   identity card is text only — name, 8px gap, marquee — so that
+   column sets the card height, which sets the bar height. Measured
+   in-browser (it reports 117.48 / 110.98, from sub-pixel line boxes):
+     desktop: column 27.3 + 8 + 18.2 = 53.5    21px name, 14px roles
+              card   8 + 53.5 + 8    = 69.5
+              bar    24 + 69.5 + 24  = 117.5
+     mobile:  column 23.4 + 8 + 15.6 = 47      18px name, 12px roles
+              card   8 + 47 + 8      = 63
+              bar    32 + 63 + 16    = 111
+   Each is a single height across its whole breakpoint: nothing in
+   the card changes size with viewport width, and the marquee shows
+   at every width.
 
    Both are mirrored by `--header-height` in core/_tokens.scss (which
    carries a matching mobile override). Change one, change the other.
@@ -93,10 +91,10 @@
   padding-right: var(--space-lg);
   /* Deliberately no `min-height` on desktop: the row is exactly as
      tall as the auto-height identity card plus the 48px of vertical
-     padding above. The card is governed by its 60px avatar, which is
-     taller than the 45.5px text column beside it, so the bar lands
-     at 24 + 76 + 24 = 124px. Mobile is content-driven too — see the
-     breakpoint block at the foot of this file. */
+     padding above — 24 + 69.5 + 24 = 117.5px, with the card's text
+     column (name + gap + marquee) setting the card. Mobile is
+     content-driven too — see the breakpoint block at the foot of
+     this file. */
 }
 
 /* ── Identity lockup (home link) ── */
@@ -104,31 +102,25 @@
 .site-nav-identity {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
 
-  /* Fixed 249x100 card per design. `flex: 0 0 auto` (not the former
-     `1 1 auto`) so it holds that width instead of growing to fill
-     the bar — `justify-content: space-between` on the inner still
-     pushes the links to the right rail.
+  /* Content-sized: the card is exactly as wide as the full name plus
+     its padding, at every breakpoint. The name is the only thing
+     allowed to set that width — the marquee opts out of intrinsic
+     sizing (see `.site-nav-marquee-clip`) and just clips to whatever
+     the name decides — so there is no fixed width to keep in step
+     with the name, its font size, or the length of the role list.
 
-     `min-width: 0` is kept and still mandatory: without it the
-     nowrap marquee track establishes a min-content floor and blows
-     the flex item out. Inside the fixed width the text column
-     resolves to 249 - 8 - 16 (padding) - 40 (avatar) - 24 (gap) =
-     161px, comfortably narrower than one ~500px copy of the role
-     string, so `translateX(-50%)` never exposes a gap at the loop
-     seam. (This is what the old `max-width: 320px` guarded; the
-     fixed width supersedes it.) */
-  flex: 0 0 auto;
+     `flex: 0 1 auto`: never grows past the name, but can shrink when
+     the row is squeezed (contact panel open on a narrow desktop, a
+     very small phone), at which point `.site-nav-name` ellipsizes
+     rather than the card overflowing into the links. `min-width: 0`
+     is what permits that shrink at all. */
+  flex: 0 1 auto;
   min-width: 0;
-  width: 249px;
-  /* border-box (Preflight): includes the padding, so the content box
-     is 225px wide. Height is content-driven now: the text column
-     (21px name + 8px gap + 14px marquee = 53.5px) is taller than the
-     40px avatar, so the card resolves to 16 + 53.5 + 16 = 85.5px.
-     The bar's own padding sits outside this — see `--header-height`. */
-  height: auto;
-  padding: 8px 16px 8px 8px;
+  /* Text-only, so the inset is even left and right. Height is
+     content-driven — see the geometry block at the top of this file
+     and `--header-height`. */
+  padding: 8px 16px;
 
   background-color: var(--color-neutral-10);
   /* Design calls for Figma corner-smoothing 70%; CSS has no native
@@ -148,32 +140,13 @@
   border-radius: 15px;
 }
 
-.site-nav-avatar {
-  position: relative;
-  width: 60px;
-  height: 60px;
-  flex-shrink: 0;
-  overflow: hidden;
-  /* Rounded square, matching the card's own 15px. */
-  border-radius: 15px;
-  background: var(--color-neutral-20);
-}
-
-/* `overflow: hidden` above already clips the photo, but next/image
-   renders an absolutely-positioned <img> and Safari has a long-
-   standing habit of ignoring a rounded ancestor's clip on
-   composited layers. Radiusing the image itself is the belt to that
-   braces; `inherit` keeps it locked to the wrapper's value. */
-.site-nav-avatar img {
-  border-radius: inherit;
-}
-
 .site-nav-identity-text {
   display: flex;
   flex-direction: column;
   /* 8px between the name and the marquee. Neither child carries a
      margin (Preflight zeroes them), so the gap is the only source of
      that spacing — nothing to unpick. */
+  gap: var(--space-xs);
   /* Second `min-width: 0` — the clamp has to be re-established on
      every flex level between the overflow container and the track. */
   min-width: 0;
@@ -198,6 +171,18 @@
 
 .site-nav-marquee-clip {
   overflow: hidden;
+  /* Opt out of the card's intrinsic width. `width: 0` makes the
+     marquee contribute nothing when the card sizes itself, so the
+     name alone sets it; `min-width: 100%` then stretches the clip back
+     out to the full text column once that width is known. Without
+     this the nowrap track — one copy of the role list runs to several
+     hundred px — would drag the card out to the marquee's length.
+
+     Seam: the loop is clean as long as one copy is wider than this
+     clip, so `translateX(-50%)` never exposes the gap at the join.
+     The clip is name-width, a copy is several times that. */
+  width: 0;
+  min-width: 100%;
 }
 
 /* Shared `@keyframes marquee-scroll` lives in core/_animations.scss
@@ -244,8 +229,8 @@
    The layer spans the whole bar and so overlaps the identity card,
    but everything except the two links is fully transparent, and
    `difference` weights by source alpha — a zero-alpha source returns
-   the backdrop unchanged. The card, avatar, name and marquee are
-   therefore never blended; they stay in `.site-nav` untouched. */
+   the backdrop unchanged. The card, name and marquee are therefore
+   never blended; they stay in `.site-nav` untouched. */
 .site-nav-blend {
   position: fixed;
   top: 0;
@@ -277,10 +262,10 @@
   justify-content: flex-end;
 
   /* 2. Row height. In the header the row is as tall as the identity
-        card (76px desktop), and the links centre against that. Here
-        the links are the only content, so without a floor the row
-        would collapse to their own 27.3px and they would ride ~24px
-        too high. `--header-height` is exactly the header row's
+        card, and the links centre against that. Here the links are
+        the only content, so without a floor the row would collapse
+        to their own 27.3px and they would ride well above the card's
+        centre line. `--header-height` is exactly the header row's
         height, so borrowing it restores the same centre line — and
         it tracks automatically if the card's height ever changes. */
   min-height: var(--header-height);
@@ -288,7 +273,8 @@
 
 /* Reserves the links' footprint in the header row — see the comment
    on the element in SiteNav.tsx. Paints nothing and takes no clicks;
-   it exists purely so the identity card keeps its old width. */
+   it exists purely so the identity card yields to the links, rather
+   than sliding under them, when the row is squeezed. */
 .site-nav-links--spacer {
   visibility: hidden;
   pointer-events: none;
@@ -380,7 +366,7 @@
   .site-nav-inner {
     /* 32px top / 16px bottom: tighter than desktop's 24/24 but
        deliberately top-heavy, so the lockup sits off the status bar.
-       With the 55px card that totals 32 + 55 + 16 = 103.
+       With the 63px card that totals 32 + 63 + 16 = 111.
 
        Sides drop 24px → 16px: below 1100px the dotted rails clamp to
        the viewport edges, so the "content crosses the rails" trick no
@@ -392,26 +378,9 @@
     padding-right: 16px;
     /* No `min-height` here either, matching desktop: the bar is
        exactly its content. See the geometry block at the top of this
-       file for the two mobile cases (marquee shown vs hidden) and
-       `--header-height`'s mobile override in core/_tokens.scss. */
+       file and `--header-height`'s mobile override in
+       core/_tokens.scss. */
     gap: var(--space-sm);
-  }
-
-  /* The card surface, radius, shadow and padding all carry over —
-     they read the same at any size and keep the lockup legible over
-     the hero. Only the fixed 249x100 box is dropped: at ~360px a
-     249px card would leave nothing for the links. `flex: 0 1 auto`
-     + the inherited `min-width: 0` lets it shrink instead. */
-  .site-nav-identity {
-    gap: var(--space-sm);
-    flex: 0 1 auto;
-    width: auto;
-    height: auto;
-  }
-
-  .site-nav-avatar {
-    width: 36px;
-    height: 36px;
   }
 
   /* Scales with the desktop bump (16 -> 21) rather than staying at
@@ -434,14 +403,5 @@
 
   .site-nav-link {
     font-size: var(--text-sm);
-  }
-}
-
-/* Below ~380px the identity column can't hold a legible marquee
-   alongside both links. Drop the marquee only — the avatar and name
-   keep the lockup recognisable, and the nav stays one row. */
-@media (max-width: 379px) {
-  .site-nav-marquee-clip {
-    display: none;
   }
 }

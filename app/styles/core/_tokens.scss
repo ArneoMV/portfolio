@@ -159,22 +159,21 @@
      project pages, the project-detail sticky rail) don't have to
      hardcode the value. Derived from `.site-nav-inner`: 24px
      padding-top + the auto-height identity card + 24px
-     padding-bottom. The card is driven by its 60px avatar, which is
-     taller than the text column beside it (name 27.3 + marquee 18.2
-     = 45.5, with no gap between them): 8 + 60 + 8 = 76 card, so
-     24 + 76 + 24 = 124px. Measured in-browser at 768/1024/1440.
+     padding-bottom. The card is text only, so its column sets it:
+     name 27.3 + 8px gap + marquee 18.2 = 53.5, card 8 + 53.5 + 8 =
+     69.5, bar 24 + 69.5 + 24 = 117.5px (117.48 measured at
+     768/1024/1440). Kept at the half pixel rather than rounded up:
+     118 would leave a 0.5px gap under the nav, and the blend-layer
+     links centre against this value, so it should match the real row.
 
-     Mobile keeps the same card padding but a 36px avatar and smaller
-     type (18/12), and is content-driven too (no min-height). It has
-     two natural heights: 102.98px at >=380px, and 100px below that,
-     where the marquee is hidden and the 36px avatar governs the card
-     instead of the text column. This single override takes the
-     taller of the two, so content is flush at >=380px and sits ~3px
-     low on a 360/375px phone — a gap, never an overlap.
+     Mobile keeps the same card padding with smaller type (18/12):
+     column 23.4 + 8 + 15.6 = 47, card 63, bar 32 + 63 + 16 = 111px
+     (110.98 measured at 320-767). One height across the whole
+     breakpoint — the marquee shows at every width.
 
      Keep in step with `.site-nav-inner`: both breakpoints are
-     content-driven, so any padding or avatar change moves these. */
-  --header-height: 124px;
+     content-driven, so any padding, gap or type change moves these. */
+  --header-height: 117.5px;
 
   /* Contact TaskSidePanel width on ≥768px. Single source of truth:
      `.task-side-panel` sizes itself from it, and `_state.scss` feeds
@@ -190,6 +189,6 @@
    rail — correct without touching any of them. */
 @media (max-width: 767px) {
   :root {
-    --header-height: 103px;
+    --header-height: 111px;
   }
 }

@@ -1,19 +1,19 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
 import { ScrollTrigger } from "@/lib/gsap/gsap-init";
 import { useContactPanel } from "@/app/components/organisms/site-shell/contact-panel-context";
 
-/** Role words scrolled by the marquee, in the order the old
- *  FooterToolbar shipped them. Joined with a comma + two NBSPs so the
- *  gap survives the `whitespace-nowrap` on the track. */
+/** Role words scrolled by the marquee, in display order. Joined with
+ *  a comma + two NBSPs so the gap survives the `whitespace-nowrap` on
+ *  the track. */
 const ROLES = [
+  "DIGITAL",
+  "PRODUCT",
   "BUILDER",
   "NEXT.JS",
-  "ENTHUSIAST",
-  "ENGINEER",
+  "UI/UX",
   "CREATIVE DESIGN",
   "PRODUCT BUILDER",
 ];
@@ -21,8 +21,8 @@ const ROLES = [
 const MARQUEE_TEXT = ROLES.join(",\u00A0\u00A0");
 
 /**
- * The site's single navigation: identity lockup (avatar + name +
- * role marquee) on the left, Work / Contact on the right. Fixed to
+ * The site's single navigation: identity lockup (name + role
+ * marquee) on the left, Work / Contact on the right. Fixed to
  * the top on every breakpoint — no scroll-hide, no bottom bar, no
  * separate mobile pattern; the mobile layout is this same row at
  * reduced sizes (see `_site-nav.scss`).
@@ -68,28 +68,19 @@ export default function SiteNav() {
       <header className="site-nav">
         <div className="site-nav-inner">
           {/* Logo-style home link. The accessible name is set here so
-              screen readers announce "Arneo MV, home" instead of
-              reading the whole role list (twice, with the duplicate
-              marquee copy). */}
+              screen readers announce "Arneo Marin-Vincetić, home"
+              instead of reading the whole role list (twice, with the
+              duplicate marquee copy). It opens with the visible name,
+              so voice-control users can target it by what they see
+              (WCAG 2.5.3, Label in Name). */}
           <Link
             href="/"
             className="site-nav-identity"
-            aria-label="Arneo MV — home"
+            aria-label="Arneo Marin-Vincetić — home"
             onNavigate={handleNavigate}
           >
-            <span className="site-nav-avatar">
-              <Image
-                src="/images/avatar_image.png"
-                alt=""
-                fill
-                sizes="40px"
-                loading="eager"
-                className="object-cover"
-              />
-            </span>
-
             <span className="site-nav-identity-text">
-              <span className="site-nav-name">Arneo MV</span>
+              <span className="site-nav-name">Arneo Marin-Vincetić</span>
 
               {/* Marquee: one visible copy + one aria-hidden duplicate,
                   with the track translated -50% so the seam lands
@@ -112,14 +103,14 @@ export default function SiteNav() {
           </Link>
 
           {/* Invisible stand-in for the links, which now render in the
-              blend layer below. It has to stay in this row: on mobile
-              `.site-nav-identity` is `flex: 0 1 auto` over a very wide
-              max-content (the nowrap marquee), so it only shrinks as
-              far as the row forces it to. With nothing competing for
-              the space it stops shrinking and the white card stretches
-              across the whole bar — measured 260px -> 367px at 414px
-              wide. Reserving the links' footprint keeps the card at
-              exactly the width it had.
+              blend layer below. The two layers are separate fixed boxes
+              and never push each other, so without this the identity
+              card would only start shrinking once it reached the
+              viewport edge — sliding underneath Work / Contact on the
+              way. Reserving the links' footprint here makes the card
+              yield (and its name ellipsize) exactly where the links
+              begin: contact panel open on a narrow desktop, or a very
+              small phone.
 
               `visibility: hidden` keeps the box in flow while painting
               nothing, and drops it from the accessibility tree, so the
@@ -149,8 +140,8 @@ export default function SiteNav() {
           The layer spans the full bar and therefore overlaps the
           identity card, but every pixel outside the two links is fully
           transparent, and `difference` against a zero-alpha source
-          returns the backdrop untouched — so the card, avatar, name
-          and marquee are never blended. They stay in `.site-nav`.
+          returns the backdrop untouched — so the card, name and
+          marquee are never blended. They stay in `.site-nav`.
 
           Geometry is the same `.site-nav-inner` box the header uses,
           so the links land exactly where they did; `--blend` only
