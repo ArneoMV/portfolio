@@ -143,10 +143,6 @@
 .site-nav-identity-text {
   display: flex;
   flex-direction: column;
-  /* 8px between the name and the marquee. Neither child carries a
-     margin (Preflight zeroes them), so the gap is the only source of
-     that spacing — nothing to unpick. */
-  gap: var(--space-xs);
   /* Second `min-width: 0` — the clamp has to be re-established on
      every flex level between the overflow container and the track. */
   min-width: 0;

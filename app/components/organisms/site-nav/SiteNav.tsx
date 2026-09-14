@@ -9,13 +9,13 @@ import { useContactPanel } from "@/app/components/organisms/site-shell/contact-p
  *  a comma + two NBSPs so the gap survives the `whitespace-nowrap` on
  *  the track. */
 const ROLES = [
-  "DIGITAL",
-  "PRODUCT",
-  "BUILDER",
-  "NEXT.JS",
-  "UI/UX",
-  "CREATIVE DESIGN",
-  "PRODUCT BUILDER",
+  "WEBSITES",
+  "PRODUCT DESIGN",
+  "UI/UX DESIGN",
+  "AI AUTOMATION",
+  "REACT",
+  "DESIGN SYSTEMS",
+  "FRONTEND DEVELOPMENT",
 ];
 
 const MARQUEE_TEXT = ROLES.join(",\u00A0\u00A0");
