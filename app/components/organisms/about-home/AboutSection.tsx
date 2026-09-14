@@ -10,8 +10,6 @@ const STORY_IMAGES = [
   "/images/home/about/about-02.png",
   "/images/home/about/about-03.png",
   "/images/home/about/about-04.png",
-  "/images/home/about/about-05.png",
-  "/images/home/about/about-06.png",
 ];
 
 /**
